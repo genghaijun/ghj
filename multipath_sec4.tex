@@ -1,6 +1,7 @@
 \section{Performance Evaluation}\label{evaluation}
 To evaluate our algorithm,
 we use the real  network Abilene (11 nodes, 14 links),
+CERNET2 ()
 and five ISP topologies which are measured by Rocketfuel\cite{2004148100061},
 including  AS3967 (79 nodes, 147 links), AS1221 (108 nodes, 153 links), AS3257 (161 nodes, 328 links), AS6461  (128 nodes, 372 links) and AS1239 (315 nodes, 972 links).
 We also generate synthetic topologies with BRITE \cite{medina2001brite},
@@ -188,7 +189,7 @@ K(c,d)=\begin{cases}
 \end{equation}
 
 It can be seen from this definition that the higher protection ratio, the higher the path diversity.
-Fig. \ref{prr} depicts the protection ratio obtained by different algorithms on Abilene and Rocketfuel topologies.
+Fig. \ref{prreal} and Fig. \ref{prrocket} respectively depict the protection ratio obtained by different algorithms on real and measured topologies.
 Fig. \ref{prd} presents the relationship between the protection ratio and average node degree on generated topologies
 when the topology size is 200.
 From Fig. \ref{prr} and Fig. \ref{prd}, we can see that INC, INC-NA and DC have the similar protection ratio, which have better performance than both of DMPA and TBFH.
@@ -196,8 +197,14 @@ Since protection ratio cannot accurately describe end-to-end network availabilit
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{protectionratioreal}
-\caption{Protection ratio on real and measured topologies}
-\label{prr}
+\caption{Protection ratio on real topologies}
+\label{prreal}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{protectionratiorocket}
+\caption{Protection ratio on measured topologies}
+\label{prrocket}
 \end{figure}
 \begin{figure}[t]
 \centering
