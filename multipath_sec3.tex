@@ -1,0 +1,1024 @@
+\section{Network Model}\label{model}
+\begin{table*}[t]
+\setlength{\belowcaptionskip}{0pt}
+\normalsize
+\caption{Notations}
+\label{notation}
+\centering
+\begin{tabular}{c|c}
+\hline
+$G\!=\!(V,E)$&Undirected graph with nodes and edges\\
+%\hline
+%$V$&Set of nodes in the graph\\
+%\hline
+%$E$&Set of links in the graph\\
+%\hline
+%$R(v)$&Router-ID of node $v$\\
+\hline
+$L(u,v)$&Direct link cost between node $u$ and node $v$\\
+\hline
+$r(u,v)$&The link failure probability between node $u$ and node $v$\\
+\hline
+ $G'=(V,E,(l,m,w))$ &The new topology when the edge
+$(l,m)\in E$ change its weight to $w$\\
+\hline
+$T_c$&Shortest path tree rooted at node $c$\\
+\hline
+$T_{c}(c,x,w)$ &Shortest path tree rooted at node $c$ in $G'=(V,E,(c,x,w))$ \\
+\hline
+$C_c(v)$ &The shortest cost from $c$ to $v$ in the original network$G\!=\!(V,E)$\\
+\hline
+$C_c(v,(l,m,w))$ &The shortest cost from node $c$  to node $v$ in the new network $G'=(V,E,(l,m,w))$\\
+\hline
+$D(T_{c},v)$ &The descendants of node $v$ in $T_{c}$\\
+\hline
+$N(v)$&Neighbors of node $v$\\
+\hline
+$D_c(v)$&Descendants of node $v$ (itself is included) in $T_c$\\
+\hline
+$N_{c}(v)$&Next-hop set computed by node $c$ for destination node $v$\\
+\hline
+$B_{c}(v)$&Best next-hop computed by node $c$ for destination node $v$\\
+
+%\hline
+%$p(v)$&tentative parent of $v$\\
+%\hline
+%$d(v)$&tentative cost from $c$ to $v$\\
+\hline
+\end{tabular}
+\end{table*}
+In this paper, we will limit our research to intra-domain link state routing protocols, e.g. OSPF and IS-IS. Each router in a single routing area maintains an identical network map which allows them to compute the shortest path to every other router in a routing area. Then each router construct its FIB table employing the above information. When a packet arrives at a router, a destination address based method is using to determine how to forward the packets to its corresponding interface. When the network topology changes, the routers adjacent to the changed component detects the change and then propagates the information to its neighboring router through the link state advertisement (LSA) information. After a period of time, all routers in this routing area are aware of  the change information and update their routing tables accordingly, then the network is at a stable state.
+
+
+In the following sections, a network is modeled as a simple, undirected weighted graph $G=(V,E)$, where $V$ and $E$ respectively denote the set of nodes (routers) and the set of edges (links) in the network. Every link $(u,v)\in E$ in the network has an associated integer weight $L(u,v)$ and a failure probability $r(u,v)$. And the weights of the links in the network are symmetric.
+$C_c(v)$ is the lowest cost from $c$ to $v$ in the network.
+We use $N(v)$ to denote the neighbor set of the node $v$.
+For a node $u\in N(V)$, we have $C_u(v)=C_v(u)=L(u,v)$.
+
+In a link state routing network, the computing node $c$ builds a shortest path tree $T_c$ rooted at itself, containing
+all the nodes in the network as potential destinations in the link state routing protocols, such as OSPF and IS-IS.
+Then the router $c$ construct its FIB table based on the above information.
+In particular, we use $B_{c}(v)$ to represent the best/default candidate,
+which lies along the shortest path from $c$ to $v$.
+Since $T_c$ is a shortest path tree, leading to the following lemma.
+\begin{lemma} {\bf The Best Next-Hop Rule}
+\label{bestnh}
+\begin{equation}
+B_c(v)=\begin{cases}
+v&\mbox{$P_c(v)=c$}\\
+B_c(P_c(v))&\mbox{$P_c(v)\neq c$}
+\end{cases}
+\end{equation}
+\end{lemma}
+Equation (\ref{bestnh}) in Lemma \ref{bestnh} means the best next-hop
+$B_c(v)$ for a destination $v$ is $c$'s direct
+child along the path from $c$ to $v$ in $T_c$.
+A shortest path routing algorithm, such as open shortest path first (OSPF) \cite{moy1998rfc,moy1998ospf},
+computes a single next-hop $B_{c}(v)$ by employing equation (\ref{bestnh})
+at each step when a new node $v$ is added to the SPT.
+
+
+We use $G'=(V,E,(l,m,w))$ to represent the new topology when the edge
+$(l,m)\in E$ change its weight to $w$, $C_c(v,(l,m,w))$ is the shortest cost from node $c$  to node $v$ in the new network $G'=(V,E,(l,m,w))$.
+$T_{c}(c,x,w)$ denote the new shortest path tree when the edge $(c,x)\in T_c$ change its weight to $w$.
+For ease of reading, we summarize some  symbols in the Table \ref{notation}.
+
+ \iffalse $T_{c}$ represent a shortest path tree rooted at $c$, $D(T_{c},v)$ represent the descendants of node $v$ (node $v$ is excluded) in $T_{c}$,
+$C_c(v)$ is the shortest cost from node $c$  to node $v$ in the original network $G$.\fi
+\section{iSPF and LFA}\label{back}
+In this section, we will discuss incremental shortest
+path first (iSPF) algorithm and LFA, both of which are the foundation of our
+work.
+\subsection{Incremental Shortest Path First Algorithm}
+The OSPF and IS-IS routing protocols which are
+widely deployed in today¡¯s Internet calculate a shortest path tree (SPT) from each router to other routers in an autonomous system (AS). Lots of commercial routers have adopted dynamic SPT algorithms which employ the structure of the previously computed SPT rather than recomputed an new SPT from scratch when the network topology changes. The reason is that when network topology changes, the new computed SPT does not differ conspicuously from the old one.
+
+The incremental shortest path first algorithm (iSPF) maintains
+a queue $Q$, each element in the queue is
+of the form $(n,(p,d,\delta))$ , where $p$ denotes a potential parent
+for node $n$, $d$ denotes a potential distance for node  $n$ , and $\delta$ denotes the potential distance change for node  $n$.
+The  iSPF \cite{Narv2002New} is carried out as following steps:\\
+(1)
+Finding all the potentially affected nodes and marking them  \textsl{floating}.\\
+(2) Computing the potential new distance, parent and the distance change $\delta$ between
+the old distance and the potential new distance for the potentially affected nodes.\\
+(3) In each iteration, a node with the smallest $\delta$ (least positive or most negative) is selected, and then a subtree, instead of only
+one node, is appended to the new SPT. All of the above nodes are marked  \textsl{anchored}.
+\begin{figure*}[t]
+        \begin{subfigure}[b]{0.3\textwidth}
+                %\centering
+                \includegraphics{ispfspt}
+                \centering
+                \caption{$T_{c}$}
+              \label{spttree11}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.3\textwidth}
+                %\centering
+                \includegraphics{ispfchange}
+                \caption{$T_{c}(c,a,2)$ }
+                \label{spttreechange12}
+        \end{subfigure}
+         \begin{subfigure}[b]{0.3\textwidth}
+                %\centering
+                \includegraphics{ispfchange2}
+                \caption{$T_{c}(c,a,-8)$}
+                \label{spttreechange13}
+        \end{subfigure}
+        \caption{An example for explaining iSPF}
+        \label{ex}
+\end{figure*}
+\iffalse
+\begin{figure}[t]
+
+\centering
+%\includegraphics[width=3in]{realcomputationoverhead}
+\includegraphics[width=3in]{ispfspt}
+\caption{Shortest path tree rooted at $A$ before link change}
+\label{ispfsptA}
+\end{figure}
+\begin{figure}[t]
+\centering
+%\includegraphics[width=3in]{realcomputationoverhead}
+\includegraphics[width=3in]{ispfchange}
+\caption{Shortest path tree rooted at $A$ when the weight of $(A,C)$ is changed to 2}
+\label{ispfchangeA}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+%\includegraphics[width=3in]{realcomputationoverhead}
+\includegraphics[width=3in]{ispfchange2}
+\caption{Shortest path tree rooted at $A$ when the weight of $(A,C)$ is changed to -8}
+\label{ispfchangeB}
+\end{figure}
+\fi
+
+Perhaps the most intuitive way to demonstrate iSPF is through an
+example. Consider the network topology depicted in Fig. \ref{spttree11}, which is composed of 6 nodes and 8 links. The letter besides the node is its label.
+The solid lines are the links in the shortest path tree which is rooted at node $c$, while the dotted lines are the links  not in the above shortest path tree. The number inside the circle is the shortest distance from node $c$ to that node.
+
+At some point, the weight of the edge $(c,a)$ is changed from 8 to 2.
+Nodes except $c$ all affected nodes and are marked as \textsl{floating}.
+Only the root node $c$ is marked as \textsl{anchored}. For all the \textsl{floating} nodes,
+we check whether they have links to the \textsl{anchored} nodes, and calculate the new distance and the change  in distance. If the change in distance is smaller than 0, the node will be enqueued into the $Q$.
+In the first iteration, the $Q$ has only one element with the form of
+\{$(a,(c,2,-6))$\}.
+In the next iteration, $(a,(c,2,6))$ will be selected and $a$ will be marked as \textsl{anchored}. Since $a$ has an outing edge to $e$ and $b$, the new distance and $\delta$ of $b$ and $e$ is calculated, which gives queue \{$(b,(a,6,-1)),(e,(a,7,-3))$\}. Then $e$ is selected, instead of only marking $e$ as \textsl{anchored}, the original subtree rooted at $e$  is considered together. Therefore the node $f$ is selected and marked as \textsl{anchored} at the same time. Since $e$ has an outing edge to $d$, the new distance and $\delta$ of $d$ is calculated, which gives queue \{$(b,(a,6,-1)),(d,(e,9,-2))$\}. Since node $d$ has the
+largest potential shortest distance decrease, node $d$ is marked as \textsl{anchored}.
+In the next iteration, node $b$ is selected.
+The new shortest path tree is depicted in the
+Fig. \ref{spttreechange12}.
+
+
+Here we will describe a special example, when a single link changes its weight to the opposite number. For example, the weight of the edge $(c,a)$ is changed from 8 to -8. Only the root node $c$ is marked as anchored. For all the floating nodes,
+we check whether they have links to the anchored nodes, and calculate the new distance and the change in distance, which gives
+queue \{$(a,(c,2,-16))$\}.
+In the next iteration, $(a,(c,2,-16))$ will be selected and  $a$ will be marked as anchored. Since $a$ has an outing edge to $e$ and $b$, the new distance and $\delta$ of $e$ and $b$ is calculated, which gives queue \{$(a,(b,-4,-11)),(e,(a,-3,-13))$\}. Then $e$ is selected, instead of only marking $e$ as anchored, the original subtree rooted at $e$  is considered together. Therefore the node $f$ is selected and marked as anchored at the same time. Since $e$ has an outing edge to $d$, the new distance and $\delta$ of $d$ is calculated, which gives queue \{$(a,(b,-4,-11)),(d,(e,-1,-12))$\}. Since node $d$ has the
+largest potential shortest distance decrease, node $d$ is marked as anchored.
+In the next iteration, node $b$ is selected.
+The new shortest path tree is given in the
+Fig. \ref{spttreechange13}.
+\subsection{Some properties of the iSPF}
+\begin{theorem}\label{newspt0}
+Given a shortest path tree $T_c$,
+when the edge $(c,x)\in T_c$ change its weight to 0, the iSPF algorithm can get the correct new SPT $T_c(c,x,0)$.
+\end{theorem}
+\begin{proof}
+The proof for this theorem is exactly the same as that of \cite{Narv2002New}, so the proof is omitted here.
+\end{proof}
+\begin{definition}
+Given a shortest path tree $T_c$, we say a node $d$ change its position in $T_c(c,x,w)$, if and only if the shortest path from $c$ to $d$ is different in the  two trees.
+\end{definition}
+\begin{theorem}\label{newsptposition0}
+Given a shortest path tree $T_c$, for any node $d(d\neq c, d\neq x)$, where $x \in N(c)$
+\begin{itemize}
+\item[(1)] If the position of the node $d$ in the new SPT $T_c(c,x,0)$ is  changed, then we have  $C_x(d)<C_c(d)$.
+ \item[(2)] If $C_x(d)<C_c(d)$ is satisfied,  then the position of the node $d$ in the new SPT $T_c(c,x,0)$ will be changed.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+(1)
+If the position of the node $d$ in the new SPT $T_c(c,x,0)$ is changed, the node $d$ or its ancestor(s) must be enqueued into the $Q$ using ENQUEUE operation.
+Assume that the difference between
+the old distance and the potential new distance for the node $d$ is  $\delta$, the new shortest path cost of node $d$ is $C_c(d)-\delta$.
+Since only the weight of the link $(c,x)$ is changed to 0, we have $d\in D(T_c(c,x,0),x)$. In $T_c(c,x,0)$, we have $C_c(d,(c,x,0))=C_c(x,(c,x,0))+C_x(d,(c,x,0))$.
+Since $C_c(x,(c,x,0))=0$, we have $C_c(d,(c,x,0))=C_x(d,(c,x,0))$.
+Because the shortest path from node $x$ to $d$ is not going through node $c$ in $T_c(c,x,0)$, we have $C_x(d,(c,x,0))=C_x(d)$.
+Because $C_x(d,(c,x,0))=C_c(d)-\delta$,
+we can get $C_x(d)=C_c(d)-\delta$.
+Therefore, we have $C_x(d)<C_c(d)$.\\
+(2)
+Since $C_x(d)<C_c(d)$, the shortest path from node $c$ to node $d$ is not via node $c$.
+When the weight of edge $(c,x)$ is changed from $L(c,x)$ to $0$, there exists a path $P=c,x,...,d$ from $c$ to $d$, and the cost of which is $C_c(x)+C_x(d)$.
+Because $C_c(x)=0$, the cost of path $P$ is $C_x(d)$.
+Therefore, the potential distance change for node $x$ is $C_c(d)-C_x(d)>0$.
+The node $x$ will be enqueued into the $Q$ using ENQUEUE operation.
+Since only the weight of the link $(c,x)$ is changed to 0, we have $d\in D(T_c(c,x,0),x)$. Therefore, the position of the node $d$ in the new SPT $T_c(c,x,0)$ will be changed.
+\end{proof}
+\iffalse
+\begin{theorem}\label{newspttree0}
+Given a $T_{c}$, $x \in N(c)$, for any node $d(d\neq c, d\neq x)$,
+if the
+\begin{itemize}
+\item[(1)] if $d \notin D(T_{c},x)$ and $C_x(d)<C_c(d)$, then we have  $d\in D(T_c(c,x,0),x)$.
+\item[(2)] if $d \notin D(T_{c},x)$ and $d \notin D(T_c(c,x,0),x)$, then we have $C_x(d)<C_c(d)$.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+
+\end{proof}
+\fi
+
+
+
+
+
+
+
+We have already known that Dijkstra's algorithm \cite{Dijkstra1959A} is not applicable with the networks whose link have negative weights. From the above example, when the link $(c,a)$ change its weight to $-L(c,a)$, the correct new shortest path tree can be constructed using iSPF. Theorem \ref{newspt} indicates that this is not a special case.
+\begin{theorem}\label{newspt}
+Given a shortest path tree $T_c$,
+when the edge $(c,x)\in T_c$ change its weight to $-L(c,x)$, the iSPF algorithm can get the correct new SPT $T_c(c,x,-L(c,x))$.
+\end{theorem}
+\begin{proof}
+We will use inductive reasoning to prove this theorem.\\
+(1)We first prove
+the base case. When the weight of edge $(c,x)$ is changed from $L(c,x)$ to $-L(c,x)$.
+The potential parent for node $x$ is $c$, the potential distance for node $x$ is $-L(c,x)$, the potential distance change for node $x$ is $-2*L(c,x)$. The node $x$ will be enqueued into the $Q$ using ENQUEUE operation. After this operation, the queue has one element in the form of
+$(x,(c,-L(c,x),-2*L(c,x)))$. Because there is no node can decrease its cost by more than $-2*L(c,x)$. Therefore, all of the descendants of node $x$ will be  placed in the correct positions during the first iteration.\\
+(2)The inductive step is the same as in the \cite{Narv2002New}, so we omitted the content.
+\end{proof}
+
+\begin{theorem}\label{newsptposition}
+Given a shortest path tree $T_c$, for any node $d(d\neq c, d\neq x)$, where $x \in N(c)$
+\begin{itemize}
+\item[(1)] If the position of the node $d$ in the new SPT $T_c(c,x,-L(c,x))$ is  changed, then we have  $C_x(d)<C_x(c)+C_c(d)$.
+ \item[(2)] If $C_x(d)<C_x(c)+C_c(d)$ is satisfied,  then the position of the node $d$ in the new SPT $T_c(c,x,-L(c,x))$ will be changed.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+(1)
+If the position of the node $d$ in the new SPT $T_c(c,x,-L(c,x))$ is changed, the node $d$ or its ancestor(s) must be enqueued into the $Q$ using ENQUEUE operation.
+Assume that the difference between
+the old distance and the potential new distance for the node $d$ is  $\delta$, the new shortest path cost of node $d$ is $C_c(d)-\delta$.
+Since only the weight of the link $(c,x)$ is changed to $-L(c,x)$, we have $d\in D(T_c(c,x,-L(c,x)),x)$. In $T_c(c,x,-L(c,x))$, we have $C_c(d,(c,x,-L(c,x)))=C_c(x,(c,x,-L(c,x)))+C_x(d,(c,x,-L(c,x)))$.
+Since $C_c(x,(c,x,-L(c,x)))=-L(c,x)$, we have $C_c(d,(c,x,-L(c,x)))=C_x(d,(c,x,-L(c,x)))-L(c,x)$.
+Because the shortest path from node $x$ to $d$ is not going through node $c$ in $T_c(c,x,-L(c,x))$, we have $C_x(d,(c,x,-L(c,x)))=C_x(d)$.
+Because $C_c(d,(c,x,-L(c,x)))=C_c(d)-\delta$,
+we can get $C_x(d)-L(c,x)=C_c(d)-\delta$.
+Therefore, $C_x(d)<L(c,x)+C_c(d)$.\\
+(2)
+Since $C_x(d)<C_x(c)+C_c(d)$, the shortest path from node $c$ to node $d$ is not via node $c$.
+When the weight of edge $(c,x)$ is changed from $L(c,x)$ to $-L(c,x)$,
+the potential distance change for node $x$ is $C_c(d)-C_x(d)+C_x(c)>0$.
+The node $x$ will be enqueued into the $Q$ using ENQUEUE operation.
+Since only the weight of the link $(c,x)$ is changed to $-L(c,x)$, we have $d\in D(T_c(c,x,-L(c,x)),x)$. Therefore, the position of the node $d$ in the new SPT $T_c(c,x,-L(c,x))$ will be changed.
+\end{proof}
+
+
+
+
+
+
+
+\iffalse
+\begin{theorem}
+Given a $T_{c}$, $x \in N(c)$, for any node $d(d\neq c, d\neq x)$
+\begin{itemize}
+\item[(1)] if $v \notin D(T_{c},x)$ and $C_x(v)<C_c(v)+C_x(c)$, then we have  $v\in D(T_c(c,x,-L(c,x)),x)$.
+\item[(2)] if $v \notin D(T_{c},x)$ and $C_x(v)=C_c(v)+C_x(c)$, then we have  $v\notin D(T_c(c,x,-L(c,x)),x)$.
+\end{itemize}
+\end{theorem}
+
+\begin{theorem}\label{newsptposition1}
+Given a $T_{c}$, $x \in N(c)$, for any node $d(d\neq c, d\neq x)$
+\begin{itemize}
+\item[(1)] If the position of the node $d$ in the new SPT $T_c(c,x,0)$ is  changed, then we have  $C_x(d)<C_c(d)+C_x(c)$.
+\item[(2)] if $C_x(d)<C_c(d)+C_x(c)$ is satisfied,  then the position of the node $d$ in the new SPT $T_c(c,x,-L(c,x))$ is  changed.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+\end{proof}
+\begin{theorem}\label{newspttree1}
+Given a $T_{c}$, $x \in N(c)$, for any node $v(v\neq c, v\neq x)$
+\begin{itemize}
+\item[(1)] if $v \notin D(T_{c},x)$ and $C_x(v)<C_c(v)+C_x(v)$, then we have  $v\in D(T_c(c,x,-L(c,x)),x)$.
+\item[(2)] if $v \notin D(T_{c},x)$ and $v \notin D(T_c(c,x,-L(c,x)),x)$, then we have $C_x(v)<C_c(v)+C_x(v)$.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+\end{proof}
+\begin{lemma}\label{nochange}
+For any node $m$ in the $G$, if $C_x(v)=C_c(v)+C_x(c)\geq C_c(m)$, the position of the node $m$ will be not changed in the new SPT $T_c(c,x,-L(c,x))$.
+\end{lemma}
+\begin{proof}
+From theorem \ref{newspt}, we can easily get this lemma. Because $C_x(v)= C_c(v)+C_x(c)= C_c(m)$, the node $x$ will not be enqueued into the Queue.
+\end{proof}
+\begin{theorem}\label{newspttree}
+Given a $T_{c}$, $x \in N(c)$, for any node $v(v\neq c, v\neq x)$
+\begin{itemize}
+\item[(1)] if $v \notin D(T_{c},x)$ and $C_x(v)<C_c(v)+C_x(c)$, then we have  $v\in D(T_c(c,x,-L(c,x)),x)$.
+\item[(2)] if $v \notin D(T_{c},x)$ and $C_x(v)=C_c(v)+C_x(c)$, then we have  $v\notin D(T_c(c,x,-L(c,x)),x)$.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+(1)We will prove the first part of this theorem  by contradiction. If  $v\notin D(T_c(c,x,-L(c,x)),x)$, from Lemma \ref{nochange} we have $C_x(v)\geq C_c(v)+C_x(c)$. This contradict the $C_x(v)<C_c(v)+C_x(c)$.\\
+(2)From Lemma \ref{nochange} we can get the second part of this theorem is correct.
+\end{proof}
+\fi
+%$v\in D(T_c(c,x,-L(c,x)),B_c(v))$,
+From Theorem \ref{newsptposition}, we can see that if the shortest path from neighboring node $x$ to $d$ is not going through node $c$.
+The node $d$  must be the descendant of node $x$ in the new shortest path tree when the  weight of $(c,x)$ is changed to $-L(c,x)$.
+Contrarily, if the node $c$ is included in the shortest path from neighboring node $x$ to $v$. The node $d$  must not be the descendant of node $x$ in the new shortest path tree when the  weight of $(c,x)$ is changed to $-L(c,x)$.
+\begin{lemma}\label{fan}
+Given a shortest path tree $T_c$, for any node $d(d\neq c, d\neq x)$, where $x \in N(c)$, if  the position of the node $d$ in the new SPT $T_c(c,x,-L(c,x))$ is not changed, then we have  $C_x(d)=C_x(c)+C_c(d)$.$C_x(d)=C_x(c)+C_c(d)$
+\end{lemma}
+\begin{proof}
+From Theorem \ref{newsptposition}, we have $C_x(d)\geq C_x(c)+C_c(d)$ when the position of the node $d$ in the new SPT $T_c(c,x,-L(c,x))$ is not changed.
+Because $C_x(d)\leq C_x(c)+C_c(d)$ is satisfied, we have $C_x(d)=C_x(c)+C_c(d)$.
+%Therefore, the lemma can be easily verified.
+\end{proof}
+\begin{figure}[t]
+\centering
+%\includegraphics[width=3in]{realcomputationoverhead}
+\includegraphics[width=1.2in]{lfaexample}
+\caption{An example for explaining LFA}
+\label{lfaexample}
+\end{figure}
+\subsection{LFA}
+Up to now, LFA is the only IPFRR scheme that has been deployed into commercial routers, and hence into operational IP networks. Therefore, at least two major vendors are already providing LFA out of the box, and other vendors are expected to follow suit.
+The LFA includes three loop-free rules.
+They are respectively Loop-free Criterion (LFC), Node Protection Criterion(NPC) and Downstream Path Criterion (DC).
+LFC can protect against a single link failure, NPC can protect against a
+single node failure, while DC is applicable to more complex failure scenarios.
+We will now dive into the details of LFA.
+
+\textbf{LFC:}
+For packets destined to a destination $v$, node $c$ ($c \ne v$)
+can forward them to its any neighboring node $x$ as long as $C_x(v)<C_c(v)+C_x(c)$,
+and there will be no forwarding loop in the induced forwarding path.
+
+\textbf{NPC:}
+For packets destined to a destination $v$, node $c$ ($c \ne v$)
+can forward them to its any neighboring node $x$ as long as $C_x(v)<C_x(f)+C_f(v)$, where $f$ is the default next hop from $c$ to $v$,
+and there will be no forwarding loop in the induced forwarding path.
+
+\textbf{DC:}
+For packets destined to a destination $v$, node $c$ ($c \ne v$)
+can forward them to its any neighboring node $x$ as long as $C_x(v)<C_c(v)$,
+and there will be no forwarding loop in the induced forwarding path.
+
+
+The LFC rule can be interpreted as the node $s$ is not on the shortest path from $x$ to $v$, NPC shows that the node $f$ is not on the shortest path from $x$ to $v$. DC rule indicates that the neighbor $x$ is closer to the destination $v$ then the node $s$ itself.
+From the description of the three rules, we can see that the neighbor who accords with the NPC rule must conform to the LFC rule, but the reverse is not necessarily true. A neighbor who meets the LFC rule must conform to the DC rule, but vice versa. There is no specific relationship between DC and NPC.
+The following is an example to explain the three rules in LFA.
+Fig. \ref{lfaexample} shows a network topology consisting of 5 nodes and 6 links.
+As shown in Fig. \ref{lfaexample}, the default next hop from node $c$ to node $d$ is $a$,
+the default next hop from node $c$ to node $e$ is $b$, $C_c(d)=4$, $C_b(d)=5$.
+The node $b$ can be used as a valid LFC next hop from the node $c$ to the destination node $d$ since $C_b(d)<C_b(c)+C_c(d)$.
+However the node $b$ is not a valid NFC next hop from the node $c$ to the destination node $d$ since $C_b(d)=C_b(a)+C_a(d)$.
+Since $C_a(e)=4<C_c(e)=5$, node $a$ can be a valid DC next hop from $c$ to $e$.
+Node $a$ can also be a valid LFC next hop from $c$ to $e$ because $C_a(e)<C_c(e)+C_e(c)$.
+Node $a$ can also be a valid NPC next hop from $c$ to $e$ because $C_a(e)<C_a(b)+C_b(e)$.
+It can be seen that the node $a$ can be used as  LFC, DC, and NPC next hop from the node $c$ to the destination node $e$.
+
+In order to achieve resilience routing,
+the node $c$ can compute a candidate set of next-hops $N_{c}(v)$
+for each destination $v$ ($v \!\neq\! c$) employing LFA, so that when a packet destined to $v$ arrives at $c$,
+$c$ can select a next-hop from $N_{c}(v)$ and forward this packet to.
+
+
+\section{Incremental Alternates Computation Algorithm}\label{iac}
+\iffalse
+Given sets of nodes $N \in V$, $I(N)=\{S(e)\notin N, E(e) \in N\}$, $O(N)=\{S(e)\in N, E(e) \notin N\}$,
+obviously $I(N)=O(N)$ in an undirected connected graph $G$.
+\fi
+
+
+
+Since each node independently computes its next-hops for all destinations,
+in the rest of the paper, our algorithm will be
+described with respect to a particular node $c$ that performs such
+kind of computation.
+
+\iffalse
+We denote the cost of the path from $c$ to $v$ in $T_{c}$ by $C_{c}(v)$,
+the children of $v$ in $T_c$ by $H_c(v)$,
+the parent of $v$ in $T_c$ by $P_{c}(v)$,
+and the descendants of $v$ in $T_c$ by $D_c(v)$, with $c$ itself included.
+\fi
+\iffalse
+\begin{figure*}[t]
+        \centering
+        \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics{shortpathtree}
+                \caption{$T_{c}$}
+              \label{spttree}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics{sachange}
+                \caption{$T'_{c}$ when $L(c,a)=0$}
+                \label{spttreechange1}
+        \end{subfigure}
+         \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics{sbchange}
+                \caption{$T'_{c}$ when $L(c,b)=0$}
+                \label{spttreechange2}
+        \end{subfigure}
+        \caption{An example for explaining some Theorems}
+        \label{theoremexample}
+\end{figure*}
+\fi
+%To compute a set $N_{c}(v)$ of next-hops for $v$, we start with
+%a simple rule called downstream criterion (DC) \cite{incits8473iso} rule.
+
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=2in]{proof}
+\caption{Next-Hop contribution rule illustration}
+\label{proofnh}
+\end{figure}
+
+\iffalse
+\begin{figure}[t]
+\centering
+%\includegraphics[width=3in]{realcomputationoverhead}
+\includegraphics[width=2in]{dcspt}
+\caption{Shortest path tree after link change}
+\label{ispfspt}
+\end{figure}
+\begin{figure}[t]
+\centering
+%\includegraphics[width=3in]{realcomputationoverhead}
+\includegraphics[width=2.5in]{dcsptcha1}
+\caption{Shortest path tree after link change}
+\label{ispfspt}
+\end{figure}
+\begin{figure}[t]
+\centering
+%\includegraphics[width=3in]{realcomputationoverhead}
+\includegraphics[width=2.5in]{dcsptcha2}
+\caption{Shortest path tree after link change}
+\label{ispfspt}
+\end{figure}
+\fi
+\iffalse
+\begin{theorem}\label{loop-free}
+For packets destined to a destination $d$, if any node $c$ ($c \ne d$)
+forwards them only to some nodes satisfy $C_v(d)<C_c(d)$,
+there will be no loop in the network.
+\end{theorem}
+\begin{proof}
+Consider a forwarding path $<v_{1}, v_{2}, ..., v_{k}, ...>$.
+By the DC rule, we have $C_{(v_1)}(d) >C_{(v_2)}(d)$, $C_{(v_2)}(d) >C_{(v_3)}(d), ...$
+$C_{(v_k)}(d) >C_{(v_(k+1))}(d)$, and so on. So there exists a strict partial order
+between any two nodes on the path, and no node can appear twice on the
+path, which means there is no loop.
+\end{proof}
+\fi
+
+The DC rule is the basis of many loop-free multipath routing algorithms
+\cite{Narvaez99efficientalgorithms, Yang_Source:2006, TBFH},
+which differ in their ways to find such neighboring nodes that satisfy this rule.
+\footnote{Their ways are also the root cause of their high complexity.}
+\iffalse
+In order to compute $C_v(d)$, it need to construct multiple
+shortest path trees rooted at its neighbors,
+so the induced cost will be particularly high for high degree nodes.
+Therefore we propose a next-hop contribution rule in Theorem \ref {nhc},
+which only need information of the local router.
+\fi
+If we naively compute $C_x(v)$ on node $c$ by constructing a SPT with $x$ as its root,
+we will have to construct a SPT for each neighbor of $c$,
+and the cost will be particularly high if the degree of $c$ is high.
+The method will involve nontrivial computational overhead.
+Such computation can consume a considerable
+amount of CPU time, preventing other critical routing functions
+from being executed. Thus, it is desirable to achieve this
+using as little CPU time as possible.
+
+For the actual deployment on the Internet, a DC-based scheme should introduce a small additional burden on the current deployed routing protocol. This paper is dedicated to finding an efficient DC-based scheme which is suitable for deploying on an ISP network. In particular, we focus on the following problem:
+\textbf{\emph{Given a computing node $c$ and $T_c$, can we find an efficient DC-based algorithmic technique and the algorithm conforms to the following two conditions:
+(1)The time complexity of the algorithm is less than constructing a shortest path tree.
+(2) It can provide the same network availability with DC.
+}}
+\subsection{Algorithm Specification}
+Before diving into the detail of IAC algorithm, we first describe DMPA.
+DMPA propose a slightly more strict rule, \textbf{The Next-Hop Contribution Rule}, than the DC rule.
+
+\begin{definition}
+\label{selection}
+Given any two nodes $u$ and $v$ in the shortest path tree $T_{c}$,
+if
+\begin{equation}
+\label{nhc-eq}
+C(u)-C(B(u))+L(u,v)<C(v),
+\end{equation}
+we say $u$ can contribute (the best next-hop for $u$) to (the next-hop set for) $v$.
+\end{definition}
+
+
+
+
+\begin{theorem} {\bf (The Next-Hop Contribution Rule)} \\
+\label{nhc}
+If $u$ can contribute to $v$, then $C_{B(u)}(v)\!<\!C(v)$,
+and $c$ can use $B(u)$, the best next hop for $u$, as a next hop for $v$
+without introducing forwarding loops.
+%as suggested by the DC rule.
+\end{theorem}
+
+We will use an example to illustrate the Next-Hop contribution rule. In the Fig. \ref{proofnh},
+$C(u)$ denote the cost of path $p=(c,a...,u)$ in the $T_c$,
+$C(v)$ denote the cost of path $p=(c,b...,v)$ in the $T_c$,
+$C(u)-C(B(u))+L(u,v)$ denote the cost of  path
+$\lambda(p)\circ (u,v)$, where $\lambda(p)$ denote the subpath of $p$ from its second node to its last node and $\circ$ is the path concatenation operator.
+We say $u$ can contribute to $v$
+if $C(u)-C(B(u))+L(u,v)<C(v)$ is satisfied. Therefore, node $c$ can use $a$ as a validate next hop to $v$.
+
+The merit of the next-hop contribution rule is that, it is very easy
+to check whether inequality (\ref{nhc-eq}) can be satisfied for any two
+nodes $u$ and $v$ in the SPT, since all terms in inequality (\ref{nhc-eq})
+are known at that time.
+So at each step when a new node $v$ is added to the SPT,
+we can simply check whether any other node $u$ added earlier can contribute to it,
+and add $B(u)$ to $N(v)$ if that is true. Similarly, if $v$ can contribute
+to $u$, just add $B(v)$ to $N(u)$. In particular, we only need to do this
+test if $u$ and $v$ are neighbors in the network, since otherwise $L(u,v)=\infty$
+and (\ref{nhc-eq}) can never be satisfied. With this rule,
+we can compute $N(v)$ for any node $v$ in a way faster than other multipath algorithms,
+without introducing loops.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=3.5in]{mnpfexample}
+\caption{An example for explaining the drawback of DMPA}
+\label{drawback}
+\end{figure}
+Fig. \ref{drawback} gives an example to explain the drawback of DMPA.
+Fig. \ref{drawback}(a) is a simple network topology  which consists of
+5 node and 6 edges. Fig. \ref{drawback}(b) is a shortest path tree rooted at node $c$. From Fig. \ref{drawback}(b), we can get $C_b(d)=5<C_c(d)=7$, therefore
+node $b$ is a feasible backup next-hop from $c$ to $d$. However, we cannot find this feasible backup next-hop employing DMPA. This drawback is due to that node $d$ only considers its neighbors' best next-hop as its potential backup next-hop.
+The time complexity of DMPA does not depend on the degree of the calculating router. However, the network availability of DMPA is lower than that of the DC. Unlike the above work, DMPA, however, our main concerns are computational efficiency and network availability, as these are critical for the Algorithm. Based on the existing work on this research area, we for the first time propose an algorithm whose complexity is less than that of Dijkstra's algorithm and without degrading the  network availability of DC.
+\label{algorithm}
+We first provide two theorems before formally describing the details of the algorithm. The following two theorems describe how to compute all the DC backup next-hop set for node $c$. And the computation overhead can be dramatically reduced via reducing the times of the operation.
+\iffalse
+\begin{theorem}\label{dcextend}
+Given a computing node $c$ and $T_{c}$, for any node $x \in N(c)$ , $T'(c)$ is the new shortest path tree rooted at node $c$  when the weight of link $(c,x)$ is changed to 0. For any node $v(v\neq c, v\neq x)$, if $v \notin D(T_{c},x)$ and $v \in D(T'_{c},x)$, then we can get $C_{x}(v)<C_{c}(v)$.
+\end{theorem}
+\begin{proof}
+Assuming that  $B_{c}(v)=y, y\neq x$ in the $T_{c}$, we have $C_{c}(v)=C_{c}(y)+C_{y}(v)$.
+Since $v \in D(T'_{c},x)$, we can obtain $C'_{c}(v)=C_{c}(x)+C_{x}(v)$, where  $C'_{c}(v)$ is the cost from node $c$ to node $v$ in the $T'_{c}$. Because the weight of link $(c,x)$ in the $T'_{c}$ is 0, we can get  $C'_{c}(v)=C_{x}(v)$(1). According to that $v \notin D(T_{c},x)$ and $v \in D(T'_{c},x)$ , we can obtain $C'_{c}(v)<C_{c}(v)$  (2). Combining the equation (1) with (2), we have $C_{x}(v)<C_{c}(v)$.
+\end{proof}
+\fi
+\begin{theorem}\label{dcbackupnexthop}
+Given a shortest path tree $T_c$, for any node $d(d\neq c, d\neq x)$, if $d \notin D(T_{c},x)$ and $v \in D(T_{c}(c,x,0),x)$, then we can get $N_c(d)=N_c(d)\cup {x}$.
+\end{theorem}
+\begin{proof}
+From the Theorem \ref{newspt0}, Theorem \ref{newsptposition0} and DC rule, we can see that the node   $x$ is a viable backup next-hop from node $c$ to node $d$, therefore we have $N_c(d)=N_c(d)\cup {x}$.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\iffalse
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{shortpathtree}
+\caption{Computation Time for Real and Measured Topologies}
+\label{ndavi}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{sachange}
+\caption{Computation Time for Real and Measured Topologies}
+\label{ndavi}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{sbchange}
+\caption{Computation Time for Real and Measured Topologies}
+\label{ndavi}
+\end{figure}
+\fi
+
+
+
+\begin{algorithm}[htb]
+\KwIn{Network graph $G=(V,E)$}
+\KwIn{Node $c$ running the algorithm}
+\KwOut{$N_c(v), (\forall v \in V \land v \neq c) $}
+%\SetAlgoNoLine
+%\SetAlgoNoEnd
+\For{$x \in N(c)$}{
+\For{$v \in V$}{
+ $v.visited \leftarrow false$\;
+ $C'_c(v) \leftarrow C_c(v)$\;
+}
+$c.visited=true$\;
+ $weight\leftarrow L(c,x) $\;
+ $L(c,x)\leftarrow 0$\;
+
+ $\triangle\leftarrow weight-L(c,x)$\;
+\For{$m\in D(T_c,x)$}
+{
+$C'_c(m)\leftarrow C'_c(m)-\triangle$\;
+$m.visited=true$\;
+}
+\For{$v \in D(T_c,x)$}{
+\For {each neighbor $u$ of $v$}{
+\If {$u.visited=false$ }
+{
+$newdist \leftarrow C'_c(v)+L(v,u)$\;
+
+\If {$newdist <C'_c(u)$}{
+$\delta \leftarrow newdist-C'_c(u)$
+ENQUEUE$(Q,(u,(v,newdist,\delta))$\;}
+}
+}
+}
+\While {$Q$ is not empty}{
+$<v,tc> \leftarrow$ EXTRACTMIN(Q)\;
+
+$v.visited\leftarrow true$\;
+$C'_c(v)\leftarrow tc$\;
+
+Add $x$ to $N_c(v)$\;
+\For {each neighbor $u$ of $v$}{
+\If {$u.visited=false$ }
+{
+$newdist \leftarrow C'_c(v)+L(v,u)$\;
+\If {$newdist <C'_c(u)$}{
+ENQUEUE$(Q,(u,(v,newdist,\delta))$\;}
+}
+}
+}
+ $L(c,x)\leftarrow weight$\;
+}
+\Return $N_c(v), (\forall v \in V \land v \neq c)$
+\caption{IAC}
+\label{mnpe}
+\end{algorithm}
+\begin{figure}[h]
+\centering
+%\includegraphics[width=3in]{realcomputationoverhead}
+\includegraphics[width=1.2in]{dcnetworktopology}
+\caption{network topology}
+\label{dcnetwork}
+\end{figure}
+We will use a simple example to explain the Theorem \ref{dcbackupnexthop}. Fig. \ref{dcnetwork} is a simple network work consists of  5 routers and 6 edges.
+Fig. \ref{spttreedc} is a shortest path tree rooted at node $c$, while Fig. \ref{spttreechange1dc} and \ref{spttreechange2dc} respectively represent the new SPT when the weight of the links $(c,a)$  and $(c,b)$  is changed to $0$. Because $e \notin D(T_{c},a)$ and $e \in D(T'_{c},a)$, we can see that node $a$  can be a viable backup next-hop from   $c$ to $e$. Due to $d \notin D(T_{c},b)$, and $d \in D(T'_{c},b)$ ,  node $b$  can be a viable backup next-hop from $c$  to $d$, and also  we can get ode $b$  can be a viable backup next-hop from $c$  to $g$ in the same way.
+\subsection{Algorithm}
+\begin{figure*}[t]
+        \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics{dcspt}
+                \caption{$T_{c}$}
+              \label{spttreedc}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics{dcsptcha1}
+                \caption{$T_c(c,a,0)$}
+                \label{spttreechange1dc}
+        \end{subfigure}
+         \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics{dcsptcha2}
+                \caption{$T_c(c,b,0)$}
+                \label{spttreechange2dc}
+        \end{subfigure}
+        \caption{An example for explaining the Theorem \ref{dcbackupnexthop}}
+        \label{theoremdc}
+\end{figure*}
+We are now in a position to describe the IAC algorithm.
+According to the above discussions, algorithm IAC is proposed to compute the backup next-hop set which satisfies the DC rule. The inputs of the IAC are the network topology $G=(V,E)$ and $T_{c}$, and the output is the backup next-hop set from node $c$ to all  other nodes in the network.
+The IAC requires several iterations. In each iteration,
+at the beginning, the $visited$ attribute of all nodes except $c$ are set to $false$ (lines 2 $\sim$ 5). We change the weight of the link  $(c,x)$  to $0$, and compute the weight change for $(c,x)$ (lines 6 $\sim$ 8), which is  stored in variable $\triangle$. The shortest cost from $c$ to $v$ and the $visited$ attribute of node $v$ are updated accordingly (lines 9 $\sim$ 11).
+For $v \in D(T_c,x)$, for each of its unvisited neighbor $u$,
+we compute the  new tentative cost  of $u$. The node $u$ will be inserted into
+the $Q$ if its new tentative cost is smaller than the old value (lines 12 $\sim$ 17).
+An $unvisited$ node $v$ with the lowest tentative cost will be popped out from the priority queue $Q$
+by the EXTRACTMIN operation, where node ID is  used as tie breaking.
+It is then added to the tree, marked as $visited$, and used as the $current\ node$ in the iteration,
+while its attribute like cost  is also set to
+a permanent value (lines $19 \sim 21$).
+The corresponding node $x$ is added to the next-hop set $N_{c}(v)$
+according to Theorem \ref{dcbackupnexthop} (line 22).
+For each unvisited neighbor $u$ of $v$,
+we compute the  new tentative cost  of $u$. The node $u$ will be inserted into
+the $Q$ if its new tentative cost is smaller than the old value (lines 23 $\sim$ 27).
+At last, we will restore the weight of the link $(c,x)$ (line 28).
+\subsection{Theoretical  Analysis}
+In this section, we will show the performance of the algorithm, including the time complexity and the number of backup next-hop computed by DC. From theorem \ref{iaccomplexity}, we can see that the computational complexity of IAC is less than that of constructing a shortest path tree. From theorem \ref{iacfullprooof}, we can see that the IAC can compute all the backup next-hop set which satisfies the DC Rule. We will describe the Theorem \ref{iaccomplexity} and Theorem \ref{iacfullprooof} in detail, and also their correctness is proved.
+\begin{theorem}\label{iaccomplexity}
+The computational complexity of IAC is less than $O(|E|lg|V|)$ when the queue is implemented as a Heap.
+\end{theorem}
+\begin{proof}
+ To compute all the backup next-hop set from node $c$ to other nodes in the network. The IAC need to run the iSPF algorithm $k$ times, where $k$ is the number of neighbors of node $c$. Let $N_{i}$ and $M_{i}$ respectively indicate the number of nodes that must adjust their costs or parents and the number of edges which anchored to these nodes when the weight of link $(c,i)$ is changed to 0. Therefore the computational complexity of the Algorithm INC is $\sum_{i=1}^k{M_{i}*lgN_{i}}\leq \sum_{i=1}^k{M_{i}}*lg|V|=O(|E|lg|V|)$. Since $N_{i}<|V|$, therefore the computational complexity of IAC is less than that of SPF.
+\end{proof}
+\begin{theorem}\label{iacfullprooof}
+Algorithm IAC can compute all the backup next-hop set that satisfies the DC Rule.
+\end{theorem}
+\begin{proof}
+We will prove the theorem by contradiction. Supposing that there is a node $d(d\neq c, d\neq x)$, $d \notin D(T_{c},x)$ and $C_x(d)<C_{c}(d)$, when the IAC is terminated. For any node $x \in N(c)$,
+if $C_x(d)<C_{c}(d)$, we have $d \in D(T_{c},x)$ according to Theorem \ref{newspt0} and
+Theorem \ref{newsptposition0}. This contradicts the assumption.
+\end{proof}
+\subsection{Discussions}
+IAC algorithm can only handle DC rule. However, it cannot be directly applied to LFC and NPC rules. Therefore, IAC cannot completely solve LFA problem.
+We want to ask whether we can find an general algorithm that can completely and efficiently solve LFA. We will discuss this issue in the following sections.
+\iffalse
+\subsection{Discussions}
+In the following, we will discuss how to apply the INC algorithm to compute all the backup next-hop set which meets the LFC rule. The LFC can be expressed as follows:
+
+For packets destined to a destination $v$, node $c$ ($c \ne v$)
+can forward them to its neighboring node $x$ if
+\begin{equation}\label{eqn-LFC}
+C_x(v)<C_c(v)+C_c(x).
+\end{equation}
+The resulting paths are loop-free and will reach the destination.
+
+The following two theorems describe how to compute all the LFC backup next-hop set for node $c$. And the computation overhead can be dramatically reduced via reducing the times of the operation.
+
+\begin{theorem}\label{lfcextend}
+Given a computing node $c$ and $T_{c}$, for any node $x \in N(c)$ , $T'(c)$ is the new shortest path tree rooted at node $c$  when the weight of link $(c,x)$ is changed to $-L(c,x)$. For any node $v(v\neq c, v\neq x)$, if $v \notin D(T_{c},x)$ and $v \in D(T'_{c},x)$, then we can get $C_{x}(v)<C_{c}(v)+C_{c}(x)$.
+\end{theorem}
+\begin{proof}
+Assuming that  $B_{c}(v)=y, y\neq x$ in the $T_{c}$, we have $C_{c}(v)=C_{c}(y)+C_{y}(v)$.
+Since $v \in D(T'_{c},x)$, we can obtain $C'_{c}(v)=C_{c}(x)+C_{x}(v)$, where  $C'_{c}(v)$ is the cost from node $c$ to node $v$ in the $T'_{c}$. Because the weight of link $(c,x)$ in the $T'_{c}$ is $-L(c,x)$, we can get  $C'_{c}(v)=C_{x}(v)-L(c,x)$(1). According to that $v \notin D(T_{c},x)$ and $v \in D(T'_{c},x)$ , we can obtain $C'_{c}(v)<C_{c}(v)$  (2). Combining the equation (1) with (2), we have $C_{x}(v)<C_{c}(v)+L(c,x)$. Because $C_{c}(x)=L(c,x)$, we can get $C_{x}(v)<C_{c}(v)+C_{c}(x)$.
+\end{proof}
+\begin{theorem}\label{lfcbackupnexthop}
+Given a computing node $c$ and $T_{c}$, for any node $x \in N(c)$ , $T'(c)$ is the new shortest path tree rooted at node $c$  when the weight of link $(c,x)$ is changed to 0. For any node $v(v\neq c, v\neq x)$, if $v \notin D(T_{c},x)$ and $v \in D(T'_{c},x)$, then we can get $N_c(v)=N_c(v)\cup {x}$.
+\end{theorem}
+\begin{proof}
+From the  Theorem \ref{lfcextend}
+and LFC rule, we can see that the node   $x$ is a viable backup next-hop from node $c$ to node $v$, therefore we have $N_c(v)=N_c(v)\cup {x}$.
+\end{proof}
+In order to implement LFC, we only need to change the line 3 of the INC as  $L(c,x)\leftarrow -L(c,x)$. From Theorem \ref{mpnedccomplexity} and Theorem \ref{fulldcprooof}, we can also get the same conclusion that the computation complexity our algorithm is less than constructing a shortest path tree and can provide the same network availability with DC. Since the proofs of Theorem \ref{mpnedccomplexity} and \ref{fulldcprooof}  are similar
+to those of \ref{mpnecomplexity} and \ref{fullprooof}, so we omitted them.
+\begin{theorem}\label{mpnedccomplexity}
+The computational complexity of INC is less than $O(|E|lg|V|)$ ¡£
+\end{theorem}
+
+\begin{theorem}\label{fulldcprooof}
+Algorithm INC can compute all the backup next-hop set that satisfies the LFC Rule.
+\end{theorem}
+
+\fi
+
+
+
+
+
+
+
+
+
+
+
+
+\iffalse
+
+Since $N_n = |V|$ and $N_e = |E|$, Algorithm \ref{dijk}
+costs at most $O(|V|)+O(N_{n}*\lg(N_{n})+N_{e}) = O(|V|*\lg(|V|)+|E|)$,
+which is similar to the complexity of a full shortest path computation.
+
+
+
+where $em_Q$ and $dk_Q$ are times needed to perform extract minimum and decrease key
+operations in the $Q$, respectively.
+Since there are at most $V$ nodes in the queue,
+$T_e=O(1), T_{x}=\lg(N_n)$ and $T_{k}=O(1)$ when the queue is implemented as a Fibonacci heap \cite{knuth1977generalization},
+and the total time is at most $O(N_n*\lg(N_{n})+N_e)$.
+
+Since $N_n = |V|$ and $N_e = |E|$, Algorithm \ref{dijk}
+costs at most $O(|V|)+O(N_{n}*\lg(N_{n})+N_{e}) = O(|V|*\lg(|V|)+|E|)$,
+which is similar to the complexity of a full shortest path computation.
+
+
+Because there are at most $|V|$ nodes in the $Q$,
+a node is extracted from $Q$ and an edge is performed decrease key
+takes $O(lg|V|)$ and $O(1)$ time complexity respectively
+on Fibonacci heap \cite{knuth1977generalization}.
+
+When a node is extracted from the queue, whose neighbors will be visited.
+The unvisited neighbors have an \emph{Enqueue} operation, while the visited
+neighbors and the node itself may have an \emph{Add} operation.
+However, both of the functions have constant complexity.
+Therefore, the complexity of Algorithm \ref{DMPA} is in $O(|V|lg|V|+|E|)$.
+
+
+In this section, we will explain the time complexity of MPA in detail.
+In order to maintain nodes, which need to be updated the positions (parents) and costs, we adopt a priority queue.
+We define $N_{n}$ is the node number which must change their distance or parent attributes (or both),
+and $N_{e}$ is the edge number that may cause any node in
+the queue to change its cost (This is implemented by the decrease-key operation of the priority queue).
+Assume the time needed by ENQUEUE to enqueue a node is $T_e$, the time
+by EXTRACTMIN to extract the node with the minimum cost is $T_{x}$,
+and the time by ENQUEUE (decrease-key) to update a node existing in the queue is $T_{k}$.
+Since each of the $N_{n}$ nodes has to be enqueued and extracted exactly once,
+and each of the $N_e$ edges can cause at most one decrease-key operation, the total queue operation time in all
+execution of Algorithm \ref{dijk} is at most $O(N_{n}*T_{e}+N_{n}*T_{x}+N_{e}*T_{k})$.
+Beside queue manipulations, some operations are called at most two times for each of the $N_e$ edges,
+including modifying the next-hop sets,
+while others are called at most once for each of the $N_n$ nodes to set their attributes.
+Each of them can be completed in constant time (or constant amortized time), and  they cost $O(N_n+N_e)$ in total.
+So the final time for all execution of Algorithm\ref{dijk} is still $O(N_{n}*T_{e}+N_{n}*T_{x}+N_{e}*T_{k})$.
+
+Since there are at most $N_n$ nodes in the queue,
+$T_e=O(1), T_{x}=\lg(N_n)$ and $T_{k}=O(1)$ when the queue is implemented as a Fibonacci heap \cite{knuth1977generalization},
+and the total time is at most $O(N_n*\lg(N_{n})+N_e)$.
+
+Since $N_n = |V|$ and $N_e = |E|$, Algorithm \ref{dijk}
+costs at most $O(|V|)+O(N_{n}*\lg(N_{n})+N_{e}) = O(|V|*\lg(|V|)+|E|)$,
+which is similar to the complexity of a full shortest path computation.
+\fi
+\section{Incremental Alternate Computation with Negative Augmentation}\label{iacna}
+For any node $x\in N(c)$, if we can quickly calculate $C_x(v), v\in V$ in the $T_{c}$, then a efficient LFA-based method can be achieved. Therefore, the problem that needs to be solved in this paper can be described as follows: For any node $x\in N(c)$,  if $T_{c}$ it is given, whether could we find an efficient algorithm which can quickly compute $C_x(v), v\in V$ or not. Theorem \ref{computeneighborcost} answers how to solve the above problem and gives proof.
+\begin{theorem}\label{computeneighborcost}
+Given a computing node $c$ and $T_{c}$, for any node $d(d\neq c, d\neq x)$ where $x \in N(c)$,
+\begin{itemize}
+\item[(1)] if $d \in D(T_{c},x)$, then we have $C_{x}(d)=C_{c}(d)-C_{c}(x)$.
+\item[(2)] if $d \notin D(T_{c},x)$ and $d \in D(T_{c},(c,x,-L(c,x)))$, then we have
+ $C_{x}(d)=C_{c}(d,(c,x,-L(c,x)))+C_{c}(x)$.
+\item[(3)] if $d \notin D(T_{c},x)$ and $d \notin D(T_{c},(c,x,-L(c,x)))$, then we have
+ $C_{x}(d)=C_{c}(d)+C_c(x)$.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+(1)Since $v \in D(T_{c},x)$, we have $C_{c}(v)=C_{c}(x)+C_{x}(v)$. Therefore, we can easy get $C_{x}(v)=C_{c}(v)-C_{c}(x)$.
+
+(2)Since $v \in D(T_{c,x,-L(c,x)},x)$, we have $C_{c}(d,(c,x,-L(c,x))=C_{c}(x,(c,x,-L(c,x))+C_{x}(d,(c,x,-L(c,x)))$.
+From Theorem \ref{newsptposition0}, we can see that $C_{x}(d,(c,x,-L(c,x)))=C_{x}(d)$.
+Therefore, we have $C_{c}(d,(c,x,-L(c,x)))=C_{c}(x,(c,x,-L(c,x)))+C_{x}(d)$.
+Because $C_{c}(x,(c,x,-L(c,x)))=-C_c(x)$, we have
+$C_{x}(d)=C_{c}(d,(c,x,-L(c,x)))+C_c(x)$.\\
+(3)From lemma \ref{fan}, we can get $C_{x}(d)=C_{c}(d)+C_c(x)$.
+\end{proof}
+We will employ a simple example to explain the Theorem \ref{computeneighborcost}. Fig. \ref{spttree21} shows a network topology consisting of 5 nodes and 6 edges. Fig. \ref{spttreechange22} shows the shortest path tree $T_c$ rooted at the node $c$. Figure  \ref{spttreechange23}shows the shortest path tree constructed using iSPF when the weight of link $(c,a)$ is changed to -3. We have $d\in D(T_c,a)$ from Fig. \ref{spttreechange22} , so $C_a(d)=C_c(d)-C_c(a)=3$.
+Because $e \notin D(T_c,a)$ and $e \in D(T_c(c,a),a)$, we have $C_a(e)=C_c(e,(c,a))+C_c(a)=6$ from Theorem \ref{computeneighborcost}.
+Since $b \notin D(T_c,a)$ and $b \notin D(T_c(c,b),a)$, we have $C_a(b)=C_a(c)+C_c(b)=8$ from Theorem \ref{computeneighborcost}.
+\iffalse
+\begin{figure}[t]
+\centering
+%\includegraphics[width=3in]{realcomputationoverhead}
+\includegraphics[width=2in]{nettopology}
+\caption{network topology}
+\label{realandrockettopologytime}
+\end{figure}
+\begin{figure}[t]
+\centering
+%\includegraphics[width=3in]{realcomputationoverhead}
+\includegraphics[width=2in]{sptc}
+\caption{Shortest path tree rooted at node $c$}
+\label{realandrockettopologytime}
+\end{figure}
+\begin{figure}[t]
+\centering
+%\includegraphics[width=3in]{realcomputationoverhead}
+\includegraphics[width=2in]{newsptc}
+\caption{New shortest path tree rooted at node $c$}
+\label{realandrockettopologytime}
+\end{figure}
+\fi
+\begin{figure*}[t]
+        \centering
+        \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics{nettopology}
+                \caption{network topology}
+              \label{spttree21}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics{sptc}
+                \caption{$T_{c}$}
+                \label{spttreechange22}
+        \end{subfigure}
+         \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics{newsptc}
+                \caption{$T_{c}(c,a,-3)$}
+                \label{spttreechange23}
+        \end{subfigure}
+        \caption{An example for explaining  Theorem \ref{computeneighborcost}}
+        \label{theoremexample}
+\end{figure*}
+
+\subsection{IAC-NC}
+\begin{algorithm}[htb]
+\KwIn{Network graph $G=(V,E)$}
+\KwIn{$T_c$}
+\KwOut{$N_c(v), (\forall v \in V \land v \neq c) $}
+%\SetAlgoNoLine
+%\SetAlgoNoEnd
+\For{$x \in N(c)$}{
+\For{$v \in V$}{
+ $v.visited \leftarrow false$\;
+ $C'_c(v) \leftarrow C_c(v)$\;
+}
+$c.visited=true$\;
+ $weight\leftarrow L(c,x) $\;
+ $L(c,x)\leftarrow -L(c,x)$\;
+
+ $\triangle\leftarrow weight-L(c,x)$\;
+\For{$m\in D(T_c,x)$}
+{
+$C'_c(m)\leftarrow C'_c(m)-\triangle$\;
+$m.visited=true$\;
+}
+\For{$v \in D(T_c,x)$}{
+\For {each neighbor $u$ of $v$}{
+\If {$u.visited=false$ }
+{
+$newdist \leftarrow C'_c(v)+L(v,u)$\;
+\If {$newdist <C'_c(u)$}{
+ENQUEUE$(Q,(u,(v,newdist,\delta))$\;}
+}
+}
+}
+
+\While {$Q$ is not empty}{
+$<v,tc> \leftarrow$ EXTRACTMIN(Q)\;
+
+$v.visited\leftarrow true$\;
+$C'_c(v)\leftarrow tc$\;
+
+Compute $C_x(v)$ using Theorem \ref{computeneighborcost}\;
+\For {each neighbor $u$ of $v$}{
+\If {$u.visited=false$ }
+{
+$newdist \leftarrow C'_c(v)+L(v,u)$\;
+\If {$newdist <C'_c(u)$}{
+$\delta \leftarrow newdist-C'_c(u)$
+ENQUEUE$(Q,(u,(v,newdist,\delta))$\;}
+}
+}
+}
+ $L(c,x)\leftarrow weight$\;
+}
+\For {$d\in V, d \neq c$}{
+\For{$x\in N(c)$}
+{
+ \If {LFA is satisfied}
+ {
+ Add $x$ to $N_c(d)$\;
+ }
+}
+}
+
+\Return $N_c(v), (\forall v \in V \land v \neq c)$
+\caption{IAC-NA}
+\label{mnpe}
+\end{algorithm}
+Since the execution process of algorithm INC and INC-NA is basically similar, we will not repeat the same part in both of the algorithms.
+However, for the completeness of the description, we still lists the pseudo code of the algorithm INC-NA. Below, we will list the differences between the two algorithms. The line 7 in INC-NA is changed into $L(c,x)=-L(c,x)$. The line 22 in INC-NA is changed into Compute $C_x(v)$ using Theorem \ref{computeneighborcost}. At last lines 29-32 are added to compute LFA next hop set for node $c$.
+\iffalse
+We will elaborate the algorithm in detail in this section.
+According to the above discussions, algorithm INC is proposed to compute the backup next-hop set which satisfies the DC rule. The inputs of the INC are the network topology $G=(V,E)$ and $T_{c}$, and the output is the backup next-hop set from node $c$ to all  other nodes in the network.
+The INC requires several iterations. In each iteration,
+at the beginning, the $visited$ attribute of all nodes except $c$ are set to $false$ (lines 2 $\sim$ 5). We change the weight of the link  $(c,x)$  to $-L(c,x)$, and compute the weight change for $(c,x)$ (lines 6 $\sim$ 8), which is  stored in variable $\triangle$. The shortest cost from $c$ to $v$ and the $visited$ attribute of node $v$ are updated accordingly (lines 9 $\sim$ 11).
+For $v \in D(T_c,x)$, for each of its unvisited neighbor $u$,
+we compute the  new tentative cost  of $u$. The node $u$ will be inserted into
+the $Q$ if its new tentative cost is smaller than the old value (lines 12 $\sim$ 17).
+An $unvisited$ node $v$ with the lowest tentative cost will be popped out from the priority queue $Q$
+by the EXTRACTMIN operation, where node ID is  used as tie breaking.
+Then we can compute $C_x(v)$ using Theorem \ref{computeneighborcost}.
+It is then added to the tree, marked as $visited$, and used as the $current\ node$ in the iteration,
+while its attribute like cost  is also set to
+a permanent value (lines $19 \sim 21$).
+The corresponding node $x$ is added to the next-hop set $N_{c}(v)$
+according to Theorem \ref{lfcbackupnexthop} (line 22).
+For each unvisited neighbor $u$ of $v$,
+we compute the  new tentative cost  of $u$. The node $u$ will be inserted into
+the $Q$ if its new tentative cost is smaller than the old value (lines 23 $\sim$ 27).
+At last, we will restore the weight of the link $(c,x)$ (line 28).
+The LFA rule is used to calculate the backup next hop set from the node $c$ to all other nodes in the network.
+\fi
+\subsection{Theoretical Analysis}
+\begin{theorem}\label{mpnecomplexity}
+The computational complexity of IAC-NA is less than $O(|E|lg|V|)$ when the queue is implemented as a Heap.
+\end{theorem}
+The proof for Theorem \ref{mpnecomplexity} is similar with that of Theorem \ref{iaccomplexity}, so we omit it.
+\begin{theorem}\label{fullprooof}
+Algorithm IAC-NA can compute all the next hop set for node $c$ that satisfies the LFA Rule.
+\end{theorem}
+\begin{proof}
+For any node $x\in N(c)$, the $C_x(v), v \in V$ will be calculated when the lines (1-28) of the IAC-NA are executed. As long as we know the above values, we can use the LFA rule to compute all the LFA next hop for node $c$. Therefore, the theorem is established.
+\end{proof}

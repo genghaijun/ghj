@@ -1,0 +1,189 @@
+\section{Background}
+\label{background}
+Nowadays, network failures have become routine events rather than exceptions.
+Improving IP network resilience has drawn great attention
+from both industry and academia.  Many schemes have been proposed to deal with this problem from different aspects, from physical level methods such as optical routing protection, to IP level approaches.
+IETF has drafted a framework named IP Fast ReRoute (IPFRR) \cite{IPFRR, FastReroute, not-via},
+which aims to provide fast recovery from network failures.
+The basic idea is that, when a node detects the failure of a link directly
+connected to itself, it can immediate switch to backup paths that are
+specifically computed for this failure.
+Based on this basic framework, current solutions fall into two categories.
+The first category computes multiple next-hops for each destination such that,
+even if routers independently select them in a hop-by-hop manner
+for detouring the failed links,
+loop-free can still be guaranteed, and thus packet routing/forwarding
+can be done as usual, i.e., no further cooperation or signaling mechanisms are needed.
+%and provides not only redundant backups, but also other features such as
+%load balance and aggregated bandwidth.
+The second category compute a multi-hop repair path for any link to be protected,
+and requires explicit cooperation/signaling between routers
+to ensure packets are indeed routed along this path when necessary.
+
+\iffalse
+
+those that can operate with an unmodified IP forwarding plane,
+and those that involve the use of a different (usually more complex)
+forwarding paradigm.
+precomputed repair paths
+
+that employs extra bits in the packet
+header to reroute for non-disconnecting failures
+
+precompute backup paths mechanisms which reroute packets to precomputed repair paths.
+\fi
+
+Many schemes \cite{moy1998rfc, FastReroute, TBFH, 20094212373257, vo2013routing, Yang_Source:2006, 20071710572557, 20114214442265, 20122315088660} that provide hop-by-hop loop-free routing are applicable in IPFRR (i.e., in the first category).
+%including Equal-Cost Multipath Routing (ECMP) \cite{moy1998rfc}, Loop-free Alternate (LFA)\cite{FastReroute}, TBFH \cite{TBFH}, MARA \cite{20094212373257}, joker links \cite{vo2013routing},
+Equal-Cost Multipath Routing (ECMP) \cite{moy1998rfc} allows packets to be forwarded along multiple paths of equal cost,
+which can be specifically tuned by network operators.
+However, ECMP cannot offer good availability since it is
+limited to cases where equal cost paths exist.
+%The idea behind LFA is to reroute affected packets to an alternate next-hop when a failure is detected.
+Loop-free Alternate (LFA)\cite{FastReroute} proposes several basic criteria for selecting a proper next-hop, including Loop-free Criterion (LFC), Node Protection Condition (NPC) and Downstream path Criterion (DC), to guarantee loop-freeness.
+However, naively verifying these criteria requires multiple Shortest-Path Trees (SPT),
+and the cost increases proportionally to the degree of a node (one SPT for each neighbor).
+Routing deflection \cite{Yang_Source:2006}  relaxes DC by taking nodes two hops away into account,
+at the cost of greater implementation complexity.
+TBFH \cite{TBFH} achieves faster computation by tightening DC, but still needs to construct multiple SPTs.
+In \cite{dmpa}, authors propose a shortest path tree based  routing protection algorithm called DMPA. DMPA guarantees loop-freeness of the induced routing path by implicitly maintaining a partial order of the routers underpinning it The time complexity of DMPA does not depend on the degree of the calculating router. However, the protection ration of DMPA is still lower than the DC.
+Permutation Routing \cite{20122315088660, vo2013routing}
+treats routers as a sequence of resources,
+and creates permutations of these resources that offer several forwarding alternatives, where each
+permutation is equivalent to a SPT and the time complexity is proportional to the number of permutations they want.
+% Joker-capable permutation routing\cite{vo2013routing} further improves permutation routing
+%by a special kind of links called joker links. Both of
+Several algorithms \cite{20094212373257,  20114214442265}
+compute a Directed Acyclic Graph (DAG) for each destination to avoid loops,
+so in a network with $|V|$ nodes, their time complexity is in the order of $|V|$ times
+the cost of computing a single DAG, which is already more complicated than computing a SPT.
+More next-hops can be found at the cost of increasingly sophisticated DAGs,
+but there is no guarantee to find an alternate next-hop for each destination (or each link).
+In \cite{20071710572557}, an interface-specific forwarding scheme called
+FIR is proposed, which utilizes the incoming port for backup
+path computation. When only single link failure notification is
+suppressed, a loop-free path is generated to forward packets to
+its destination if such a path exists. However, this design only
+works on the single failure case and requires a complicated
+pre-computation.
+\iffalse
+MARA \cite{20094212373257} constructs a Directed Acyclic Graph (DAG) for each destination,
+FIR \cite{20071710572557} employs the local rerouting and pre-computes interface-specific forwarding tables. However, it needs a very complicated pre-computation algorithm to handle link failures.
+In\cite{20114214442265}, authors  proposed a centralized computation method to offer an effective alternative routing for guaranteed network connectivity.
+\fi
+
+\iffalse
+Instantaneous loop-freeness has also been studied, where link-state\cite{schollmeier2003improving,ohara2009mara,lee2004proactive} as well as distance-vector\cite{ vutukury2000mpath, vutukury2001mdva} multipath algorithms achieve  loop-free at every instant.
+\fi
+
+
+The second category \cite{ apostolopoulos2006using, gjessing2006implementation,Pathsplicing:2008,cho2012independent,
+20075110977789} uses explicit cooperation/signaling schemes to route packets along a multi-hop repair path.
+\iffalse
+In \cite{andersen2002resilient}, multiple instances of a link-state routing protocol are used to provide multiple choices, where each link is associated with a vector of weights tuned by end systems.
+\fi
+Multi-topology routing\cite{apostolopoulos2006using, gjessing2006implementation} compute multiple routes based on backup network topologies tailored for specific failures, either by removing the corresponding links or by increasing their associated weights. Routers can control which topology the routers
+should be employed by changing additional bits in the packet header.
+Path splicing\cite{Pathsplicing:2008} creates a set of slices for the network based on random link-weight perturbations, and end system can control which slices the routers should use by embedding control bits in packet headers.
+Node/link-independent configurations of a topology are also computed to make the routing resilient under any single link fault  \cite{cho2012independent}.
+The capability, as well as the complexity, of these algorithms is proportional to the number of alternative configurations they want to employ.
+Failure-Carrying Packets (FCP)\cite {20075110977789} carries link failure information in the IP Packet header to allow routers to diagnose problems and select alternate paths. However, this scheme also requires considerable overhead to find the new working path when receiving a packet carrying root-cause failure
+messages. Not-via \cite{not-via} proposes a framework to use special not-via addresses to
+provide link protection by such multi-hop paths.
+In \cite{Yang2018Fast}, authors propose the tunneling on
+demand (TOD) approach, which uses interface-specific-routing and introduces a
+few tunnels “on demand”, i.e., only for the multi-link failures
+that will induce routing loops to the ISR. TOD can protect
+the routing against arbitrary single-link failures and dual-link
+failures. However, TOD also need auxiliary mechanism to achieve its goal.
+
+
+
+
+
+A few studies \cite{20102012943182}\cite{Menth20101300} compare the computation complexity and
+network protection capability of the above two categories of schemes.
+Since both of them need intensive computation, it is argued that not-via address
+is better, in the sense that it provides higher network protection coverage\cite{Menth20101300}.
+
+
+
+%As discussed above, in order to provide failure resilient routing, much more
+%overhead is required in both kinds of solutions.
+%Our solution focuses on how to achieve failure resilient routing without introducing
+%conspicuous overhead.
+
+
+Since the performance of routing and forwarding is critical to the Internet, routing protection algorithm has to be highly efficient to avoid becoming a bottleneck. However, the existing approaches often focus on finding more, or  disjoint paths, rather than reducing the computation or the communication overhead, which is the focus of this paper.
+
+\iffalse In \cite{dmpa}, we propose a shortest path tree based multipath routing
+algorithm called DMPA. DMPA guarantees loop-freeness of
+the induced routing path by implicitly maintaining a partial
+order of the routers underpinning it The time complexity of
+DMPA does not depend on the degree of the calculating router.
+However, the protection ration of DMPA is still lower than
+the DC. \fi
+Unlike the above works, however, our main concerns are computational efficiency and network availability, as these are critical for the routing protection algorithm. Based on the existing work on this research area, we for the first time propose two routing protection algorithms (IAC and IAC-NA) whose complexity is less than that of Dijkstra’s algorithm and also have a high network availability.
+\iffalse
+Unlike the above works, however, our main concerns
+are computational efficiency and protection ratio, as these are
+critical for the Algorithm. Based on the existing work on this
+research area, we for the first time propose an algorithm whose
+complexity is less than that of Dijkstras algorithm and without
+degrading the protection ratio.
+\fi
+
+%Unlike the above works, however, our main concerns are computational efficiency and network availability, as these are critical for the routing protection algorithm. Based on the existing work on this research area, we for the first time propose a routing protection algorithm whose complexity is less than that of Dijkstra’s algorithm and also has a high network availability.
+
+
+
+\iffalse
+In this paper, we focus on protection schemes that (1) are computationally efficient,
+(2) provide high network protection coverage.
+
+and (3) preserve as much as possible the benefits
+that multiple next-hop solutions have, such as no cooperation/signaling and load balancing.
+\fi
+\begin{table}
+\caption{Comparison of Different Routing Protection Algorithms}
+\label{britetable1}
+\centering
+%\large
+\normalsize
+\begin{tabular}{|c|c|c|c|c|c|c|}% 通过添加 | 来表示是否需要绘制竖线
+\hline  % 在表格最上方绘制横线
+Algorithm&LFC&NPC&DC\\
+\hline
+DMPA&$\times$&$-$&$\times$\\
+\hline
+TBFH&$-$&$-$&$\times$\\
+\hline  %在第一行和第二行之间绘制横线
+IAC&$-$ &$-$&$\surd$\\
+\hline % 在表格最下方绘制横线
+IAC-NA&$\surd$ &$\surd$&$\surd$\\
+\hline % 在表格最下方绘制横线
+\end{tabular}
+
+\end{table}
+
+
+A comparison of several existing solutions and ours can be
+seen in Table \ref{britetable1}.
+In Table \ref{britetable1}, the $\surd$ describes the algorithm that can
+compute all the next hop set satisfied the corresponding rule,
+the $\times$ means the algorithm can
+compute the partial  next hop set satisfied the corresponding rule,
+while the $-$ represents the algorithm cannot compute the next hop set of corresponding rule.
+As shown in table \ref{britetable1}, only IAC-NA can be applied to three LFA rules and can compute all the next hops  that meet the LFA rule. The other three algorithms do not support NPC rule.
+Both of the DMPA and TBFH  can be  used to deal with LFC and DC rule. However  DMPA and TBFH cannot compute all the next hops which satisfied LFC and DC rules.
+
+
+Evaluation studies \cite{Gjoka2007Evaluation,Menth20101300} show that LFA protects against
+many more failures than ECMP. Nevertheless, they also reveal that, on
+average, LFA offers protection against only about 90\%
+of all possible link failures and less than 75\% of node failures
+Despite the limited protection it achieves, LFA is already supported by some equipment vendors \cite{cisco,Juniper}. With that in mind,
+Retvari et al. \cite{lfarevisited} suggested that networks should be augmented with additional links to ensure that LFA can provide recovery
+for all possible failures.
+Therefore, our algorithms can directly use the above research findings, so that they can protect all single network component failure scenarios in the network.
+

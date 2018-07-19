@@ -1,0 +1,25 @@
+\section{Introduction}
+With the rapid development of the Internet, more and more real-time and mission-critical applications are deployed on the internet. Since these applications are more sensitive to network delay, which impose more strict requirements on network reliability \cite{Zheng}. However, network failures are common in the Internet \cite{20083511494785}. Whereas, the convergence time for the current deployed intra-domain routing protocol is the order of seconds. Therefore, network outage may be occurred even if a single network component fails. The slow convergence of the current deployed intra-domain routing protocols cannot meet the reliability requirements of real-time applications. Therefore, improving the network availability has become an urgent problem \cite{Scalable,Jose2016Optimal,Yang2014Keep,Elhourani2016IP,Liu2013Ensuring,Stephens2016Scalable}. In order to improve the network availability, the routing protection method is usually adopted in
+the industry. The existing  routing protection schemes can be divided into two sub-categories, by whether special cooperation/signaling between routers are required for packet forwarding. Cooperation-free schemes compute multiple next-hops for each destination, and each router independently selects an appropriate next-hop for standard packet forwarding, where care must be taken such that the induced forwarding paths are loop-free. The benefit is that they can provide not only redundant backup links, but also other features such as load balancing and high throughput. The other sub-category of schemes compute, for a link to protect, a multi-hop repair path that is agreed by all routers on that path. Thus special cooperation mechanisms have to be employed to reroute packets along that path. In this paper we focus on the first type of schemes. And also, we confined our work in the link-state routing networks. Most Internet Service Providers (ISPs) prefer link-state routing instead of distance-vector routing in their intra-domain system[10], because of its merits like fast convergence and good support for metrics. Layer2 networks are also incorporating link-state routing into their network architecture, such as the standardized Transparent Interconnection of Lots of Links (TRILL) [11]. On the other hand, during topology changes caused by link or node failure, millisecond level fast convergence is preferred [12], which poses stringent performance requirement to route computation [13]. Among all the cooperation-free
+schemes, LFA has been favored by the industry for its simplicity and efficiency, which is to cope with  the single network component failure scenario. However, the existing algorithms about LFA are time-consuming and require a large amount of router CPU resources. Therefore, this paper studies how to employ the incremental shortest path first (iSPF) algorithm to reduce the computational overhead of the LFA implementation, and proposes an efficient Intra-domain routing protection algorithm based on iSPF. In particular, our contributions can be summarized as follows:
+\begin{itemize}
+\item We propose an incremental alternates computation (IAC) algorithm based on iSPF, which can compute all the next hops satisfied DC rule. %, where isotonicity plays an important role.
+\item Theoretical analysis indicates that the computation complexity of IAC is less than that of constructing a shortest path tree and  can provide the same network availability as DC.
+\item We propose an IAC-NA algorithm which can  efficiently calculate
+the minimum cost of all its neighbors to all other nodes of the
+network on the shortest path tree rooted at the compute node. Therefore
+IAC-NA can completely and efficiently deal with LFA problem.
+%\item An efficient incremental deployment method is provided for  IAC and IAC-NA.
+\item Theoretical analysis and experiments results indicate that IAC-NA can provide the same network availability as LFA.
+\end{itemize}
+
+The rest of the paper is constructed as follows. The related
+work is summarized in Section \ref{background}.
+Section \ref{model}  describes the network model.
+Section \ref{back} describes the iSPF and LFA in detail.
+Section \ref{iac} and section \ref{iacna} respectively present the incremental alternative computation algorithm and incremental alternate computation with negative augmentation algorithm.
+In the section \ref{evaluation}, we evaluate our algorithms on three different types of topology.  And finally section \ref{conclusion} concludes the paper.
+
+
+
+
