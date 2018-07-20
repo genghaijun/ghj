@@ -1,12 +1,12 @@
 \section{Performance Evaluation}\label{evaluation}
 To evaluate our algorithms,
-we use the real  network 
+we use the real  network
 CERNET2 (14 nodes, 16 links), Abilene (11 nodes, 14 links), NJLATA (11 nodes, 23 links), TORONTO (25 nodes, 55 links) and
 USLD (28 nodes, 45 links)
 and five ISP topologies which are measured by Rocketfuel\cite{2004148100061},
 including   AS1221 (108 nodes, 153 links),
-AS1239 (315 nodes, 972 links), 
-AS1755 (87 nodes, 161 links), AS3257 (161 nodes, 328 links), 
+AS1239 (315 nodes, 972 links),
+AS1755 (87 nodes, 161 links), AS3257 (161 nodes, 328 links),
 AS3967 (79 nodes, 147 links), and AS6461  (128 nodes, 372 links) .
 We also generate synthetic topologies with BRITE \cite{medina2001brite},
 using parameters as listed in Table \ref{britetable}.
@@ -201,7 +201,7 @@ K(c,d)=\begin{cases}
 The average number of backup next hops
 describes the number of opportunities packets can be deflected off the
 shortest path.
-For both of the above two metrics, larger is better. 
+For both of the above two metrics, larger is better.
 
 Fig. \ref{prreal} and Fig. \ref{prrocket} respectively depict the protection ratio obtained by different algorithms on real and measured topologies.
 Fig. \ref{prd} presents the relationship between the protection ratio and average node degree on generated topologies
@@ -211,21 +211,21 @@ Fig .\ref{abicumulative} and  Fig .\ref{cercumulative} show
 the cumulative distribution of the average  number of backup next hops for Abilene and CERNET2.
 \begin{figure}[t]
 \centering
-\includegraphics[width=3in]{Abilenecumulative}
-\caption{Cumulative distribution distribution of the average number of next hops on Abilene topology}
+\includegraphics[width=3in]{CERNET2cumulative}
+\caption{Cumulative distribution distribution of the average number of next hops on CERNET2 topology}
 \label{abicumulative}
 \end{figure}
 \begin{figure}[t]
 \centering
-\includegraphics[width=3in]{CERNET2cumulative}
-\caption{Cumulative distribution distribution of the average number of next hops on CERNET2 topology}
+\includegraphics[width=3in]{TORONTOcumulative}
+\caption{Cumulative distribution distribution of the average number of next hops on TORONTO topology}
 \label{cercumulative}
 \end{figure}
 We made several conclusions. First, IAC/IAC-NA and DC are more
 flexible than TBFH and DMPA. They have more deflection choices in all
 the experiment networks. Second, the
 larger networks can provide more opportunities to detour.
-\iffalse 
+\iffalse
 Last,
 For IAC/IAC-NA and DC, more than
 40\% of routers have more than one next hop in all simulated topologies.
