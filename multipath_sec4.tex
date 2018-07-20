@@ -74,12 +74,7 @@ Fig. \ref{realtopologytime} and Fig. \ref{rockettopologytime} respectively indic
 \caption{Computation overhead on generated topologies when topology size is 200}
 \label{nodedegree6}
 \end{figure}
-\begin{figure}[t]
-\centering
-\includegraphics[width=3in]{nodedegree}
-\caption{Network Availability on Generated Topologies When Topology Size=200}
-\label{avdeg}
-\end{figure}
+
 \iffalse
 \begin{figure*}[t]
         \centering
@@ -186,7 +181,7 @@ Real& Abilene& 6.82&7.27 & 6.97 & 6.83&6.52\\
 \end{tabular}
 \end{table}
 \fi
-\subsection{Protection ratio and the cumulative distribution of the 
+\subsection{Protection ratio and the cumulative distribution of the
 number of backup next hops}
 In this section, we will use the protection ratio  and the average number of backup next hops to measure the path diversity of different algorithms.
 The protection ratio is defined as
@@ -252,6 +247,12 @@ Since both of the above two metrics cannot accurately describe end-to-end networ
 \includegraphics[width=3in]{protectionratiodegree}
 \caption{Protection ratio on generated topologies when topology size is 200}
 \label{prd}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{nodedegree}
+\caption{Network Availability on Generated Topologies When Topology Size=200}
+\label{avdeg}
 \end{figure}
  \subsection{Network availability}
  We formally define the network availability $A(G)$ as follows (similar to that in \cite{ReliabilityAnalysis}),
