@@ -1,14 +1,19 @@
 \section{Performance Evaluation}\label{evaluation}
-To evaluate our algorithm,
-we use the real  network Abilene (11 nodes, 14 links),
+To evaluate our algorithms,
+we use the real  network 
+CERNET2 (14 nodes, 16 links), Abilene (11 nodes, 14 links), NJLATA (11 nodes, 23 links), TORONTO (25 nodes, 55 links) and
+USLD (28 nodes, 45 links)
 and five ISP topologies which are measured by Rocketfuel\cite{2004148100061},
-including  AS3967 (79 nodes, 147 links), AS1221 (108 nodes, 153 links), AS3257 (161 nodes, 328 links), AS6461  (128 nodes, 372 links) and AS1239 (315 nodes, 972 links).
+including   AS1221 (108 nodes, 153 links),
+AS1239 (315 nodes, 972 links), 
+AS1755 (87 nodes, 161 links), AS3257 (161 nodes, 328 links), 
+AS3967 (79 nodes, 147 links), and AS6461  (128 nodes, 372 links) .
 We also generate synthetic topologies with BRITE \cite{medina2001brite},
 using parameters as listed in Table \ref{britetable}.
 %In this section, we first show how link failures are modeled in our evaluation.
 For similarity, we use a simple model to characterize link failure events.
 The fail probability of each link $e$
-is randomly generated in the range from 0 to 0.02.
+is randomly generated in the range from 0 to 0.0001.
 All the simulations are conducted on a PC with Intel
 i5 CPU, 1.7GHz and 1.5G Memory.
 Because neither DMPA nor TBFH can implement the NPC rule, IAC can only implement DC rule, so in the experiment we only compare the performance of
@@ -46,11 +51,17 @@ Theoretical analysis has indicated that the time complexity of IAC/IAC-NA is les
 \centering
 \includegraphics[width=3in]{realcomputationoverhead}
 %\includegraphics[width=3in]{lfaexample}
-\caption{Computation overhead on real and measured topologies}
-\label{realandrockettopologytime}
+\caption{Computation overhead on real topologies}
+\label{realtopologytime}
 \end{figure}
-
-Fig. \ref{realandrockettopologytime} indicates the computational overhead obtained by different algorithms on Abilene and Rocketfuel topologies. From the Fig. \ref{realandrockettopologytime}, we can see that IAC/IAC-NA has the lowest computation overhead among all the algorithms. The computation overhead of IAC/IAC-NA is less than computing a SPT, while DMPA need to construct a SPT and TBFH need to compute two SPTs. The computation overhead of DC is proportionally to the degree of the network average node degree.
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{rocketcomputationoverhead}
+%\includegraphics[width=3in]{lfaexample}
+\caption{Computation overhead on  measured topologies}
+\label{rockettopologytime}
+\end{figure}
+Fig. \ref{realtopologytime} and Fig. \ref{rockettopologytime} respectively indicate the computational overhead obtained by different algorithms on real and Rocketfuel topologies. From the Fig. \ref{realtopologytime} and Fig. \ref{rockettopologytime}, we can see that IAC/IAC-NA has the lowest computation overhead among all the algorithms. The computation overhead of IAC/IAC-NA is less than computing a SPT, while DMPA need to construct a SPT and TBFH need to compute two SPTs. The computation overhead of DC is proportionally to the degree of the network average node degree.
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{tscomputationoverhead}
@@ -175,8 +186,9 @@ Real& Abilene& 6.82&7.27 & 6.97 & 6.83&6.52\\
 \end{tabular}
 \end{table}
 \fi
-\subsection{Protection ratio}
-In this section, we will use protection ratio to measure path diversity of different algorithms. The protection ratio is defined as
+\subsection{Protection ratio and The average number of next hops}
+In this section, we will use the protection ratio  and the average number of next hops to measure the path diversity of different algorithms.
+The protection ratio is defined as
 \begin{equation}
 Pr=\frac{\sum\limits_{c,d\in V, c\neq d}{K(c,d)}}{|V|*(|V|-1)}
 \end{equation}
@@ -186,18 +198,53 @@ K(c,d)=\begin{cases}
 0&\mbox{$|N_c(d)|=1$}
 \end{cases}
 \end{equation}
+The average number of next hops
+describes the number of opportunities packets can be deflected off the
+shortest path.
+For both of the above two metrics, larger is better. 
 
-It can be seen from this definition that the higher protection ratio, the higher the path diversity.
-Fig. \ref{prr} depicts the protection ratio obtained by different algorithms on Abilene and Rocketfuel topologies.
+Fig. \ref{prreal} and Fig. \ref{prrocket} respectively depict the protection ratio obtained by different algorithms on real and measured topologies.
 Fig. \ref{prd} presents the relationship between the protection ratio and average node degree on generated topologies
 when the topology size is 200.
-From Fig. \ref{prr} and Fig. \ref{prd}, we can see that INC, INC-NA and DC have the similar protection ratio, which have better performance than both of DMPA and TBFH.
-Since protection ratio cannot accurately describe end-to-end network availability. Therefore, we will use network availability to measure the end-to-end availability of different algorithms in the next section.
+Fig .\ref{number} depicts  the average number of next hops obtained by different algorithms on real and Rocketfuel topologies.
+Fig .\ref{abicumulative} and  Fig .\ref{cercumulative} show
+the cumulative distribution of the average number of next hops for Abilene, and CERNET2.
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{Abilenecumulative}
+\caption{Cumulative distribution distribution of the average number of next hops on Abilene topology}
+\label{abicumulative}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{CERNET2cumulative}
+\caption{Cumulative distribution distribution of the average number of next hops on CERNET2 topology}
+\label{cercumulative}
+\end{figure}
+We made several conclusions. First, IAC/IAC-NA and DC are more
+flexible than TBFH and DMPA. They have more deflection choices in all
+the experiment networks. Second, the
+larger networks can provide more opportunities to detour.
+\iffalse 
+Last,
+For IAC/IAC-NA and DC, more than
+40\% of routers have more than one next hop in all simulated topologies.
+and this advantage is more pronounced in large topologies.
+From Fig. \ref{prreal}, Fig. \ref{prrocket} and Fig. \ref{prd}, we can see that INC, INC-NA and DC have the similar protection ratio, which have better performance than both of DMPA and TBFH.
+\fi
+
+Since both of the above two metrics cannot accurately describe end-to-end network availability. Therefore, we will use network availability to measure the end-to-end availability of different algorithms in the next section.
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{protectionratioreal}
-\caption{Protection ratio on real and measured topologies}
-\label{prr}
+\caption{Protection ratio on real topologies}
+\label{prreal}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{protectionratiorocket}
+\caption{Protection ratio on measured topologies}
+\label{prrocket}
 \end{figure}
 \begin{figure}[t]
 \centering
@@ -244,7 +291,8 @@ A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)}
 \begin{table}[t]
 \centering
 %\normalsize
-\small
+\footnotesize
+%\small
 %\renewcommand{\arraystretch}{1}
 \caption{Network Availability for Real and Measured Topologies}
 \label{Availability}
@@ -254,17 +302,32 @@ A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)}
 \cline{3-6}
 & & IAC/IAC-NA &DC & TBFH &  DMPA\\
 \hline
-Real& Abilene& 97.12&97.12 &94.45& 96.89 \\
+\multirow{5}{*}{Real}
+& CERNET2& 99.93&99.93 &97.37& 98.54 \\
+\cline{2-6}
+& Abilene& 99.97&99.97 &97.34& 98.63\\
+\cline{2-6}
+& NJLATA& 99.93&99.93 &96.87& 97.81 \\
+\cline{2-6}
+& TORONTO& 99.87&99.87 &97.65& 98.74 \\
+\cline{2-6}
+& USLD& 99.94&99.94 &97.34& 98.57 \\
+\cline{2-6}
 \hline
-\multirow{4}{*}{Measured}
+\multirow{5}{*}{Measured}
+& AS1221 & 99.94 &99.94&96.35&97.25 \\
+\cline{2-6}
+& AS1239 &  99.96&99.96 &95.67&96.37 \\
+\cline{2-6}
+& AS1755 &  99.98&99.98&97.38&98.29 \\
+\cline{2-6}
+& AS3257 & 99.91&99.91&95.48&96.35 \\
+\cline{2-6}
+& AS3967 & 99.94 &99.94&95.78&96.89 \\
+\cline{2-6}
+& AS6461 & 99.96 &99.96&95.82&97.03 \\
+\cline{2-6}
 
-& AS3967 & 91.25 &91.25&86.76&90.01 \\
-\cline{2-6}
-& AS1221 & 93.23 &93.23&87.34&92.11 \\
-\cline{2-6}
-& AS3257 & 92.65&92.65&84.45&90.89 \\
-\cline{2-6}
-& AS1239 &  93.25&93.25 &83.45&90.13 \\
 \hline
 \end{tabular}
 \end{table}
