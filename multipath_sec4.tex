@@ -186,8 +186,9 @@ Real& Abilene& 6.82&7.27 & 6.97 & 6.83&6.52\\
 \end{tabular}
 \end{table}
 \fi
-\subsection{Protection ratio}
-In this section, we will use protection ratio to measure path diversity of different algorithms. The protection ratio is defined as
+\subsection{Protection ratio and The average number of next hops}
+In this section, we will use the protection ratio  and the average number of next hops to measure the path diversity of different algorithms.
+The protection ratio is defined as
 \begin{equation}
 Pr=\frac{\sum\limits_{c,d\in V, c\neq d}{K(c,d)}}{|V|*(|V|-1)}
 \end{equation}
@@ -197,13 +198,31 @@ K(c,d)=\begin{cases}
 0&\mbox{$|N_c(d)|=1$}
 \end{cases}
 \end{equation}
+The average number of next hops
+describes the number of opportunities packets can be deflected off the
+shortest path.
+For both of the above two metrics, larger is better. 
 
-It can be seen from this definition that the higher protection ratio, the higher the path diversity.
 Fig. \ref{prreal} and Fig. \ref{prrocket} respectively depict the protection ratio obtained by different algorithms on real and measured topologies.
 Fig. \ref{prd} presents the relationship between the protection ratio and average node degree on generated topologies
 when the topology size is 200.
-From Fig. \ref{prr} and Fig. \ref{prd}, we can see that INC, INC-NA and DC have the similar protection ratio, which have better performance than both of DMPA and TBFH.
-Since protection ratio cannot accurately describe end-to-end network availability. Therefore, we will use network availability to measure the end-to-end availability of different algorithms in the next section.
+Fig .\ref{number} depicts  the average number of next hops obtained by different algorithms on real and Rocketfuel topologies.
+Figure  shows
+the cumulative distribution of K for Abilene, Exodus, and Sprint 
+
+We made several conclusions. First, IAC/IAC-NA and DC are more
+flexible than TBFH and DMPA. They have more deflection choices in all
+the experiment networks. Second, the
+larger networks can provide more opportunities to detour.
+\iffalse 
+Last,
+For IAC/IAC-NA and DC, more than
+40\% of routers have more than one next hop in all simulated topologies.
+and this advantage is more pronounced in large topologies.
+From Fig. \ref{prreal}, Fig. \ref{prrocket} and Fig. \ref{prd}, we can see that INC, INC-NA and DC have the similar protection ratio, which have better performance than both of DMPA and TBFH.
+\fi
+
+Since both of the above two metrics cannot accurately describe end-to-end network availability. Therefore, we will use network availability to measure the end-to-end availability of different algorithms in the next section.
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{protectionratioreal}
@@ -261,7 +280,8 @@ A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)}
 \begin{table}[t]
 \centering
 %\normalsize
-\small
+\footnotesize
+%\small
 %\renewcommand{\arraystretch}{1}
 \caption{Network Availability for Real and Measured Topologies}
 \label{Availability}
@@ -272,29 +292,29 @@ A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)}
 & & IAC/IAC-NA &DC & TBFH &  DMPA\\
 \hline
 \multirow{5}{*}{Real}
-& CERNET2& 97.12&97.12 &94.45& 96.89 \\
+& CERNET2& 99.93&99.93 &97.37& 98.54 \\
 \cline{2-6}
-& Abilene& 97.12&97.12 &94.45& 96.89 \\
+& Abilene& 99.97&99.97 &97.34& 98.63\\
 \cline{2-6}
-& NJLATA& 97.12&97.12 &94.45& 96.89 \\
+& NJLATA& 99.93&99.93 &96.87& 97.81 \\
 \cline{2-6}
-& TORONTO& 97.12&97.12 &94.45& 96.89 \\
+& TORONTO& 99.87&99.87 &97.65& 98.74 \\
 \cline{2-6}
-& USLD& 97.12&97.12 &94.45& 96.89 \\
+& USLD& 99.94&99.94 &97.34& 98.57 \\
 \cline{2-6}
 \hline
 \multirow{5}{*}{Measured}
-& AS1221 & 93.23 &93.23&87.34&92.11 \\
+& AS1221 & 99.94 &99.94&96.35&97.25 \\
 \cline{2-6}
-& AS1239 &  93.25&93.25 &83.45&90.13 \\
+& AS1239 &  99.96&99.96 &95.67&96.37 \\
 \cline{2-6}
-& AS1755 &  93.25&93.25 &83.45&90.13 \\
+& AS1755 &  99.98&99.98&97.38&98.29 \\
 \cline{2-6}
-& AS3257 & 92.65&92.65&84.45&90.89 \\
+& AS3257 & 99.91&99.91&95.48&96.35 \\
 \cline{2-6}
-& AS3967 & 91.25 &91.25&86.76&90.01 \\
+& AS3967 & 99.94 &99.94&95.78&96.89 \\
 \cline{2-6}
-& AS6461 & 91.25 &91.25&86.76&90.01 \\
+& AS6461 & 99.96 &99.96&95.82&97.03 \\
 \cline{2-6}
 
 \hline
