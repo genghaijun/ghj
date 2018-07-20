@@ -186,8 +186,8 @@ Real& Abilene& 6.82&7.27 & 6.97 & 6.83&6.52\\
 \end{tabular}
 \end{table}
 \fi
-\subsection{Protection ratio and The average number of next hops}
-In this section, we will use the protection ratio  and the average number of next hops to measure the path diversity of different algorithms.
+\subsection{Protection ratio and the average number of backup next hops}
+In this section, we will use the protection ratio  and the average number of backup next hops to measure the path diversity of different algorithms.
 The protection ratio is defined as
 \begin{equation}
 Pr=\frac{\sum\limits_{c,d\in V, c\neq d}{K(c,d)}}{|V|*(|V|-1)}
@@ -198,7 +198,7 @@ K(c,d)=\begin{cases}
 0&\mbox{$|N_c(d)|=1$}
 \end{cases}
 \end{equation}
-The average number of next hops
+The average number of backup next hops
 describes the number of opportunities packets can be deflected off the
 shortest path.
 For both of the above two metrics, larger is better. 
@@ -208,7 +208,7 @@ Fig. \ref{prd} presents the relationship between the protection ratio and averag
 when the topology size is 200.
 Fig .\ref{number} depicts  the average number of next hops obtained by different algorithms on real and Rocketfuel topologies.
 Fig .\ref{abicumulative} and  Fig .\ref{cercumulative} show
-the cumulative distribution of the average number of next hops for Abilene, and CERNET2.
+the cumulative distribution of the average  number of backup next hops for Abilene and CERNET2.
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{Abilenecumulative}

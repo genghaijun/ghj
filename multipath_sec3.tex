@@ -922,6 +922,7 @@ Since $b \notin D(T_c,a)$ and $b \notin D(T_c(c,b),a)$, we have $C_a(b)=C_a(c)+C
 \end{figure*}
 
 \subsection{IAC-NC}
+\iffalse
 \begin{algorithm}[htb]
 \KwIn{Network graph $G=(V,E)$}
 \KwIn{$T_c$}
@@ -987,8 +988,11 @@ ENQUEUE$(Q,(u,(v,newdist,\delta))$\;}
 \caption{IAC-NA}
 \label{mnpe}
 \end{algorithm}
+\fi
 Since the execution process of algorithm INC and INC-NA is basically similar, we will not repeat the same part in both of the algorithms.
-However, for the completeness of the description, we still lists the pseudo code of the algorithm INC-NA. Below, we will list the differences between the two algorithms. The line 7 in INC-NA is changed into $L(c,x)=-L(c,x)$. The line 22 in INC-NA is changed into Compute $C_x(v)$ using Theorem \ref{computeneighborcost}. At last lines 29-32 are added to compute LFA next hop set for node $c$.
+Below, we will list the differences between the two algorithms. The line 7 in INC-NA is changed into $L(c,x)=-L(c,x)$. The line 22 in INC-NA is changed into Compute $C_x(v)$ using Theorem \ref{computeneighborcost}.
+%However, for the completeness of the description, we still lists the pseudo code of the algorithm INC-NA. 
+%At last lines 29-32 are added to compute LFA next hop set for node $c$.
 \iffalse
 We will elaborate the algorithm in detail in this section.
 According to the above discussions, algorithm INC is proposed to compute the backup next-hop set which satisfies the DC rule. The inputs of the INC are the network topology $G=(V,E)$ and $T_{c}$, and the output is the backup next-hop set from node $c$ to all  other nodes in the network.
