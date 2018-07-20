@@ -355,8 +355,20 @@ Email: wzl@csnet1.cs.tsinghua.edu.cn}
 % make the title area
 \maketitle
 \begin{abstract}
-Single network  component failure may lead to  heavy packet loss
-and degrade the network performance. The Internet Service Providers (ISPs) generally deploy Loop Free Alternates (LFA) to cope  with this issue. However, the efficiency and effectiveness issues of implementing LFA are still not well addressed.
+Both the hardware and the software of network equipments face occasional failures. 
+%Typical scenarios include that a fiber is broken, or a forwarding port is down, or even a router completely stops working. 
+Without proper failure mitigation methods, packets forwarded to the failed equipment are no longer able to 
+be correctly forwarded, 
+%so packet losses will be inevitable 
+and network performance will be degraded. 
+Although routing protocols automatically heal the network by computing new paths and reroute, they typically exhibit 
+a slow response of hundreds of milliseconds or even longer.  
+To support critical applications or guarantee a high quality of service, Internet Service Providers (ISPs) 
+generally deploy a technique called Loop Free Alternates (LFA) for fast reroute. 
+With LFA, alternative next hops are stored alongside with 
+the default next hop in a router's forwarding table, and can be immediately activated in face of link or node failures. 
+In this paper, we propose IAC-NA, an algorithm for computing these alternative next hops efficiently.
+
 The computational overhead of some existing methods (denoted by LFA) is very large, and their computational complexity is linear with the average node degree of the network. Therefore, the current methods need to consume a large amount of CPU resources, aggravate the burden on the router, and they are not suitable for practical deployment in large-scale networks.
 Some schemes, e.g. TBFH, have less computational overhead than LFA, however, the network availability of TBFH is lower than LFA.
 Therefore, to improve the routing resilience without introducing significant extra overhead, this paper propose incremental alternates computation with negative augmentation algorithm (IAC-NA) based on Incremental Shortest Path First Algorithm.
@@ -380,7 +392,7 @@ significant extra overhead, we propose an efficient Intra-domain routing protect
 \end{abstract}
 
 \begin{IEEEkeywords}
-Loop Free Alternates; distributed algorithm; Incremental Shortest Path First; network failure; network availability
+Loop Free Alternates; fast reroute; multipath; network availability
 \end{IEEEkeywords}
 
 % no keywords
