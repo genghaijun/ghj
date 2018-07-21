@@ -202,9 +202,39 @@ For both of the above two metrics, larger is better.
 Fig. \ref{prreal} and Fig. \ref{prrocket} respectively depict the protection ratio obtained by different algorithms on real and measured topologies.
 Fig. \ref{prd} presents the relationship between the protection ratio and average node degree on generated topologies
 when the topology size is 200.
-%Fig .\ref{number} depicts  the average number of next hops obtained by different algorithms on real and Rocketfuel topologies.
+Fig .\ref{realnumber} and Fig. \ref{rocketnumber} depicts  the average number of backup next hops obtained by different algorithms on real and measured topologies.
 Fig .\ref{abicumulative} and  Fig .\ref{cercumulative} show
 the cumulative distribution of the  number of backup next hops for CERNET2 and TORONTO topologies.
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{protectionratioreal}
+\caption{Protection ratio on real topologies}
+\label{prreal}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{protectionratiorocket}
+\caption{Protection ratio on measured topologies}
+\label{prrocket}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{protectionratiodegree}
+\caption{Protection ratio on generated topologies when topology size is 200}
+\label{prd}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{realnum}
+\caption{Average number of backup next hops on real topologies}
+\label{realnumber}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{rocketnum}
+\caption{Average number of backup next hops on measured topologies}
+\label{rocketnumber}
+\end{figure}
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{CERNET2cumulative}
@@ -230,24 +260,7 @@ From Fig. \ref{prreal}, Fig. \ref{prrocket} and Fig. \ref{prd}, we can see that 
 \fi
 
 Since both of the above two metrics cannot accurately describe end-to-end network availability. Therefore, we will use network availability to measure the end-to-end availability of different algorithms in the next section.
-\begin{figure}[t]
-\centering
-\includegraphics[width=3in]{protectionratioreal}
-\caption{Protection ratio on real topologies}
-\label{prreal}
-\end{figure}
-\begin{figure}[t]
-\centering
-\includegraphics[width=3in]{protectionratiorocket}
-\caption{Protection ratio on measured topologies}
-\label{prrocket}
-\end{figure}
-\begin{figure}[t]
-\centering
-\includegraphics[width=3in]{protectionratiodegree}
-\caption{Protection ratio on generated topologies when topology size is 200}
-\label{prd}
-\end{figure}
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{nodedegree}
