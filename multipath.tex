@@ -364,10 +364,10 @@ and network performance will be degraded.
 Although routing protocols automatically detect topology changes, heal the network by globally computing new paths, and reroute, 
 they typically exhibit a slow response of hundreds of milliseconds or even longer.  
 To support critical applications or guarantee a high quality of service, Internet Service Providers 
-generally deploy a technique called Loop Free Alternates for local fast rerouting. 
-To handle link or node failures, alternate next hops are stored alongside with 
+generally deploy a technique called Loop Free Alternates for local fast rerouting or load balancing. 
+Alternate next hops are stored alongside with 
 the default next hops in a router's forwarding table, and can be immediately activated 
-to invoke a loop free repair path.
+to invoke a loop free repair path in face of link or node failures, or used for multipath transmission.
 Existing algorithms for computing Loop Free Alternates 
 rely on one or more rounds of full shortest path tree computation on a graph, 
 and cannot achieve both good coverage of alternates and low computational complexity at the same time.
