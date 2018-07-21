@@ -632,7 +632,10 @@ From the Theorem \ref{newspt0}, Theorem \ref{newsptposition0} and DC rule, we ca
 }
 $c.visited=true$\;
  $weight\leftarrow L(c,x) $\;
- $L(c,x)\leftarrow 0$\;
+ $L(c,x)\leftarrow 0$;\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad
+%\begin{shaded}
+(\textbf{In IAC-NA $L(c,x)=-L(c,x)$)}\;
+%\end{shaded}
 
  $\triangle\leftarrow weight-L(c,x)$\;
 \For{$m\in D(T_c,x)$}
@@ -657,8 +660,9 @@ $<v,tc> \leftarrow$ EXTRACTMIN(Q)\;
 
 $v.visited\leftarrow true$\;
 $C'_c(v)\leftarrow tc$\;
+Add $x$ to $N_c(v)$;\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad
+(\textbf {In IAC-NA Compute $C_x(v)$ using Theorem \ref{computeneighborcost}})\;
 
-Add $x$ to $N_c(v)$\;
 \For {each neighbor $u$ of $v$}{
 \If {$u.visited=false$ }
 {
@@ -669,6 +673,15 @@ ENQUEUE$(Q,(u,(v,newdist,\delta))$\;}
 }
 }
  $L(c,x)\leftarrow weight$\;
+}
+\For {$d\in V, d \neq c$}{
+\For{$x\in N(c)$}
+{
+ \If {LFA is satisfied}
+ {
+ Add $x$ to $N_c(d)$\;
+ }
+}
 }
 \Return $N_c(v), (\forall v \in V \land v \neq c)$
 \caption{IAC}
@@ -991,7 +1004,7 @@ ENQUEUE$(Q,(u,(v,newdist,\delta))$\;}
 \fi
 Since the execution process of algorithm INC and INC-NA is basically similar, we will not repeat the same part in both of the algorithms.
 Below, we will list the differences between the two algorithms. The line 7 in INC-NA is changed into $L(c,x)=-L(c,x)$. The line 22 in INC-NA is changed into Compute $C_x(v)$ using Theorem \ref{computeneighborcost}.
-%However, for the completeness of the description, we still lists the pseudo code of the algorithm INC-NA. 
+%However, for the completeness of the description, we still lists the pseudo code of the algorithm INC-NA.
 %At last lines 29-32 are added to compute LFA next hop set for node $c$.
 \iffalse
 We will elaborate the algorithm in detail in this section.

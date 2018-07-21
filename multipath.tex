@@ -41,6 +41,11 @@
 %\documentclass[conference]{IEEEtran}
 %\documentclass[10pt,conference,compsocconf,letterpaper]{IEEEtran}
 \documentclass[10pt, conference, letterpaper]{IEEEtran}
+\usepackage{color}
+\usepackage{framed}
+%\definecolor{shadecolor}{gray}{0.85}
+\usepackage{color}
+   % \definecolor{gray}{rgb}{0.9,0.9,0.9}
 %\usepackage{CTEX}
 %\usepackage{algorithm}
 %\usepackage[noend]{algorithmic}
@@ -355,31 +360,31 @@ Email: wzl@csnet1.cs.tsinghua.edu.cn}
 % make the title area
 \maketitle
 \begin{abstract}
-Both the hardware and the software of network equipments face occasional failures. 
-%Typical scenarios include that a fiber is broken, or a forwarding port is down, or even a router completely stops working. 
-Without proper failure mitigation methods, packets forwarded to the failed equipment are no longer able to 
-be correctly forwarded, 
-%so packet losses will be inevitable 
-and network performance will be degraded. 
-Although routing protocols automatically detect topology changes, heal the network by globally computing new paths, and reroute, 
-they typically exhibit a slow response of hundreds of milliseconds or even longer.  
-To support critical applications or guarantee a high quality of service, Internet Service Providers 
-generally deploy a technique called Loop Free Alternates for local fast rerouting or load balancing. 
-Alternate next hops are stored alongside with 
-the default next hops in a router's forwarding table, and can be immediately activated 
+Both the hardware and the software of network equipments face occasional failures.
+%Typical scenarios include that a fiber is broken, or a forwarding port is down, or even a router completely stops working.
+Without proper failure mitigation methods, packets forwarded to the failed equipment are no longer able to
+be correctly forwarded,
+%so packet losses will be inevitable
+and network performance will be degraded.
+Although routing protocols automatically detect topology changes, heal the network by globally computing new paths, and reroute,
+they typically exhibit a slow response of hundreds of milliseconds or even longer.
+To support critical applications or guarantee a high quality of service, Internet Service Providers
+generally deploy a technique called Loop Free Alternates for local fast rerouting or load balancing.
+Alternate next hops are stored alongside with
+the default next hops in a router's forwarding table, and can be immediately activated
 to invoke a loop free repair path in face of link or node failures, or used for multipath transmission.
-Existing algorithms for computing Loop Free Alternates 
-rely on one or more rounds of full shortest path tree computation on a graph, 
+Existing algorithms for computing Loop Free Alternates
+rely on one or more rounds of full shortest path tree computation on a graph,
 and cannot achieve both good coverage of alternates and low computational complexity at the same time.
-Based on some graph properties we newly find, we propose IAC-NA, which can 
+Based on some graph properties we newly find, we propose IAC-NA, which can
 compute the full set of alternates based on incremental shortest path computation on an augmented graph.
-Compared with the naive implementation in typical commercial routers, IAC-NA achieves the same coverage of alternates but  
-with at least an $O(k)$ reduction in both time and memory consumption, where $k$ is the degree of a node. 
-Compared with TBFH and DMPA, which are latest algorithms proposed for acceleration of computation, 
-IAC-NA not only achieves around $3 \sim 6$ times reduction in computation time 
-and finds xx times of available alternates in typical real-world topologies, but also 
+Compared with the naive implementation in typical commercial routers, IAC-NA achieves the same coverage of alternates but
+with at least an $O(k)$ reduction in both time and memory consumption, where $k$ is the degree of a node.
+Compared with TBFH and DMPA, which are latest algorithms proposed for acceleration of computation,
+IAC-NA not only achieves around $3 \sim 6$ times reduction in computation time
+and finds xx times of available alternates in typical real-world topologies, but also
 provides link and node protection capabilities that TBFH and DMPA cannot provide.
-These advantages make IAC-NA a good candidate for large complex networks that require failure protection and load balancing 
+These advantages make IAC-NA a good candidate for large complex networks that require failure protection and load balancing
 in a highly dynamic environment.
 
 \iffalse
@@ -402,6 +407,8 @@ The DC (Downstream Criterion) approach has been widely used by many internet ser
 However, all of the existing algorithms concerning on the implementation of DC are time-consuming and require a large amount of router CPU resources.
  To improve the routing resilience without introducing
 significant extra overhead, we propose an efficient Intra-domain routing protection algorithm based on i-SPF (ERPISPF). Theoretical analysis indicates that the time complexity of ERPISPF is less than that of constructing a shortest path tree. The experiment results show that ERPISPF reduce more than 93\% computation overhead compared to the DC, and can provide the same network availability with DC.\fi
+
+
 \end{abstract}
 
 \begin{IEEEkeywords}
