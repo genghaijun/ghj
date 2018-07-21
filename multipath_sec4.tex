@@ -1,12 +1,12 @@
 \section{Performance Evaluation}\label{evaluation}
 To evaluate our algorithms,
-we use the real  network 
+we use the real  network
 CERNET2 (14 nodes, 16 links), Abilene (11 nodes, 14 links), NJLATA (11 nodes, 23 links), TORONTO (25 nodes, 55 links) and
 USLD (28 nodes, 45 links)
 and five ISP topologies which are measured by Rocketfuel\cite{2004148100061},
 including   AS1221 (108 nodes, 153 links),
-AS1239 (315 nodes, 972 links), 
-AS1755 (87 nodes, 161 links), AS3257 (161 nodes, 328 links), 
+AS1239 (315 nodes, 972 links),
+AS1755 (87 nodes, 161 links), AS3257 (161 nodes, 328 links),
 AS3967 (79 nodes, 147 links), and AS6461  (128 nodes, 372 links) .
 We also generate synthetic topologies with BRITE \cite{medina2001brite},
 using parameters as listed in Table \ref{britetable}.
@@ -74,12 +74,7 @@ Fig. \ref{realtopologytime} and Fig. \ref{rockettopologytime} respectively indic
 \caption{Computation overhead on generated topologies when topology size is 200}
 \label{nodedegree6}
 \end{figure}
-\begin{figure}[t]
-\centering
-\includegraphics[width=3in]{nodedegree}
-\caption{Network Availability on Generated Topologies When Topology Size=200}
-\label{avdeg}
-\end{figure}
+
 \iffalse
 \begin{figure*}[t]
         \centering
@@ -186,7 +181,8 @@ Real& Abilene& 6.82&7.27 & 6.97 & 6.83&6.52\\
 \end{tabular}
 \end{table}
 \fi
-\subsection{Protection ratio and the average number of backup next hops}
+\subsection{Protection ratio and the cumulative distribution of the
+number of backup next hops}
 In this section, we will use the protection ratio  and the average number of backup next hops to measure the path diversity of different algorithms.
 The protection ratio is defined as
 \begin{equation}
@@ -201,39 +197,14 @@ K(c,d)=\begin{cases}
 The average number of backup next hops
 describes the number of opportunities packets can be deflected off the
 shortest path.
-For both of the above two metrics, larger is better. 
+For both of the above two metrics, larger is better.
 
 Fig. \ref{prreal} and Fig. \ref{prrocket} respectively depict the protection ratio obtained by different algorithms on real and measured topologies.
 Fig. \ref{prd} presents the relationship between the protection ratio and average node degree on generated topologies
 when the topology size is 200.
-Fig .\ref{number} depicts  the average number of next hops obtained by different algorithms on real and Rocketfuel topologies.
+Fig .\ref{realnumber} and Fig. \ref{rocketnumber} depicts  the average number of backup next hops obtained by different algorithms on real and measured topologies.
 Fig .\ref{abicumulative} and  Fig .\ref{cercumulative} show
-the cumulative distribution of the average  number of backup next hops for Abilene and CERNET2.
-\begin{figure}[t]
-\centering
-\includegraphics[width=3in]{Abilenecumulative}
-\caption{Cumulative distribution distribution of the average number of next hops on Abilene topology}
-\label{abicumulative}
-\end{figure}
-\begin{figure}[t]
-\centering
-\includegraphics[width=3in]{CERNET2cumulative}
-\caption{Cumulative distribution distribution of the average number of next hops on CERNET2 topology}
-\label{cercumulative}
-\end{figure}
-We made several conclusions. First, IAC/IAC-NA and DC are more
-flexible than TBFH and DMPA. They have more deflection choices in all
-the experiment networks. Second, the
-larger networks can provide more opportunities to detour.
-\iffalse 
-Last,
-For IAC/IAC-NA and DC, more than
-40\% of routers have more than one next hop in all simulated topologies.
-and this advantage is more pronounced in large topologies.
-From Fig. \ref{prreal}, Fig. \ref{prrocket} and Fig. \ref{prd}, we can see that INC, INC-NA and DC have the similar protection ratio, which have better performance than both of DMPA and TBFH.
-\fi
-
-Since both of the above two metrics cannot accurately describe end-to-end network availability. Therefore, we will use network availability to measure the end-to-end availability of different algorithms in the next section.
+the cumulative distribution of the  number of backup next hops for CERNET2 and TORONTO topologies.
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{protectionratioreal}
@@ -251,6 +222,50 @@ Since both of the above two metrics cannot accurately describe end-to-end networ
 \includegraphics[width=3in]{protectionratiodegree}
 \caption{Protection ratio on generated topologies when topology size is 200}
 \label{prd}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{realnum}
+\caption{Average number of backup next hops on real topologies}
+\label{realnumber}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{rocketnum}
+\caption{Average number of backup next hops on measured topologies}
+\label{rocketnumber}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{CERNET2cumulative}
+\caption{Cumulative  distribution of the  number of backup next hops on CERNET2 topology}
+\label{abicumulative}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{TORONTOcumulative}
+\caption{Cumulative  distribution of the number of backup next hops on TORONTO topology}
+\label{cercumulative}
+\end{figure}
+We made several conclusions. First, IAC/IAC-NA and DC are more
+flexible than TBFH and DMPA. They have more deflection choices in all
+the experiment networks. Second, the
+larger networks can provide more opportunities to detour.
+\iffalse
+Last,
+For IAC/IAC-NA and DC, more than
+40\% of routers have more than one next hop in all simulated topologies.
+and this advantage is more pronounced in large topologies.
+From Fig. \ref{prreal}, Fig. \ref{prrocket} and Fig. \ref{prd}, we can see that INC, INC-NA and DC have the similar protection ratio, which have better performance than both of DMPA and TBFH.
+\fi
+
+Since both of the above two metrics cannot accurately describe end-to-end network availability. Therefore, we will use network availability to measure the end-to-end availability of different algorithms in the next section.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{nodedegree}
+\caption{Network Availability on Generated Topologies When Topology Size=200}
+\label{avdeg}
 \end{figure}
  \subsection{Network availability}
  We formally define the network availability $A(G)$ as follows (similar to that in \cite{ReliabilityAnalysis}),
