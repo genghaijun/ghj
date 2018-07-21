@@ -361,27 +361,40 @@ Without proper failure mitigation methods, packets forwarded to the failed equip
 be correctly forwarded, 
 %so packet losses will be inevitable 
 and network performance will be degraded. 
-Although routing protocols automatically heal the network by computing new paths and reroute, they typically exhibit 
-a slow response of hundreds of milliseconds or even longer.  
-To support critical applications or guarantee a high quality of service, Internet Service Providers (ISPs) 
-generally deploy a technique called Loop Free Alternates (LFA) for fast reroute. 
-With LFA, alternative next hops are stored alongside with 
-the default next hop in a router's forwarding table, and can be immediately activated in face of link or node failures. 
-In this paper, we propose IAC-NA, an algorithm for computing these alternative next hops efficiently.
+Although routing protocols automatically detect topology changes, heal the network by globally computing new paths, and reroute, 
+they typically exhibit a slow response of hundreds of milliseconds or even longer.  
+To support critical applications or guarantee a high quality of service, Internet Service Providers 
+generally deploy a technique called Loop Free Alternates for local fast rerouting. 
+To handle link or node failures, alternate next hops are stored alongside with 
+the default next hops in a router's forwarding table, and can be immediately activated 
+to invoke a loop free repair path.
+Existing algorithms for computing Loop Free Alternates 
+rely on one or more rounds of full shortest path tree computation on a graph, 
+and cannot achieve both good coverage of alternates and low computational complexity at the same time.
+Based on some graph properties we newly find, we propose IAC-NA, which can 
+compute the full set of alternates based on incremental shortest path computation on an augmented graph.
+Compared with the naive implementation in typical commercial routers, IAC-NA achieves the same coverage of alternates but  
+with at least an $O(k)$ reduction in both time and memory consumption, where $k$ is the degree of a node. 
+Compared with TBFH and DMPA, which are latest algorithms proposed for acceleration of computation, 
+IAC-NA not only achieves around $3 \sim 6$ times reduction in computation time 
+and finds xx times of available alternates in typical real-world topologies, but also 
+provides link and node protection capabilities that TBFH and DMPA cannot provide.
+These advantages make IAC-NA a good candidate for large complex networks that require failure protection and load balancing 
+in a highly dynamic environment.
 
+\iffalse
 The computational overhead of some existing methods (denoted by LFA) is very large, and their computational complexity is linear with the average node degree of the network. Therefore, the current methods need to consume a large amount of CPU resources, aggravate the burden on the router, and they are not suitable for practical deployment in large-scale networks.
 Some schemes, e.g. TBFH, have less computational overhead than LFA, however, the network availability of TBFH is lower than LFA.
 Therefore, to improve the routing resilience without introducing significant extra overhead, this paper propose incremental alternates computation with negative augmentation algorithm (IAC-NA) based on Incremental Shortest Path First Algorithm.
 
-\iffalse
 a DC-based algorithm and a LFA-based algorithm  are proposed.
 Both of them are based on Incremental Shortest Path First Algorithm.
 They are respectively the incremental alternates computation algorithm (IAC) and incremental alternates computation with negative augmentation (IAC-NA).
-\fi
+
 IAC-NA  first turns the problem of quickly implementation of LFA into how to efficiently calculate the minimum cost of all its neighbors to all other nodes of the network on the shortest path tree rooted at the compute node. Then a theorem for calculating the cost is presented and its correctness is proved. Finally, we theoretically analyze the time complexity of the algorithm. The computational complexity of IAC-NA is independent of the average node degree of the network.
 
 Experiments show that compared with LFA algorithm, IAC-NA not only has less computation overhead, but also provides the same network availability as LFA.
-\iffalse
+
 Lots of related researches have shown that network failures occur inevitably and frequently on the Internet. When network failures occur, the current deployed intra-domain routing protocol need to re-convergence. During the process of re-convergence, the packets may be lost due to inconsistent routing information, greatly reducing the network availability, seriously affecting the ISP¡¯s service quality and reputation. Therefore, improving the network availability has become an urgent problem.
 The DC (Downstream Criterion) approach has been widely used by many internet service providers for coping with the single link failure scenario in large Internet backbones. However, the efficiency issue of the implementation of DC is not well addressed.
 \fi
