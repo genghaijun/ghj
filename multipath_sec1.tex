@@ -40,7 +40,7 @@ facing complicated protocol processing (such as border routers handling a large 
 or dynamic reconfiguration (such as frequent path computation and traffic re-balancing).
 So an efficient implementation of the LFA mechanism is of great importance. Although some algorithms \cite{TBFH, Geng2018A}
 have been proposed towards this direction, they reduce computational complexity at the cost of
-a fair portion of candidate alternates that can be utilized, thus sacrifice their capability of failure protection and
+a fair portion of candidate alternates that can be utilized, thus sacrifice their capability of failure repair and
 redundancy provision.
 
 In this paper, we propose Incremental Alternates Computation based on Negative
@@ -53,11 +53,11 @@ and use both synthesized and real-world topologies to evaluate its performance.
 Compared with the naive implementation in typical commercial routers, IAC-NA achieves the same coverage of alternates but  
 with at least an $O(k)$ reduction in both time and memory consumption, where $k$ is the degree of a node. 
 Compared with TBFH and DMPA, which are latest algorithms proposed for acceleration of computation, 
-IAC-NA not only achieves around 10 times reduction in computation time 
+IAC-NA not only reduces the computation time by around an order of magnitude
 and finds 50\% more available alternates in typical real-world topologies, but also 
 provides  node protection capabilities that TBFH and DMPA cannot provide.
 These advantages make IAC-NA a good candidate for both traditional telecommunication networks
-and emerging complex networks that require failure protection and load balancing
+and emerging complex networks that require failure repair and load balancing
 in a highly dynamic environment.
 \iffalse
 Our contributions are summarized as follows:

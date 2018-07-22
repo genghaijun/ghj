@@ -1,6 +1,6 @@
 \section{Background}
 \label{background}
-\subsection{Failure Protection and Multipath Routing}
+\subsection{Failure Repair and Multipath Routing}
 Nowadays, network component failures have become routine events rather than exceptions.
 Both the industry and the academia have paid attention to improving the network resilience, 
 and proposed various schemes from physical level methods such as optical routing protection, 
@@ -22,7 +22,7 @@ shortest path tree (SPT) computation, and the cost increases proportionally with
 degree of a node, i.e., one SPT for each neighbor. 
 TBFH \cite{TBFH} and DMPA \cite{dmpa} achieve faster computation at the cost of tightening 
 the selection rules and less alternates being found. 
-FIR \cite{20071710572557} improves the protecting capability of a single link failure 
+FIR \cite{20071710572557} improves the protecting capability against a single link failure 
 by computing different alternates for packets from different incoming ports, 
 at the cost of an  increased computation overhead, and a restricted scenario, 
 i.e., only for protecting a link. 
@@ -42,7 +42,7 @@ in establishing multi-hop protecting paths.
 TOD \cite{Yang2018Fast} proposes tunneling on demand (TOD) to handle one or dual link failures, 
 but needs it additional signaling protocol to establish tunnels. 
 
-Besides failure protection, alternate next hops also find applications in multipath 
+Besides failure repair, alternate next hops also find applications in multipath 
 routing \cite{andersen2002resilient, cho2012independent}, 
 where multiple next hops can increase the bandwidth utilization, achieve load balancing, or 
 improve routing resilience and reliability, if loop free are guaranteed. 
@@ -66,47 +66,85 @@ it will not become a bottleneck.
  
 
 \subsection{Network Model and Basic Notations}
+A link state network is modeled as an undirected graph $G=(V,E)$, 
+where $V$ and $E$ respectively denote the set of nodes (routers) and the set of edges (links) in the network. 
+Every link $(u,v)\in E$ in the network  has a link weight $L(u,v)$ and 
+a link failure probability $r(u,v)$, both of which are non-negative.
+We use $C_c(v)$ to denote the lowest cost from node $c$ to node $v$ in the network, 
+and use $N_{c}(v)$ to denote the set of next hops that $c$ can forward to when receiving a packet destined to the node $v$.
+For a neighboring node $u$ of $v$, i.e., $u\in N_{c}(V)$, it is clear that $C_u(v)=C_v(u)=L(u,v)$.
+
+In traditional link state routing protocols, such as IS-IS or OSPF, 
+a node $c$  can construct such a graph from information carried by link state advertisements. 
+Then it builds a shortest path tree (SPT) $T_c$, where $c$ is the root of the tree, and all other nodes are included, 
+with a classic shortest path algorithm such as the Dijkstra's or the Bellman-Ford algorithm\cite{CLRS}. 
+In $T_c$, each direct child $x$ of $c$ is $c$'s next hop for packets destined to $x$ and $x$'s descendents, 
+i.e., ``$N_{c}(v)=x$ iff $v=x$ or $v$ is $x$'s descendent''. 
+For failure repair or multipath transmission, 
+we have to design new algorithms that can add more appropriate elements to $N_{c}(v)$.
+
+We use $G'=(V,E,(l,m,w))$ to represent the new topology when the edge
+$(l,m)\in E$ change its weight to $w$, $C_c(v,(l,m,w))$ is the shortest cost from node $c$  to node $v$ in the new network $G'=(V,E,(l,m,w))$.
+$T_{c}(c,x,w)$ denote the new shortest path tree when the edge $(c,x)\in T_c$ change its weight to $w$.
+For ease of reading, we summarize some  symbols in the Table \ref{notation}.
 
 
 \subsection{Loop Free Alternates}
 
-Loop-free Alternate (LFA)\cite{LFA} proposes several basic criteria for selecting a proper next-hop, including Loop-free Criterion (LFC), Node Protection Condition (NPC) and Downstream path Criterion (DC), to guarantee loop-freeness.
+Loop-free Alternate (LFA)\cite{LFA} proposes several criteria for selecting  proper next hops, 
+including the Loop-free Criterion (LFC), the Node Protection Condition (NPC) and the Downstream Criterion (DC).
+These criteria are designed to guarantee loop-freeness when alternative next hops are used for different failure scenarios,  
+and can be explained as follows.
+
+\begin{figure}[t]
+\centering
+%\includegraphics[width=3in]{realcomputationoverhead}
+\includegraphics[width=3in]{lfaexample}
+\caption{An example for explaining LFA}
+\label{lfaexample}
+\end{figure}
 
 
+LFC can protect against a single link failure, NPC can protect against a
+single node failure, while DC is applicable to more complex failure scenarios.
+We will now dive into the details of LFA.
 
-\iffalse
+\textbf{LFC:}
+For packets destined to a destination $v$, node $c$ ($c \ne v$)
+can forward them to its any neighboring node $x$ as long as $C_x(v)<C_c(v)+C_x(c)$,
+and there will be no forwarding loop in the induced forwarding path.
 
-those that can operate with an unmodified IP forwarding plane,
-and those that involve the use of a different (usually more complex)
-forwarding paradigm.
-precomputed repair paths
+\textbf{NPC:}
+For packets destined to a destination $v$, node $c$ ($c \ne v$)
+can forward them to its any neighboring node $x$ as long as $C_x(v)<C_x(f)+C_f(v)$, where $f$ is the default next hop from $c$ to $v$,
+and there will be no forwarding loop in the induced forwarding path.
 
-that employs extra bits in the packet
-header to reroute for non-disconnecting failures
-
-precompute backup paths mechanisms which reroute packets to precomputed repair paths.
-\fi
-
-
-
-\iffalse
-MARA \cite{20094212373257} constructs a Directed Acyclic Graph (DAG) for each destination,
-FIR \cite{20071710572557} employs the local rerouting and pre-computes interface-specific forwarding tables. However, it needs a very complicated pre-computation algorithm to handle link failures.
-In\cite{20114214442265}, authors  proposed a centralized computation method to offer an effective alternative routing for guaranteed network connectivity.
-\fi
-
-\iffalse
-Instantaneous loop-freeness has also been studied, where link-state\cite{schollmeier2003improving,ohara2009mara,lee2004proactive} as well as distance-vector\cite{ vutukury2000mpath, vutukury2001mdva} multipath algorithms achieve  loop-free at every instant.
-\fi
+\textbf{DC:}
+For packets destined to a destination $v$, node $c$ ($c \ne v$)
+can forward them to its any neighboring node $x$ as long as $C_x(v)<C_c(v)$,
+and there will be no forwarding loop in the induced forwarding path.
 
 
-%As discussed above, in order to provide failure resilient routing, much more
-%overhead is required in both kinds of solutions.
-%Our solution focuses on how to achieve failure resilient routing without introducing
-%conspicuous overhead.
+The LFC rule can be interpreted as the node $s$ is not on the shortest path from $x$ to $v$, NPC shows that the node $f$ is not on the shortest path from $x$ to $v$. DC rule indicates that the neighbor $x$ is closer to the destination $v$ then the node $s$ itself.
+From the description of the three rules, we can see that the neighbor who accords with the NPC rule must conform to the LFC rule, but the reverse is not necessarily true. A neighbor who meets the LFC rule must conform to the DC rule, but vice versa. There is no specific relationship between DC and NPC.
+The following is an example to explain the three rules in LFA.
+Fig. \ref{lfaexample} shows a network topology consisting of 5 nodes and 6 links.
+As shown in Fig. \ref{lfaexample}, the default next hop from node $c$ to node $d$ is $a$,
+the default next hop from node $c$ to node $e$ is $b$, $C_c(d)=4$, $C_b(d)=5$.
+The node $b$ can be used as a valid LFC next hop from the node $c$ to the destination node $d$ since $C_b(d)<C_b(c)+C_c(d)$.
+However the node $b$ is not a valid NFC next hop from the node $c$ to the destination node $d$ since $C_b(d)=C_b(a)+C_a(d)$.
+Since $C_a(e)=4<C_c(e)=5$, node $a$ can be a valid DC next hop from $c$ to $e$.
+Node $a$ can also be a valid LFC next hop from $c$ to $e$ because $C_a(e)<C_c(e)+C_e(c)$.
+Node $a$ can also be a valid NPC next hop from $c$ to $e$ because $C_a(e)<C_a(b)+C_b(e)$.
+It can be seen that the node $a$ can be used as  LFC, DC, and NPC next hop from the node $c$ to the destination node $e$.
+
+In order to achieve resilience routing,
+the node $c$ can compute a candidate set of next-hops $N_{c}(v)$
+for each destination $v$ ($v \!\neq\! c$) employing LFA, so that when a packet destined to $v$ arrives at $c$,
+$c$ can select a next-hop from $N_{c}(v)$ and forward this packet to.
 
 
-Since the performance of routing and forwarding is critical to the Internet, routing protection algorithm has to be highly efficient to avoid becoming a bottleneck. However, the existing approaches often focus on finding more, or  disjoint paths, rather than reducing the computation or the communication overhead, which is the focus of this paper.
+%Since the performance of routing and forwarding is critical to the Internet, routing protection algorithm has to be highly efficient to avoid becoming a bottleneck. However, the existing approaches often focus on finding more, or  disjoint paths, rather than reducing the computation or the communication overhead, which is the focus of this paper.
 
 \iffalse In \cite{dmpa}, we propose a shortest path tree based multipath routing
 algorithm called DMPA. DMPA guarantees loop-freeness of
@@ -114,9 +152,9 @@ the induced routing path by implicitly maintaining a partial
 order of the routers underpinning it The time complexity of
 DMPA does not depend on the degree of the calculating router.
 However, the protection ration of DMPA is still lower than
-the DC. \fi
+the DC. 
 Unlike the above works, however, our main concerns are computational efficiency and network availability, as these are critical for the routing protection algorithm. Based on the existing work on this research area, we for the first time propose two routing protection algorithms (IAC and IAC-NA) whose complexity is less than that of Dijkstra¡¯s algorithm and also have a high network availability.
-\iffalse
+
 Unlike the above works, however, our main concerns
 are computational efficiency and protection ratio, as these are
 critical for the Algorithm. Based on the existing work on this

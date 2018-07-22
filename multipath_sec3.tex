@@ -47,6 +47,8 @@ $B_{c}(v)$&Best next-hop computed by node $c$ for destination node $v$\\
 \hline
 \end{tabular}
 \end{table*}
+
+\iffalse
 In this paper, we will limit our research to intra-domain link state routing protocols, e.g. OSPF and IS-IS. Each router in a single routing area maintains an identical network map which allows them to compute the shortest path to every other router in a routing area. Then each router construct its FIB table employing the above information. When a packet arrives at a router, a destination address based method is using to determine how to forward the packets to its corresponding interface. When the network topology changes, the routers adjacent to the changed component detects the change and then propagates the information to its neighboring router through the link state advertisement (LSA) information. After a period of time, all routers in this routing area are aware of  the change information and update their routing tables accordingly, then the network is at a stable state.
 
 
@@ -77,13 +79,12 @@ A shortest path routing algorithm, such as open shortest path first (OSPF) \cite
 computes a single next-hop $B_{c}(v)$ by employing equation (\ref{bestnh})
 at each step when a new node $v$ is added to the SPT.
 
-
 We use $G'=(V,E,(l,m,w))$ to represent the new topology when the edge
 $(l,m)\in E$ change its weight to $w$, $C_c(v,(l,m,w))$ is the shortest cost from node $c$  to node $v$ in the new network $G'=(V,E,(l,m,w))$.
 $T_{c}(c,x,w)$ denote the new shortest path tree when the edge $(c,x)\in T_c$ change its weight to $w$.
 For ease of reading, we summarize some  symbols in the Table \ref{notation}.
 
- \iffalse $T_{c}$ represent a shortest path tree rooted at $c$, $D(T_{c},v)$ represent the descendants of node $v$ (node $v$ is excluded) in $T_{c}$,
+ $T_{c}$ represent a shortest path tree rooted at $c$, $D(T_{c},v)$ represent the descendants of node $v$ (node $v$ is excluded) in $T_{c}$,
 $C_c(v)$ is the shortest cost from node $c$  to node $v$ in the original network $G$.\fi
 \section{iSPF and LFA}\label{back}
 In this section, we will discuss incremental shortest
@@ -338,55 +339,6 @@ From Theorem \ref{newsptposition}, we have $C_x(d)\geq C_x(c)+C_c(d)$ when the p
 Because $C_x(d)\leq C_x(c)+C_c(d)$ is satisfied, we have $C_x(d)=C_x(c)+C_c(d)$.
 %Therefore, the lemma can be easily verified.
 \end{proof}
-\begin{figure}[t]
-\centering
-%\includegraphics[width=3in]{realcomputationoverhead}
-\includegraphics[width=3in]{lfaexample}
-\caption{An example for explaining LFA}
-\label{lfaexample}
-\end{figure}
-\subsection{LFA}
-Up to now, LFA is the only IPFRR scheme that has been deployed into commercial routers, and hence into operational IP networks. Therefore, at least two major vendors are already providing LFA out of the box, and other vendors are expected to follow suit.
-The LFA includes three loop-free rules.
-They are respectively Loop-free Criterion (LFC), Node Protection Criterion(NPC) and Downstream Path Criterion (DC).
-LFC can protect against a single link failure, NPC can protect against a
-single node failure, while DC is applicable to more complex failure scenarios.
-We will now dive into the details of LFA.
-
-\textbf{LFC:}
-For packets destined to a destination $v$, node $c$ ($c \ne v$)
-can forward them to its any neighboring node $x$ as long as $C_x(v)<C_c(v)+C_x(c)$,
-and there will be no forwarding loop in the induced forwarding path.
-
-\textbf{NPC:}
-For packets destined to a destination $v$, node $c$ ($c \ne v$)
-can forward them to its any neighboring node $x$ as long as $C_x(v)<C_x(f)+C_f(v)$, where $f$ is the default next hop from $c$ to $v$,
-and there will be no forwarding loop in the induced forwarding path.
-
-\textbf{DC:}
-For packets destined to a destination $v$, node $c$ ($c \ne v$)
-can forward them to its any neighboring node $x$ as long as $C_x(v)<C_c(v)$,
-and there will be no forwarding loop in the induced forwarding path.
-
-
-The LFC rule can be interpreted as the node $s$ is not on the shortest path from $x$ to $v$, NPC shows that the node $f$ is not on the shortest path from $x$ to $v$. DC rule indicates that the neighbor $x$ is closer to the destination $v$ then the node $s$ itself.
-From the description of the three rules, we can see that the neighbor who accords with the NPC rule must conform to the LFC rule, but the reverse is not necessarily true. A neighbor who meets the LFC rule must conform to the DC rule, but vice versa. There is no specific relationship between DC and NPC.
-The following is an example to explain the three rules in LFA.
-Fig. \ref{lfaexample} shows a network topology consisting of 5 nodes and 6 links.
-As shown in Fig. \ref{lfaexample}, the default next hop from node $c$ to node $d$ is $a$,
-the default next hop from node $c$ to node $e$ is $b$, $C_c(d)=4$, $C_b(d)=5$.
-The node $b$ can be used as a valid LFC next hop from the node $c$ to the destination node $d$ since $C_b(d)<C_b(c)+C_c(d)$.
-However the node $b$ is not a valid NFC next hop from the node $c$ to the destination node $d$ since $C_b(d)=C_b(a)+C_a(d)$.
-Since $C_a(e)=4<C_c(e)=5$, node $a$ can be a valid DC next hop from $c$ to $e$.
-Node $a$ can also be a valid LFC next hop from $c$ to $e$ because $C_a(e)<C_c(e)+C_e(c)$.
-Node $a$ can also be a valid NPC next hop from $c$ to $e$ because $C_a(e)<C_a(b)+C_b(e)$.
-It can be seen that the node $a$ can be used as  LFC, DC, and NPC next hop from the node $c$ to the destination node $e$.
-
-In order to achieve resilience routing,
-the node $c$ can compute a candidate set of next-hops $N_{c}(v)$
-for each destination $v$ ($v \!\neq\! c$) employing LFA, so that when a packet destined to $v$ arrives at $c$,
-$c$ can select a next-hop from $N_{c}(v)$ and forward this packet to.
-
 
 \section{Incremental Alternates Computation Algorithm}\label{iac}
 \iffalse
@@ -657,7 +609,6 @@ ENQUEUE$(Q,(u,(v,newdist,\delta))$\;}
 }
 \While {$Q$ is not empty}{
 $<v,tc> \leftarrow$ EXTRACTMIN(Q)\;
-
 $v.visited\leftarrow true$\;
 $C'_c(v)\leftarrow tc$\;
 Add $x$ to $N_c(v)$;\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad
