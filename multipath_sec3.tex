@@ -688,6 +688,7 @@ ENQUEUE$(Q,(u,(v,newdist,\delta))$\;}
 \caption{IAC}
 \label{mnpe}
 \end{algorithm}
+\iffalse
 \begin{figure}[h]
 \centering
 %\includegraphics[width=3in]{realcomputationoverhead}
@@ -695,23 +696,30 @@ ENQUEUE$(Q,(u,(v,newdist,\delta))$\;}
 \caption{Network topology}
 \label{dcnetwork}
 \end{figure}
+\fi
 We will use a simple example to explain the Theorem \ref{dcbackupnexthop}. Fig. \ref{dcnetwork} is a simple network work consists of  5 routers and 6 edges.
 Fig. \ref{spttreedc} is a shortest path tree rooted at node $c$, while Fig. \ref{spttreechange1dc} and \ref{spttreechange2dc} respectively represent the new SPT when the weight of the links $(c,a)$  and $(c,b)$  is changed to $0$. Because $e \notin D(T_{c},a)$ and $e \in D(T'_{c},a)$, we can see that node $a$  can be a viable backup next-hop from   $c$ to $e$. Due to $d \notin D(T_{c},b)$, and $d \in D(T'_{c},b)$ ,  node $b$  can be a viable backup next-hop from $c$  to $d$, and also  we can get ode $b$  can be a viable backup next-hop from $c$  to $g$ in the same way.
 \subsection{Algorithm}
 \begin{figure*}[t]
-        \begin{subfigure}[b]{0.32\textwidth}
+\begin{subfigure}[b]{0.20\textwidth}
+                \centering
+                \includegraphics{dcnetworktopology}
+                \caption{$T_{c}$}
+              \label{dcnetwork}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.24\textwidth}
                 \centering
                 \includegraphics{dcspt}
                 \caption{$T_{c}$}
               \label{spttreedc}
         \end{subfigure}
-        \begin{subfigure}[b]{0.32\textwidth}
+        \begin{subfigure}[b]{0.22\textwidth}
                 \centering
                 \includegraphics{dcsptcha1}
                 \caption{$T_c(c,a,0)$}
                 \label{spttreechange1dc}
         \end{subfigure}
-         \begin{subfigure}[b]{0.32\textwidth}
+         \begin{subfigure}[b]{0.24\textwidth}
                 \centering
                 \includegraphics{dcsptcha2}
                 \caption{$T_c(c,b,0)$}

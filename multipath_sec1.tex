@@ -28,8 +28,8 @@ if there are stringent demand on bandwidth or load balancing.
 
 %why link-state routing matters
 Most ISPs use a link-state routing protocol, such as OSPF or IS-IS, in their intra-domain system.
-large data center networks are also incorporating link-state routing into their Layer 2 network architecture 
-to achieve benefits like transparent node movement, shortest path routing, traffic engineering and multipath \cite{perlman2011introduction, TRILL}.
+large data center networks are also incorporating link-state routing into their Layer 2 network architecture \cite{perlman2011introduction, TRILL} 
+to achieve benefits like transparent node movement, shortest path routing, traffic engineering and multipath.
 %why computation complexity matters
 However, in such link state networks, computing loop free alternates typically require on one or more rounds 
 of full shortest path tree computation on a graph, and poses a heavy burden to both the processor load and 
@@ -51,8 +51,8 @@ and use both synthesized and real-world topologies to evaluate its performance.
 Compared with the naive implementation in typical commercial routers, IAC-NA achieves the same coverage of alternates but  
 with at least an $O(k)$ reduction in both time and memory consumption, where $k$ is the degree of a node. 
 Compared with TBFH and DMPA, which are latest algorithms proposed for acceleration of computation, 
-IAC-NA not only achieves around $3 \sim 6$ times reduction in computation time 
-and finds xx times of more available alternates in typical real-world topologies, but also 
+IAC-NA not only achieves around 10 times reduction in computation time 
+and finds 50\% more available alternates in typical real-world topologies, but also 
 provides  node protection capabilities that TBFH and DMPA cannot provide.
 These advantages make IAC-NA a good candidate for both traditional telecommunication networks 
 and emerging complex networks that require failure protection and load balancing 
@@ -71,8 +71,11 @@ IAC-NA can completely and efficiently deal with LFA problem.
 \end{itemize}
 \fi
 
+
+
 The rest of the paper is constructed as follows. 
 Section \ref{background} introduces background of Loop Free Alternates with basic graph model and notations.
+
 {\em Section \ref{model}  describes the network model.
 Section \ref{back} describes the iSPF and LFA in detail.
 Section \ref{iac} and section \ref{iacna} respectively present the incremental alternative computation algorithm and incremental alternate computation with negative augmentation algorithm.
