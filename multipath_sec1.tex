@@ -1,61 +1,61 @@
 \section{Introduction}
-Internet is now supporting more and more real-time and mission-critical applications, 
-which are sensitive to packet loss, network delay, or available bandwidth. 
-However, network failures are common in the Internet \cite{Zheng}\cite{20083511494785} 
-since both the hardware and the software of network equipments face occasional failures. 
-Typical scenarios include that a fiber is broken, or a forwarding port is down, 
-or a router completely stops working. 
-Without proper failure mitigation methods, packets forwarded to the failed equipment are 
-no longer able to be correctly forwarded, so packet losses will be inevitable 
-and network performance will be degraded. 
-Although routing protocols automatically detect topology changes, 
-heal the network by globally computing new paths, and reroute, 
-they typically exhibit a slow response of hundreds of milliseconds or even longer 
-due to the convergence delay of the distributed execution of the protocol.  
-This slow response cannot meet the requirements of real-time applications, 
-and improving the network availability has always been a high priority job of Internet Service 
-Providers (ISPs) \cite{Scalable,Jose2016Optimal,Yang2014Keep,Elhourani2016IP,Liu2013Ensuring,Stephens2016Scalable}. 
+Internet is now supporting more and more real-time and mission-critical applications,
+which are sensitive to packet loss, network delay, or available bandwidth.
+However, network failures are common in the Internet \cite{Zheng}\cite{Xu2017Failure}
+since both the hardware and the software of network equipments face occasional failures.
+Typical scenarios include that a fiber is broken, or a forwarding port is down,
+or a router completely stops working.
+Without proper failure mitigation methods, packets forwarded to the failed equipment are
+no longer able to be correctly forwarded, so packet losses will be inevitable
+and network performance will be degraded.
+Although routing protocols automatically detect topology changes,
+heal the network by globally computing new paths, and reroute,
+they typically exhibit a slow response of hundreds of milliseconds or even longer
+due to the convergence delay of the distributed execution of the protocol.
+This slow response cannot meet the requirements of real-time applications,
+and improving the network availability has always been a high priority job of Internet Service
+Providers (ISPs) \cite{Scalable,Jose2016Optimal,Yang2014Keep,Elhourani2016IP,Liu2013Ensuring,Stephens2016Scalable}.
 
 %route protection
-%In order to improve the network availability, the routing protection method is usually adopted in the industry. The existing  routing protection schemes can be divided into two sub-categories, by whether special cooperation/signaling between routers are required for packet forwarding. Cooperation-free schemes compute multiple next-hops for each destination, and each router independently selects an appropriate next-hop for standard packet forwarding, where care must be taken such that the induced forwarding paths are loop-free. The benefit is that they can provide not only redundant backup links, but also other features such as load balancing and high throughput. The other sub-category of schemes compute, for a link to protect, a multi-hop repair path that is agreed by all routers on that path. Thus special cooperation mechanisms have to be employed to reroute packets along that path. In this paper we focus on the first type of schemes. And also, we confined our work in the link-state routing networks. 
-To support critical applications or guarantee a high quality of service, ISPs generally deploy 
+%In order to improve the network availability, the routing protection method is usually adopted in the industry. The existing  routing protection schemes can be divided into two sub-categories, by whether special cooperation/signaling between routers are required for packet forwarding. Cooperation-free schemes compute multiple next-hops for each destination, and each router independently selects an appropriate next-hop for standard packet forwarding, where care must be taken such that the induced forwarding paths are loop-free. The benefit is that they can provide not only redundant backup links, but also other features such as load balancing and high throughput. The other sub-category of schemes compute, for a link to protect, a multi-hop repair path that is agreed by all routers on that path. Thus special cooperation mechanisms have to be employed to reroute packets along that path. In this paper we focus on the first type of schemes. And also, we confined our work in the link-state routing networks.
+To support critical applications or guarantee a high quality of service, ISPs generally deploy
 a technique called Loop Free Alternates (LFA) \cite{IPFRR, LFA} for local fast rerouting.
-With LFA, alternate next hops are stored alongside with the default next hops in a router's 
-forwarding table, and can be immediately activated to invoke a loop free repair path 
-in face of link or node failures. As long as not introducing routing loops, 
-these alternative next hops can also be used for multipath transmission 
+With LFA, alternate next hops are stored alongside with the default next hops in a router's
+forwarding table, and can be immediately activated to invoke a loop free repair path
+in face of link or node failures. As long as not introducing routing loops,
+these alternative next hops can also be used for multipath transmission
 if there are stringent demand on bandwidth or load balancing.
 
 %why link-state routing matters
 Most ISPs use a link-state routing protocol, such as OSPF or IS-IS, in their intra-domain system.
-large data center networks are also incorporating link-state routing into their Layer 2 network architecture 
+Large data center networks are also incorporating link-state routing into their Layer 2 network architecture
 to achieve benefits like transparent node movement, shortest path routing, traffic engineering and multipath \cite{perlman2011introduction, TRILL}.
 %why computation complexity matters
-However, in such link state networks, computing loop free alternates typically require on one or more rounds 
-of full shortest path tree computation on a graph, and poses a heavy burden to both the processor load and 
-the memory consumption of a network equipment. This further brings challenges to networks 
-facing complicated protocol processing (such as border routers handling a large amount of BGP route update) 
-or dynamic reconfiguration (such as frequent path computation and traffic re-balancing). 
-So an efficient implementation of the LFA mechanism is of great importance. Although some algorithms \cite{TBFH, dmpa}
-have been proposed towards this direction, they reduce computational complexity at the cost of  
-a fair portion of candidate alternates that can be utilized, thus sacrifice their capability of failure protection and 
-redundancy provision. 
+However, in such link state networks, computing loop free alternates typically require on one or more rounds
+of full shortest path tree computation on a graph, and poses a heavy burden to both the processor load and
+the memory consumption of a network equipment. This further brings challenges to networks
+facing complicated protocol processing (such as border routers handling a large amount of BGP route update)
+or dynamic reconfiguration (such as frequent path computation and traffic re-balancing).
+So an efficient implementation of the LFA mechanism is of great importance. Although some algorithms \cite{TBFH, Geng2018A}
+have been proposed towards this direction, they reduce computational complexity at the cost of
+a fair portion of candidate alternates that can be utilized, thus sacrifice their capability of failure protection and
+redundancy provision.
 
-In this paper, we propose Incremental Alternates Computation based on Negative 
-Augmentation (IAC-NA), an algorithm that can 
-compute the full set of alternates within a given graph in a highly efficient way. 
+In this paper, we propose Incremental Alternates Computation based on Negative
+Augmentation (IAC-NA), an algorithm that can
+compute the full set of alternates within a given graph in a highly efficient way.
 Actually, IAC-NA is a modified incremental shortest-path-first (iSPF) computation
-on an augmented graph with respect to the given graph, where the sign of some link cost 
-is simply reversed, i.e., from $x$ to $-x$. We formally prove the property of IAC-NA, 
+on an augmented graph with respect to the given graph, where the sign of some link cost
+is simply reversed, i.e., from $x$ to $-x$. We formally prove the property of IAC-NA,
 and use both synthesized and real-world topologies to evaluate its performance.
-Compared with the naive implementation in typical commercial routers, IAC-NA achieves the same coverage of alternates but  
-with at least an $O(k)$ reduction in both time and memory consumption, where $k$ is the degree of a node. 
-Compared with TBFH and DMPA, which are latest algorithms proposed for acceleration of computation, 
-IAC-NA not only achieves around $3 \sim 6$ times reduction in computation time 
-and finds xx times of more available alternates in typical real-world topologies, but also 
+Compared with the naive implementation in typical commercial routers, IAC-NA achieves the same coverage of alternates but
+with at least an $O(k)$ reduction in both time and memory consumption, where $k$ is the degree of a node.
+Compared with TBFH and DMPA, which are latest algorithms proposed for acceleration of computation,
+IAC-NA not only achieves around $3 \sim 6$ times reduction in computation time
+and finds xx times of more available alternates in typical real-world topologies, but also
 provides  node protection capabilities that TBFH and DMPA cannot provide.
-These advantages make IAC-NA a good candidate for both traditional telecommunication networks 
-and emerging complex networks that require failure protection and load balancing 
+These advantages make IAC-NA a good candidate for both traditional telecommunication networks
+and emerging complex networks that require failure protection and load balancing
 in a highly dynamic environment.
 \iffalse
 Our contributions are summarized as follows:
@@ -71,7 +71,7 @@ IAC-NA can completely and efficiently deal with LFA problem.
 \end{itemize}
 \fi
 
-The rest of the paper is constructed as follows. 
+The rest of the paper is constructed as follows.
 Section \ref{background} introduces background of Loop Free Alternates with basic graph model and notations.
 {\em Section \ref{model}  describes the network model.
 Section \ref{back} describes the iSPF and LFA in detail.
