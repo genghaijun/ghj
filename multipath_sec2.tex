@@ -72,9 +72,7 @@ Every link $(u,v)\in E$ in the network  has a link weight $L(u,v)$ and
 a link failure probability $r(u,v)$, both of which are non-negative.
 We use $C_c^G(v)$ to denote the lowest cost from node $c$ to node $v$ in the network $G$,
 and use $N_{c}^G(v)$ to denote the set of next hops that $c$ can forward to when receiving a packet destined to the node $v$.
-In the rest of the paper, we will omit the superscript $G$
-in the notations when the network topology is $G$.
-For a neighboring node $u$ of $v$, i.e., $u\in N_{c}(v)$, it is clear that $C_u(v)=C_v(u)=L(u,v)$.
+For a neighboring node $u$ of $v$, i.e., $u\in N_{c}(v)$, it is clear that $C_u^G(v)=C_v^G(u)=L(u,v)$.
 
 In traditional link state routing protocols, such as IS-IS or OSPF,
 a node $c$  can construct such a graph from information carried by link state advertisements.
@@ -88,10 +86,13 @@ We use $D_c^G(v)$ to denote the descendants of node $v$ (itself is included) in 
 %$G'=(V,E,(l,m,w))$$C_c(v,(l,m,w))$
 
 
+
 We use $G'=G^w_{(u,v)}$ to represent a network topology when the edge
 $(u,v)\in E$ change its weight to $w$ in the network $G=(V,E)$, $C_c^{G'}(d)$ is the lowest cost from node $c$  to node $d$ in the network $G'=G^w_{(u,v)}$. $T_{c}^{G'}$ denote the  shortest path tree rooted at node $c$ in the network $G'=G^w_{(u,v)}$.
 We use $D_c^{G'}(v)$ to denote the descendants of node $v$ (itself is included) in $T_{c}^{G'}$.
 For ease of reading, we summarize some  symbols in the Table \ref{notation}.
+In the rest of the paper, we will omit the superscript $G$
+in the notations when the network topology is $G$.
 
 
 \subsection{Loop Free Alternates}

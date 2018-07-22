@@ -746,7 +746,7 @@ In this section, we will show the performance of the algorithm, including the ti
 The computational complexity of IAC is less than $O(|E|lg|V|)$ when the queue is implemented as a Heap.
 \end{theorem}
 \begin{proof}
- To compute all the backup next-hop set from node $c$ to other nodes in the network. The IAC need to run the iSPF algorithm $k$ times, where $k$ is the number of neighbors of node $c$. Let $N_{i}$ and $M_{i}$ respectively indicate the number of nodes that must adjust their costs or parents and the number of edges which anchored to these nodes when the weight of link $(c,i)$ is changed to 0. Therefore the computational complexity of the Algorithm INC is $\sum_{i=1}^k{M_{i}*lgN_{i}}\leq \sum_{i=1}^k{M_{i}}*lg|V|=O(|E|lg|V|)$. Since $N_{i}<|V|$, therefore the computational complexity of IAC is less than that of SPF.
+ To compute all the backup next-hop set from node $c$ to other nodes in the network. The IAC need to run the iSPF algorithm $k$ times, where $k$ is the number of neighbors of node $c$. Let $N_{i}$ and $M_{i}$ respectively indicate the number of nodes that must adjust their costs or parents and the number of edges which anchored to these nodes when the weight of link $(c,i)$ is changed to $-L(c,i)$. Therefore the computational complexity of the Algorithm INC is $\sum_{i=1}^k{M_{i}*lgN_{i}}\leq \sum_{i=1}^k{M_{i}}*lg|V|=O(|E|lg|V|)$. Since $N_{i}<|V|$, therefore the computational complexity of IAC is less than that of SPF.
 \end{proof}
 \begin{theorem}\label{fullprooof}
 Algorithm IAC-NA can compute all the next hop set for node $c$ that satisfies the LFA Rule.
