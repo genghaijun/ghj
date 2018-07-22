@@ -877,9 +877,9 @@ For any node $x\in N(c)$, if we can quickly calculate $C_x(v), v\in V$ in the $T
 Given a computing node $c$ and $T_{c}$, for any node $d(d\neq c, d\neq x)$ where $x \in N(c)$,
 \begin{itemize}
 \item[(1)] if $d \in D(T_{c},x)$, then we have $C_{x}(d)=C_{c}(d)-C_{c}(x)$.
-\item[(2)] if $d \notin D(T_{c},x)$ and $d \in D(T_{c},(c,x,-L(c,x)))$, then we have
+\item[(2)] if $d \notin D(T_{c},x)$ and $d \in D(T_{c}(c,x,-L(c,x)),x)$, then we have
  $C_{x}(d)=C_{c}(d,(c,x,-L(c,x)))+C_{c}(x)$.
-\item[(3)] if $d \notin D(T_{c},x)$ and $d \notin D(T_{c},(c,x,-L(c,x)))$, then we have
+\item[(3)] if $d \notin D(T_{c},x)$ and $d \notin D(T_{c}(c,x,-L(c,x)),x)$, then we have
  $C_{x}(d)=C_{c}(d)+C_c(x)$.
 \end{itemize}
 \end{theorem}
