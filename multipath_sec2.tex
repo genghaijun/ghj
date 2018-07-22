@@ -71,22 +71,26 @@ where $V$ and $E$ respectively denote the set of nodes (routers) and the set of 
 Every link $(u,v)\in E$ in the network  has a link weight $L(u,v)$ and
 a link failure probability $r(u,v)$, both of which are non-negative.
 We use $C_c^G(v)$ to denote the lowest cost from node $c$ to node $v$ in the network $G$,
-and use $N_{c}^G(v)(v)$ to denote the set of next hops that $c$ can forward to when receiving a packet destined to the node $v$.
+and use $N_{c}^G(v)$ to denote the set of next hops that $c$ can forward to when receiving a packet destined to the node $v$.
+In the rest of the paper, we will omit the superscript $G$
+in the notations when the network topology is $G$.
 For a neighboring node $u$ of $v$, i.e., $u\in N_{c}(v)$, it is clear that $C_u(v)=C_v(u)=L(u,v)$.
 
 In traditional link state routing protocols, such as IS-IS or OSPF,
 a node $c$  can construct such a graph from information carried by link state advertisements.
-Then it builds a shortest path tree (SPT) $T_c$, where $c$ is the root of the tree, and all other nodes are included,
+Then it builds a shortest path tree (SPT) $T_c^G$, where $c$ is the root of the tree, and all other nodes are included,
 with a classic shortest path algorithm such as the Dijkstra's or the Bellman-Ford algorithm\cite{CLRS}.
 In $T_c$, each direct child $x$ of $c$ is $c$'s next hop for packets destined to $x$ and $x$'s descendents,
 i.e., ``$N_{c}(v)=x$ iff $v=x$ or $v$ is $x$'s descendent''.
 For failure repair or multipath transmission,
 we have to design new algorithms that can add more appropriate elements to $N_{c}(v)$.
+We use $D_c^G(v)$ to denote the descendants of node $v$ (itself is included) in $T_c$.
 %$G'=(V,E,(l,m,w))$$C_c(v,(l,m,w))$
 
 
-We use $G'=G^w_{(u,v)}$ to represent the new topology when the edge
+We use $G'=G^w_{(u,v)}$ to represent a network topology when the edge
 $(u,v)\in E$ change its weight to $w$ in the network $G=(V,E)$, $C_c^{G'}(d)$ is the lowest cost from node $c$  to node $d$ in the network $G'=G^w_{(u,v)}$. $T_{c}^{G'}$ denote the  shortest path tree rooted at node $c$ in the network $G'=G^w_{(u,v)}$.
+We use $D_c^{G'}(v)$ to denote the descendants of node $v$ (itself is included) in $T_{c}^{G'}$.
 For ease of reading, we summarize some  symbols in the Table \ref{notation}.
 
 
@@ -154,7 +158,7 @@ order of the routers underpinning it The time complexity of
 DMPA does not depend on the degree of the calculating router.
 However, the protection ration of DMPA is still lower than
 the DC.
-Unlike the above works, however, our main concerns are computational efficiency and network availability, as these are critical for the routing protection algorithm. Based on the existing work on this research area, we for the first time propose two routing protection algorithms (IAC and IAC-NA) whose complexity is less than that of Dijkstra’s algorithm and also have a high network availability.
+Unlike the above works, however, our main concerns are computational efficiency and network availability, as these are critical for the routing protection algorithm. Based on the existing work on this research area, we for the first time propose two routing protection algorithms (IAC and IAC) whose complexity is less than that of Dijkstra’s algorithm and also have a high network availability.
 
 Unlike the above works, however, our main concerns
 are computational efficiency and protection ratio, as these are
@@ -191,7 +195,7 @@ TBFH&$\times$&$-$&$\times$\\
 \hline  %在第一行和第二行之间绘制横线
 IAC&$-$ &$-$&$\surd$\\
 \hline % 在表格最下方绘制横线
-IAC-NA&$\surd$ &$\surd$&$\surd$\\
+IAC&$\surd$ &$\surd$&$\surd$\\
 \hline % 在表格最下方绘制横线
 \end{tabular}
 
@@ -205,7 +209,7 @@ compute all the next hop set satisfied the corresponding rule,
 the $\times$ means the algorithm can
 compute the partial  next hop set satisfied the corresponding rule,
 while the $-$ represents the algorithm cannot compute the next hop set of corresponding rule.
-As shown in table \ref{britetable1}, only IAC-NA can be applied to three LFA rules and can compute all the next hops  that meet the LFA rule. The other three algorithms do not support NPC rule.
+As shown in table \ref{britetable1}, only IAC can be applied to three LFA rules and can compute all the next hops  that meet the LFA rule. The other three algorithms do not support NPC rule.
 Both of the DMPA and TBFH  can be  used to deal with LFC and DC rule. However  DMPA and TBFH cannot compute all the next hops which satisfied LFC and DC rules.
 
 

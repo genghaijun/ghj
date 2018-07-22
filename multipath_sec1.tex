@@ -28,7 +28,7 @@ if there are stringent demand on bandwidth or load balancing.
 
 %why link-state routing matters
 Most ISPs use a link-state routing protocol, such as OSPF or IS-IS, in their intra-domain system.
-large data center networks are also incorporating link-state routing into their Layer 2 network architecture \cite{perlman2011introduction, TRILL} 
+large data center networks are also incorporating link-state routing into their Layer 2 network architecture \cite{perlman2011introduction, TRILL}
 to achieve benefits like transparent node movement, shortest path routing, traffic engineering and multipath.
 
 
@@ -43,20 +43,19 @@ have been proposed towards this direction, they reduce computational complexity 
 a fair portion of candidate alternates that can be utilized, thus sacrifice their capability of failure repair and
 redundancy provision.
 
-In this paper, we propose Incremental Alternates Computation based on Negative
-Augmentation (IAC-NA), an algorithm that can
+In this paper, we propose Incremental Alternates Computation (IAC), an algorithm that can
 compute the full set of alternates within a given graph in a highly efficient way.
-Actually, IAC-NA is a modified incremental shortest-path-first (iSPF) computation
+Actually, IAC is a modified incremental shortest-path-first (iSPF) computation
 on an augmented graph with respect to the given graph, where the sign of some link cost
-is simply reversed, i.e., from $x$ to $-x$. We formally prove the property of IAC-NA,
+is simply reversed, i.e., from $x$ to $-x$. We formally prove the property of IAC,
 and use both synthesized and real-world topologies to evaluate its performance.
-Compared with the naive implementation in typical commercial routers, IAC-NA achieves the same coverage of alternates but  
-with at least an $O(k)$ reduction in both time and memory consumption, where $k$ is the degree of a node. 
-Compared with TBFH and DMPA, which are latest algorithms proposed for acceleration of computation, 
-IAC-NA not only reduces the computation time by around an order of magnitude
-and finds 50\% more available alternates in typical real-world topologies, but also 
+Compared with the naive implementation in typical commercial routers, IAC achieves the same coverage of alternates but
+with at least an $O(k)$ reduction in both time and memory consumption, where $k$ is the degree of a node.
+Compared with TBFH and DMPA, which are latest algorithms proposed for acceleration of computation,
+IAC not only reduces the computation time by around an order of magnitude
+and finds 50\% more available alternates in typical real-world topologies, but also
 provides  node protection capabilities that TBFH and DMPA cannot provide.
-These advantages make IAC-NA a good candidate for both traditional telecommunication networks
+These advantages make IAC a good candidate for both traditional telecommunication networks
 and emerging complex networks that require failure repair and load balancing
 in a highly dynamic environment.
 \iffalse
@@ -64,21 +63,21 @@ Our contributions are summarized as follows:
 \begin{itemize}
 \item We propose an incremental alternates computation (IAC) algorithm based on iSPF, which can compute all the next hops satisfied DC rule. %, where isotonicity plays an important role.
 \item Theoretical analysis indicates that the computation complexity of IAC is less than that of constructing a shortest path tree and  can provide the same network availability as DC.
-\item We propose an IAC-NA algorithm which can  efficiently calculate
+\item We propose an IAC algorithm which can  efficiently calculate
 the minimum cost of all its neighbors to all other nodes of the
 network on the shortest path tree rooted at the compute node. Therefore
-IAC-NA can completely and efficiently deal with LFA problem.
-%\item An efficient incremental deployment method is provided for  IAC and IAC-NA.
-\item Theoretical analysis and experiments results indicate that IAC-NA can provide the same network availability as LFA.
+IAC can completely and efficiently deal with LFA problem.
+%\item An efficient incremental deployment method is provided for  IAC and IAC.
+\item Theoretical analysis and experiments results indicate that IAC can provide the same network availability as LFA.
 \end{itemize}
 \fi
 
-The rest of the paper is constructed as follows. 
+The rest of the paper is constructed as follows.
 Section \ref{background} introduces background of Loop Free Alternates with basic graph model and notations.
 
 {\em Section \ref{model}  describes the network model.
 Section \ref{back} describes the iSPF and LFA in detail.
-Section \ref{iac} and section \ref{iacna} respectively present the incremental alternative computation algorithm and incremental alternate computation with negative augmentation algorithm.
+Section  \ref{iacna}  present the incremental alternative computation algorithm.
 In the section \ref{evaluation}, we evaluate our algorithms on three different types of topology.  And finally section \ref{conclusion} concludes the paper.
 }
 
