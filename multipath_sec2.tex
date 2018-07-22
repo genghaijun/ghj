@@ -3,7 +3,7 @@
 Nowadays, network failures have become routine events rather than exceptions.
 Improving IP network resilience has drawn great attention
 from both industry and academia.  Many schemes have been proposed to deal with this problem from different aspects, from physical level methods such as optical routing protection, to IP level approaches.
-IETF has drafted a framework named IP Fast ReRoute (IPFRR) \cite{IPFRR, FastReroute, not-via},
+IETF has drafted a framework named IP Fast ReRoute (IPFRR) \cite{IPFRR, LFA, not-via},
 which aims to provide fast recovery from network failures.
 The basic idea is that, when a node detects the failure of a link directly
 connected to itself, it can immediate switch to backup paths that are
@@ -33,14 +33,14 @@ header to reroute for non-disconnecting failures
 precompute backup paths mechanisms which reroute packets to precomputed repair paths.
 \fi
 
-Many schemes \cite{moy1998rfc, FastReroute, TBFH, 20094212373257, vo2013routing, Yang_Source:2006, 20071710572557, 20114214442265, 20122315088660} that provide hop-by-hop loop-free routing are applicable in IPFRR (i.e., in the first category).
-%including Equal-Cost Multipath Routing (ECMP) \cite{moy1998rfc}, Loop-free Alternate (LFA)\cite{FastReroute}, TBFH \cite{TBFH}, MARA \cite{20094212373257}, joker links \cite{vo2013routing},
+Many schemes \cite{moy1998rfc, LFA, TBFH, 20094212373257, vo2013routing, Yang_Source:2006, 20071710572557, 20114214442265, 20122315088660} that provide hop-by-hop loop-free routing are applicable in IPFRR (i.e., in the first category).
+%including Equal-Cost Multipath Routing (ECMP) \cite{moy1998rfc}, Loop-free Alternate (LFA)\cite{LFA}, TBFH \cite{TBFH}, MARA \cite{20094212373257}, joker links \cite{vo2013routing},
 Equal-Cost Multipath Routing (ECMP) \cite{moy1998rfc} allows packets to be forwarded along multiple paths of equal cost,
 which can be specifically tuned by network operators.
 However, ECMP cannot offer good availability since it is
 limited to cases where equal cost paths exist.
 %The idea behind LFA is to reroute affected packets to an alternate next-hop when a failure is detected.
-Loop-free Alternate (LFA)\cite{FastReroute} proposes several basic criteria for selecting a proper next-hop, including Loop-free Criterion (LFC), Node Protection Condition (NPC) and Downstream path Criterion (DC), to guarantee loop-freeness.
+Loop-free Alternate (LFA)\cite{LFA} proposes several basic criteria for selecting a proper next-hop, including Loop-free Criterion (LFC), Node Protection Condition (NPC) and Downstream path Criterion (DC), to guarantee loop-freeness.
 However, naively verifying these criteria requires multiple Shortest-Path Trees (SPT),
 and the cost increases proportionally to the degree of a node (one SPT for each neighbor).
 Routing deflection \cite{Yang_Source:2006}  relaxes DC by taking nodes two hops away into account,
