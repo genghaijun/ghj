@@ -674,7 +674,8 @@ ENQUEUE$(Q,(u,(v,newdist,\delta))$\;}
 }
  $L(c,x)\leftarrow weight$\;
 }
-\For {$d\in V, d \neq c$}{
+\For {$d\in V, d \neq c$}
+{
 \For{$x\in N(c)$}
 {
  \If {LFA is satisfied}
@@ -1004,8 +1005,9 @@ ENQUEUE$(Q,(u,(v,newdist,\delta))$\;}
 \fi
 Since the execution process of algorithm INC and INC-NA is basically similar, we will not repeat the same part in both of the algorithms.
 Below, we will list the differences between the two algorithms. The line 7 in INC-NA is changed into $L(c,x)=-L(c,x)$. The line 22 in INC-NA is changed into Compute $C_x(v)$ using Theorem \ref{computeneighborcost}.
+At last lines 29-32 are added to compute LFA next hop set for node $c$.
 %However, for the completeness of the description, we still lists the pseudo code of the algorithm INC-NA.
-%At last lines 29-32 are added to compute LFA next hop set for node $c$.
+%
 \iffalse
 We will elaborate the algorithm in detail in this section.
 According to the above discussions, algorithm INC is proposed to compute the backup next-hop set which satisfies the DC rule. The inputs of the INC are the network topology $G=(V,E)$ and $T_{c}$, and the output is the backup next-hop set from node $c$ to all  other nodes in the network.

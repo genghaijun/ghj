@@ -44,10 +44,14 @@
 \usepackage{color}
 \usepackage{framed}
 \usepackage{color, soul}
+\soulregister\cite7
+\soulregister\citep7
+\soulregister\citet7
+\soulregister\ref7
+\soulregister\pageref7
 \sethlcolor{yellow}
-%\definecolor{shadecolor}{gray}{0.85}
 \usepackage{color}
-   % \definecolor{gray}{rgb}{0.9,0.9,0.9}
+% \definecolor{gray}{rgb}{0.9,0.9,0.9}
 %\usepackage{CTEX}
 %\usepackage{algorithm}
 %\usepackage[noend]{algorithmic}
@@ -383,9 +387,9 @@ compute the full set of alternates based on incremental shortest path computatio
 Compared with the naive implementation in typical commercial routers, IAC-NA achieves the same coverage of alternates but
 with at least an $O(k)$ reduction in both time and memory consumption, where $k$ is the degree of a node.
 Compared with TBFH and DMPA, which are latest algorithms proposed for acceleration of computation,
-IAC-NA not only achieves around $3 \sim 6$ times reduction in computation time
-and finds xx times of available alternates in typical real-world topologies, but also
-provides link and node protection capabilities that TBFH and DMPA cannot provide.
+IAC-NA not only achieves around 10 times reduction in computation time
+and finds 1.5 times of available alternates in typical real-world topologies, but also
+provides node protection capabilities that TBFH and DMPA cannot provide.
 These advantages make IAC-NA a good candidate for large complex networks that require failure protection and load balancing
 in a highly dynamic environment.
 
