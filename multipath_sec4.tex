@@ -19,12 +19,12 @@ i5 CPU, 1.7GHz and 1.5G Memory.
 Due to space
 constraints, we only present the results
 for DC rule in the experiment, while the results for LFC and NPC
-are similar. 
+are similar.
 %Because neither DMPA nor TBFH can implement the NPC rule,  so in the experiment we only compare the performance of the four methods on achieving  DC rule.
 
 %Due to space constraints, we only list data for DC rules.
 %Because neither DMPA nor TBFH can implement the NPC rule, IAC can only implement DC rule, so in the experiment we only compare the performance of
-%the four methods on achieving  DC rule. 
+%the four methods on achieving  DC rule.
 
 %Because IAC and IAC-NA have similar performance in realizing DC rule, IAC/IAC-NA is used to represent these two algorithms in the following section.
 %In the following section, we will use IAC/IAC-NA to denote the IAC and IAC-NA.
@@ -55,14 +55,15 @@ m&NodePlacement &GrowthTypem & ${alpha}$  \\
 \end{center}
 \end{table}
 \subsection{Computation complexity}
-Theoretical analysis has indicated that the time complexity of IAC/IAC-NA is less than that of building of a shortest path tree, which has a great advantage over DC, TBFH and DMPA. In order to further verify the computational performance, we make simulations on different topologies. In this section, we evaluate the computational overhead of different algorithms. In order to avoid the uncertain factors impact the algorithm¡¯s performance. The computational overhead of an algorithm is defined as the ratio of computation time of the algorithm to that of SPF (shortest path first).
+Theoretical analysis has indicated that the time complexity of IAC is less than that of building of a shortest path tree, which has a great advantage over Naive, TBFH and DMPA. In order to further verify the computational performance, we make simulations on different topologies. In this section, we evaluate the computational overhead of different algorithms. In order to avoid the uncertain factors impact the algorithm¡¯s performance. The computational overhead of an algorithm is defined as the ratio of computation time of the algorithm to that of SPF (shortest path first).
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{realcomputationoverhead}
 %\includegraphics[width=3in]{lfaexample}
-\caption{Computation overhead on real topologies}
+\caption{Computation overhead on real and measured topologies}
 \label{realtopologytime}
 \end{figure}
+\iffalse
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{rocketcomputationoverhead}
@@ -70,7 +71,8 @@ Theoretical analysis has indicated that the time complexity of IAC/IAC-NA is les
 \caption{Computation overhead on  measured topologies}
 \label{rockettopologytime}
 \end{figure}
-Fig. \ref{realtopologytime} and Fig. \ref{rockettopologytime} respectively indicate the computational overhead obtained by different algorithms on real and Rocketfuel topologies. From the Fig. \ref{realtopologytime} and Fig. \ref{rockettopologytime}, we can see that IAC/IAC-NA has the lowest computation overhead among all the algorithms. The computation overhead of IAC/IAC-NA is less than computing a SPT, while DMPA need to construct a SPT and TBFH need to compute two SPTs. The computation overhead of DC is proportionally to the degree of the network average node degree.
+\fi
+Fig. \ref{realtopologytime} indicates the computational overhead obtained by different algorithms on real and Rocketfuel topologies. From the Fig. \ref{realtopologytime}, we can see that IAC has the lowest computation overhead among all the algorithms. The computation overhead of IAC is less than computing a SPT, while DMPA need to construct a SPT and TBFH need to compute two SPTs. The computation overhead of DC is proportionally to the average node degree of the network.
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{tscomputationoverhead}
@@ -160,10 +162,10 @@ Fig. \ref{realtopologytime} and Fig. \ref{rockettopologytime} respectively indic
 \label{sprint}
 \end{figure}
 \fi
-Fig. \ref{topologysize200} illustrates the relationship between the computation overhead and topology size on generated topologies when the average node degree is 6. As Fig. \ref{topologysize200} shows, the computation overhead of all the algorithms does not depend on the topology size. The computation overhead of IAC/IAC-NA is lowest among all the algorithms.
+Fig. \ref{topologysize200} illustrates the relationship between the computation overhead and topology size on generated topologies when the average node degree is 6. As Fig. \ref{topologysize200} shows, the computation overhead of all the algorithms does not depend on the topology size. The computation overhead of IAC is lowest among all the algorithms.
 
 Fig. \ref{nodedegree6} presents the relationship between the computation overhead and average node degree on generated topologies when the topology size is 200.
-As the average node degree increases, the computation overhead of DC increases accordingly. And also IAC/IAC-NA has the highest performance among all the algorithms. Therefore, the above experiment results are consistent with the theoretical analysis described above.
+As the average node degree increases, the computation overhead of Naive increases accordingly. And also IAC has the highest performance among all the algorithms. Therefore, the above experiment results are consistent with the theoretical analysis described above.
 \iffalse
  \begin{table}[h]
 \centering
@@ -208,7 +210,7 @@ describes the number of opportunities packets can be deflected off the
 shortest path.
 For both of the above two metrics, larger is better.
 
-Fig. \ref{prreal} and Fig. \ref{prrocket} respectively depict the protection ratio obtained by different algorithms on real and measured topologies.
+Fig. \ref{prreal} depicts the protection ratio obtained by different algorithms on real and measured topologies.
 Fig. \ref{prd} presents the relationship between the protection ratio and average node degree on generated topologies
 when the topology size is 200.
 Fig .\ref{realnumber} and Fig. \ref{rocketnumber} depicts  the average number of backup next hops obtained by different algorithms on real and measured topologies.
@@ -217,15 +219,17 @@ the cumulative distribution of the  number of backup next hops for CERNET2 and T
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{protectionratioreal}
-\caption{Protection ratio on real topologies}
+\caption{Protection ratio on real and measured topologies}
 \label{prreal}
 \end{figure}
+\iffalse
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{protectionratiorocket}
 \caption{Protection ratio on measured topologies}
 \label{prrocket}
 \end{figure}
+\fi
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{protectionratiodegree}
@@ -324,7 +328,7 @@ A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)}
 \hline
 &\multirow{2}{*}{Network}& \multicolumn{4}{|c}{Network Availability($\%$)} \\
 \cline{3-6}
-& & IAC/IAC-NA &DC & TBFH &  DMPA\\
+& & IAC &DC & TBFH &  DMPA\\
 \hline
 \multirow{5}{*}{Real}
 & CERNET2& 99.93&99.93 &97.37& 98.54 \\
