@@ -119,13 +119,13 @@ one node, is appended to the new SPT. All of the above nodes are marked  \textsl
         \begin{subfigure}[b]{0.33\textwidth}
                 \centering
                 \includegraphics{ispfchange}
-                \caption{$T_{c}(c,a,2)$ }
+                \caption{shortest path tree when the $L(c,a)=2$}
                 \label{spttreechange12}
         \end{subfigure}
          \begin{subfigure}[b]{0.33\textwidth}
                 \centering
                 \includegraphics{ispfchange2}
-                \caption{$T_{c}(c,a,-8)$}
+                \caption{$T_{c}^{G_{(c,a)}}$}
                 \label{spttreechange13}
         \end{subfigure}
         \caption{An example for explaining iSPF}
@@ -184,7 +184,10 @@ The new shortest path tree is given in the
 Fig. \ref{spttreechange13}.
 \subsection{Some properties of the iSPF}
 \begin{definition}
-Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}^w$, we say a node $d$ change its position in $T_c^{G'}$, if and only if the shortest path from $c$ to $d$ is different in the  two trees
+Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$,
+for any node $d\in V, d \neq c, d\in D_c(x)$,
+we say the node $d$ change its position in $T_c^{G'}$, if and only if the
+$d\in D_c^{G'}(x)$ is satisfied.
 \end{definition}
 \iffalse
 \begin{theorem}\label{newspt0}
@@ -246,8 +249,8 @@ if the
 
 We have already known that Dijkstra's algorithm \cite{Dijkstra1959A} is not applicable with the networks whose link have negative weights. From the above example, when the link $(c,a)$ change its weight to $-L(c,a)$, the correct new shortest path tree can be constructed using iSPF. Theorem \ref{newspt} indicates that this is not a special case.
 \begin{theorem}\label{newspt}
-Given a shortest path tree $T_c$ and a network topology $G'=G_{(c,x)}^{-L(c,x)}$,
-when the edge $(c,x)\in T_c$ change its weight to $-L(c,x)$, the iSPF algorithm can get the correct new SPT $T_c^{G'}$.
+Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$,
+the iSPF algorithm can get the correct SPT $T_c^{G'}$.
 \end{theorem}
 \begin{proof}
 We will use inductive reasoning to prove this theorem.\\
@@ -259,7 +262,7 @@ $(x,(c,-L(c,x),-2*L(c,x)))$. Because there is no node can decrease its cost by m
 \end{proof}
 
 \begin{theorem}\label{newsptposition}
-Given a shortest path tree $T_c$ and a network topology $G'=G_{(c,x)}^{-L(c,x)}$, for any node $d(d\neq c, d\neq x)$, where $x \in N(c)$
+Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d(d\neq c, d\neq x)$
 \begin{itemize}
 \item[(1)] If the position of the node $d$ in the new SPT $T_c^{G'}$ is  changed, then we have  $C_x(d)<C_x(c)+C_c(d)$.
  \item[(2)] If $C_x(d)<C_x(c)+C_c(d)$ is satisfied,  then the position of the node $d$ in the new SPT $T_c^{G'}$ will be changed.
@@ -340,7 +343,7 @@ From Theorem \ref{newsptposition}, we can see that if the shortest path from nei
 The node $d$  must be the descendant of node $x$ in the new shortest path tree when the  weight of $(c,x)$ is changed to $-L(c,x)$.
 Contrarily, if the node $c$ is included in the shortest path from neighboring node $x$ to $v$. The node $d$  must not be the descendant of node $x$ in the new shortest path tree when the  weight of $(c,x)$ is changed to $-L(c,x)$.
 \begin{lemma}\label{fan}
-Given a shortest path tree $T_c$, for any node $d(d\neq c, d\neq x)$, where $x \in N(c)$, if  the position of the node $d$ in the new SPT $T_c^{G'}$ is not changed, then we have  $C_x(d)=C_x(c)+C_c(d)$.
+Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d(d\neq c, d\neq x)$,  if  the position of the node $d$ in the new SPT $T_c^{G'}$ is not changed, then we have  $C_x(d)=C_x(c)+C_c(d)$.
 \end{lemma}
 \begin{proof}
 From Theorem \ref{newsptposition}, we have $C_x(d)\geq C_x(c)+C_c(d)$ when the position of the node $d$ in the new SPT $T_c^{G'}$ is not changed.
@@ -536,7 +539,7 @@ Our main concerns are computational efficiency and network availability, as thes
 \label{algorithm}
 For any node $x\in N(c)$, if we can quickly calculate $C_x(v), v\in V$ in the $T_{c}$, then a efficient LFA-based method can be achieved. Therefore, the problem that needs to be solved in this paper can be described as follows: For any node $x\in N(c)$,  if $T_{c}$ it is given, whether could we find an efficient algorithm which can quickly compute $C_x(v), v\in V$ or not. Theorem \ref{computeneighborcost} answers how to solve the above problem and gives proof.
 \begin{theorem}\label{computeneighborcost}
-Given a $T_{c}$ and a network topology $G'=G_{(c,x)}^{-L(c,x)}$, for any node $d(d\neq c, d\neq x)$ where $x \in N(c)$,
+Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d(d\neq c, d\neq x)$,
 \begin{itemize}
 \item[(1)] if $d \in D_c(x)$, then we have $C_{x}(d)=C_{c}(d)-C_{c}(x)$.
 \item[(2)] if $d \notin D_c(x)$ and $d \in D_c^{G'}(x)$, then we have
@@ -737,7 +740,7 @@ by the EXTRACTMIN operation, where node ID is  used as tie breaking.
 It is then added to the tree, marked as $visited$, and used as the $current\ node$ in the iteration,
 while its attribute like cost  is also set to
 a permanent value (lines $19 \sim 21$).
-The corresponding cost $C_x(v)$ is computed 
+The corresponding cost $C_x(v)$ is computed
 according to Theorem \ref{computeneighborcost} (line 22).
 For each unvisited neighbor $u$ of $v$,
 we compute the  new tentative cost  of $u$. The node $u$ will be inserted into
@@ -923,7 +926,7 @@ which is similar to the complexity of a full shortest path computation.
          \begin{subfigure}[b]{0.32\textwidth}
                 \centering
                 \includegraphics{newsptc}
-                \caption{$T_{c}(c,a,-3)$}
+                \caption{$T_{c}^{G_{(c,a)}}$}
                 \label{spttreechange23}
         \end{subfigure}
         \caption{An example for explaining  Theorem \ref{computeneighborcost}}
