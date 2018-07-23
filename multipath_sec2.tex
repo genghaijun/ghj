@@ -83,10 +83,10 @@ then each direct child $x$ of $c$ is $c$'s next hop for packets destined to $x$'
 i.e., ``$N_{c}^{G}(v)=x$ iff $(c,x) \in E^{G}$ and $v \in D_{c}^{G}(x)$''.
 For failure repair or multipath transmission,  more appropriate elements should be added to $N_{c}^{G}(v)$.
 
-To support the algorithm design, we also define a dual graph $G_{(u,v)}$ for the prime graph $G$, 
-where the only difference between them is a simple sign reversion of link $(u,v)$'s cost, 
-i.e., $L^{G}(u,v)=-L^{G_{(u,v)}}(u,v)$.
-These notations are summarized in Table \ref{notation}, 
+To support the algorithm design, we also define a dual graph $G_{(u,v)}$ for the prime graph $G$,
+where the only difference between them is a simple sign reversion of link $(u,v)$'s cost,
+i.e., $L^{G_{(u,v)}}(u,v)=-L^{G}(u,v)$.
+These notations are summarized in Table \ref{notation},
 and when the graph is clear from context, we simply omit the superscript $G$ from them.
 
 \begin{table*}[t]
