@@ -536,6 +536,29 @@ We first provide two theorems before formally describing the details of the algo
 
 
 Our main concerns are computational efficiency and network availability, as these are critical for the Algorithm. Based on the existing work on this research area, we for the first time propose an algorithm whose complexity is less than that of Dijkstra's algorithm and without degrading the  network availability of LFA.
+\begin{figure*}[t]
+        \centering
+        \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics{nettopology}
+                \caption{network topology}
+              \label{spttree21}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics{sptc}
+                \caption{$T_{c}$}
+                \label{spttreechange22}
+        \end{subfigure}
+         \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics{newsptc}
+                \caption{$T_{c}^{G_{(c,a)}}$}
+                \label{spttreechange23}
+        \end{subfigure}
+        \caption{An example for explaining  Theorem \ref{computeneighborcost}}
+        \label{theoremexample}
+\end{figure*}
 \label{algorithm}
 For any node $x\in N(c)$, if we can quickly calculate $C_x(v), v\in V$ in the $T_{c}$, then a efficient LFA-based method can be achieved. Therefore, the problem that needs to be solved in this paper can be described as follows: For any node $x\in N(c)$,  if $T_{c}$ it is given, whether could we find an efficient algorithm which can quickly compute $C_x(v), v\in V$ or not. Theorem \ref{computeneighborcost} answers how to solve the above problem and gives proof.
 \begin{theorem}\label{computeneighborcost}
@@ -558,9 +581,9 @@ Because $C_{c}^{G'}(x)=-C_c(x)$, we have
 $C_{x}(d)=C_{c}^{G'}(d)+C_c(x)$.\\
 (3)From lemma \ref{fan}, we can get $C_{x}(d)=C_{c}(d)+C_c(x)$.
 \end{proof}
-We will employ a simple example to explain the Theorem \ref{computeneighborcost}. Fig. \ref{spttree21} shows a network topology consisting of 5 nodes and 6 edges. Fig. \ref{spttreechange22} shows the shortest path tree $T_c$ rooted at the node $c$. Figure  \ref{spttreechange23}shows the shortest path tree constructed using iSPF when the weight of link $(c,a)$ is changed to -3. We have $d\in D(T_c,a)$ from Fig. \ref{spttreechange22} , so $C_a(d)=C_c(d)-C_c(a)=3$.
-Because $e \notin D_c(a)$ and $e \in D_c^{G_{(c,a)}^{-3}}(a)$, we have $C_a(e)=C_c^{G_{(c,a)}^-3}(e)+C_c(a)=6$ from Theorem \ref{computeneighborcost}.
-Since $b \notin D_c(a)$ and $b \notin D_c^{G_{(c,b)}^{-5}}(a)$, we have $C_a(b)=C_a(c)+C_c(b)=8$ from Theorem \ref{computeneighborcost}.
+We will employ a simple example to explain the Theorem \ref{computeneighborcost}. Fig. \ref{spttree21} shows a network topology consisting of 5 nodes and 6 edges. Fig. \ref{spttreechange22} shows the shortest path tree $T_c$ rooted at the node $c$. Figure  \ref{spttreechange23}shows the shortest path tree constructed using iSPF when the weight of link $(c,a)$ is changed to -3. We have $d\in D_c(a)$ from Fig. \ref{spttreechange22} , so $C_a(d)=C_c(d)-C_c(a)=3$.
+Because $e \notin D_c(a)$ and $e \in D_c^{G_{(c,a)}}(a)$, we have $C_a(e)=C_c^{G_{(c,a)}}(e)+C_c(a)=6$ from Theorem \ref{computeneighborcost}.
+Since $b \notin D_c(a)$ and $b \notin D_c^{G_{(c,a)}}(a)$, we have $C_a(b)=C_a(c)+C_c(b)=8$ from Theorem \ref{computeneighborcost}.
 \iffalse
 \begin{theorem}\label{dcextend}
 Given a computing node $c$ and $T_{c}$, for any node $x \in N(c)$ , $T'(c)$ is the new shortest path tree rooted at node $c$  when the weight of link $(c,x)$ is changed to 0. For any node $v(v\neq c, v\neq x)$, if $v \notin D(T_{c},x)$ and $v \in D(T'_{c},x)$, then we can get $C_{x}(v)<C_{c}(v)$.
@@ -909,29 +932,7 @@ which is similar to the complexity of a full shortest path computation.
 \label{realandrockettopologytime}
 \end{figure}
 \fi
-\begin{figure*}[t]
-        \centering
-        \begin{subfigure}[b]{0.32\textwidth}
-                \centering
-                \includegraphics{nettopology}
-                \caption{network topology}
-              \label{spttree21}
-        \end{subfigure}
-        \begin{subfigure}[b]{0.32\textwidth}
-                \centering
-                \includegraphics{sptc}
-                \caption{$T_{c}$}
-                \label{spttreechange22}
-        \end{subfigure}
-         \begin{subfigure}[b]{0.32\textwidth}
-                \centering
-                \includegraphics{newsptc}
-                \caption{$T_{c}^{G_{(c,a)}}$}
-                \label{spttreechange23}
-        \end{subfigure}
-        \caption{An example for explaining  Theorem \ref{computeneighborcost}}
-        \label{theoremexample}
-\end{figure*}
+
 \iffalse
 \subsection{IAC-NC}
 \iffalse
