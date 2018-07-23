@@ -55,7 +55,7 @@ and offer forwarding alternatives for each permutation.
 Path splicing\cite{Pathsplicing:2008} creates a set of slices for the network based on random
 link-weight perturbations, and end systems control which slices the routers should use
 by embedding control bits in packet headers.
-Loops can also be avoided by computing Directed Acyclic Graphs (DAG) 
+Loops can also be avoided by computing Directed Acyclic Graphs (DAG)
 \cite{20094212373257,  20114214442265, cho2012independent},
 but the complexity also increases significantly.
 
@@ -181,35 +181,35 @@ since $C_{x}(c)+C_{c}(d)$ is the lowest cost of any path from $x$ to $d$ that pa
 So the protection route will bypass $c$, thus bypass link $(c,b)$ too.
 
 \textbf{NPC:}
-$x$ can be chosen when $C_x(d)<C_x(b)+C_b(d)$, 
+$x$ can be chosen when $C_x(d)<C_x(b)+C_b(d)$,
 which means the protection route will bypass $b$, thus also bypass link $(c,b)$.
 
 \textbf{DC:}
 $x$ can be chosen when $C_x(d)<C_c(d)$,
-which means the protection route will bypass $c$ (and link $(c,b)$), 
-and the remaining cost to the destination strictly decreases. 
+which means the protection route will bypass $c$ (and link $(c,b)$),
+and the remaining cost to the destination strictly decreases.
 
-From the explanation above, we can see all of the three criteria can bypass a link failure, 
-while \textbf{NPC} can also bypass a node failure. 
+From the explanation above, we can see all of the three criteria can bypass a link failure,
+while \textbf{NPC} can also bypass a node failure.
 In addition, \textbf{DC} has a nice property that even when used simultaneously by multiple nodes,
-there will be no loop due to the decreasing cost to the destination, 
-while \textbf{LFC} and \textbf{NPC} can only be used by node $c$ locally. 
+there will be no loop due to the decreasing cost to the destination,
+while \textbf{LFC} and \textbf{NPC} can only be used by node $c$ locally.
 This property makes \textbf{DC} useful in building multipath routing algorithms \cite{TBFH, dmpa, Yang_Source:2006}.
- 
+
 
 As in the concrete example of Fig. \ref{lfaexample}, let $c$ be the computing node.
-For all packets destined to $d$, 
+For all packets destined to $d$,
 $c$ selects node $b$ as its default next hop.
-Since $C_a(d)=5, C_{a}(c)=2$, and $C_{c}(d)=4$, node $a$ satisfies \textbf{LFC}, i.e., $C_a(d)<C_a(c)+C_c(d)$, 
-and can be used as an alternate next hop if the link $(c,b)$ fails. 
-However, node $a$ does not satisfy \textbf{NPC} since $C_a(d)=C_a(b)+C_b(d)$, 
+Since $C_a(d)=5, C_{a}(c)=2$, and $C_{c}(d)=4$, node $a$ satisfies \textbf{LFC}, i.e., $C_a(d)<C_a(c)+C_c(d)$,
+and can be used as an alternate next hop if the link $(c,b)$ fails.
+However, node $a$ does not satisfy \textbf{NPC} since $C_a(d)=C_a(b)+C_b(d)$,
 so if the failed component is node $b$, $a$ cannot be used as an alternate.
-Similarly, since $C_a(d)>C_c(d)$, $a$ cannot be used in \textbf{DC} based multipath routing schemes. 
+Similarly, since $C_a(d)>C_c(d)$, $a$ cannot be used in \textbf{DC} based multipath routing schemes.
 
 Now consider another destination $e$, and the default next hop on $c$ for destination $e$ will now be $a$.
-Since $C_b(e)<C_b(c)+C_c(e)$, $C_b(e)<C_b(a)+C_a(e)$, and $C_{b}(e)<C_{c}(e)$, 
-$b$ is a valid next hop for destination $e$ according to anyone of \textbf{LFC}, \textbf{NPC}, and \textbf{DC}, 
-so it can be used for local route protection from link failure and node failure, 
+Since $C_b(e)<C_b(c)+C_c(e)$, $C_b(e)<C_b(a)+C_a(e)$, and $C_{b}(e)<C_{c}(e)$,
+$b$ is a valid next hop for destination $e$ according to anyone of \textbf{LFC}, \textbf{NPC}, and \textbf{DC},
+so it can be used for local route protection from link failure and node failure,
 and for \textbf{DC} based  multipath routing.
 
 
@@ -264,21 +264,21 @@ IAC&$\surd$ &$\surd$&$\surd$\\
 \end{table}
 
 
-A comparison of several existing solutions and ours can be
+A comparison of several existing solutions and our's can be
 seen in Table \ref{britetable1}.
 In Table \ref{britetable1}, the $\surd$ describes the algorithm that can
 compute all the next hop set satisfied the corresponding rule,
 the $\times$ means the algorithm can
 compute the partial  next hop set satisfied the corresponding rule,
 while the $-$ represents the algorithm cannot compute the next hop set of corresponding rule.
-As shown in table \ref{britetable1}, only IAC can be applied to three LFA rules and can compute all the next hops  that meet the LFA rule. The other three algorithms do not support NPC rule.
+As shown in table \ref{britetable1}, only IAC can be applied to three LFA rules and can compute all the next hops  that meet the LFA rule. The other two algorithms do not support NPC rule.
 Both of the DMPA and TBFH  can be  used to deal with LFC and DC rule. However  DMPA and TBFH cannot compute all the next hops which satisfied LFC and DC rules.
 
 
 Evaluation studies \cite{Gjoka2007Evaluation,Menth20101300} show that LFA protects against
 many more failures than ECMP. Nevertheless, they also reveal that, on
-average, LFA offers protection against only about 90\%
-of all possible link failures and less than 75\% of node failures
+average, LFA offers protection against only about 70\%
+of all possible link failures and less than 60\% of node failures
 Despite the limited protection it achieves, LFA is already supported by some equipment vendors \cite{cisco,Juniper}. With that in mind,
 Retvari et al. \cite{lfarevisited} suggested that networks should be augmented with additional links to ensure that LFA can provide recovery
 for all possible failures.
