@@ -154,8 +154,12 @@ in the notations when the network topology is $G$.
 
 Loop-free Alternate (LFA)\cite{LFA} proposes several criteria for selecting  proper next hops,
 including the Loop-free Criterion (LFC), the Node Protection Condition (NPC) and the Downstream Criterion (DC).
-These criteria are designed to guarantee loop-freeness when alternative next hops are used for different failure scenarios,
-and can be explained as follows.
+These criteria are designed to provide alternative paths bypassing the failed component, 
+and guarantee loop-freeness. In what follows, we describe the criteria with regard to a node $c$ receiving 
+packets destined to node $d$ ($c \ne d$), where $c$ detects that the default next hop for $d$ cannot be used, 
+and has to find an alternate next hop among $c$'s neighboring nodes. 
+The corresponding graph is illustrated in Fig. \ref{lfaexample}.
+
 
 \begin{figure}[t]
 \centering
@@ -166,14 +170,15 @@ and can be explained as follows.
 \end{figure}
 
 
-LFC can protect against a single link failure, NPC can protect against a
-single node failure, while DC is applicable to more complex failure scenarios.
-We will now dive into the details of LFA.
+%LFC can protect against a single link failure, NPC can protect against a
+%single node failure, while DC is applicable to more complex failure scenarios.
+%We will now dive into the details of LFA.
 
 \textbf{LFC:}
-For packets destined to a destination $v$, node $c$ ($c \ne v$)
-can forward them to its any neighboring node $x$ as long as $C_x(v)<C_c(v)+C_x(c)$,
-and there will be no forwarding loop in the induced forwarding path.
+node $c$ can choose any neighboring node $x$ of $c$ satisfying $C_x(d)<C_x(c)+C_{c}(d)$, 
+which means when packets are routed from $x$ to $d$, they will not be routed back to $c$, 
+since $C_{x}(c)+C_{c}(d)$ is the lowest cost of any path from $x$ to $d$ that passing $c$.  
+
 
 \textbf{NPC:}
 For packets destined to a destination $v$, node $c$ ($c \ne v$)
