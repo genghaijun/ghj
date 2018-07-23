@@ -341,7 +341,7 @@ Given a $T_{c}$, $x \in N(c)$, for any node $v(v\neq c, v\neq x)$
 %$v\in D(T_c(c,x,-L(c,x)),B_c(v))$,
 From Theorem \ref{newsptposition}, we can see that if the shortest path from neighboring node $x$ to $d$ is not going through node $c$.
 The node $d$  must be the descendant of node $x$ in the new shortest path tree when the  weight of $(c,x)$ is changed to $-L(c,x)$.
-Contrarily, if the node $c$ is included in the shortest path from neighboring node $x$ to $v$. The node $d$  must not be the descendant of node $x$ in the new shortest path tree when the  weight of $(c,x)$ is changed to $-L(c,x)$.
+Contrarily, if the node $c$ is included in the shortest path from neighboring node $x$ to $d$. The node $d$  must not be the descendant of node $x$ in the new shortest path tree when the  weight of $(c,x)$ is changed to $-L(c,x)$.
 \begin{lemma}\label{fan}
 Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d(d\neq c, d\neq x)$,  if  the position of the node $d$ in the new SPT $T_c^{G'}$ is not changed, then we have  $C_x(d)=C_x(c)+C_c(d)$.
 \end{lemma}
