@@ -646,10 +646,10 @@ From the Theorem \ref{newspt0}, Theorem \ref{newsptposition0} and DC rule, we ca
 %\SetAlgoNoEnd
 \For{$x \in N(c)$}{
 \For{$v \in V$}{
- $v.visited \leftarrow false$\;
+ $v.visited \leftarrow floating$\;
  $C'_c(v) \leftarrow C_c(v)$\;
 }
-$c.visited=true$\;
+$c.visited=anchored$\;
  $weight\leftarrow L(c,x) $\;
  $L(c,x)\leftarrow -L(c,x)$;
 %\begin{shaded}
@@ -660,11 +660,11 @@ $c.visited=true$\;
 \For{$m\in D(T_c,x)$}
 {
 $C'_c(m)\leftarrow C'_c(m)-\triangle$\;
-$m.visited=true$\;
+$m.visited=anchored$\;
 }
 \For{$v \in D(T_c,x)$}{
 \For {each neighbor $u$ of $v$}{
-\If {$u.visited=false$ }
+\If {$u.visited=floating$ }
 {
 $newdist \leftarrow C'_c(v)+L(v,u)$\;
 
@@ -676,14 +676,14 @@ ENQUEUE$(u,(v,newdist,\delta))$\;}
 }
 \While {$Q$ is not empty}{
 $<v,tc> \leftarrow$ EXTRACTMIN(Q)\;
-$v.visited\leftarrow true$\;
+$v.visited\leftarrow anchored$\;
 $C'_c(v)\leftarrow tc$\;
 Compute $C_x(v)$ using Theorem \ref{computeneighborcost}\;
 %Add $x$ to $N_c(v)$;\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad
 %\hl{(In IAC-NA Compute $C_x(v)$ using Theorem 9)} \;
 
 \For {each neighbor $u$ of $v$}{
-\If {$u.visited=false$ }
+\If {$u.visited=floating$ }
 {
 $newdist \leftarrow C'_c(v)+L(v,u)$\;
 \If {$newdist <C'_c(u)$}{
@@ -752,20 +752,20 @@ Fig. \ref{spttreedc} is a shortest path tree rooted at node $c$, while Fig. \ref
 \end{figure*}
 \fi
 We are now in a position to describe the IAC algorithm.
-According to the above discussions, algorithm IAC is proposed to compute the backup next-hop set which satisfies the DC rule. The inputs of the IAC are the network topology $G=(V,E)$ and $T_{c}$, and the output is the backup next-hop set from node $c$ to all  other nodes in the network.
+According to the above discussions, algorithm IAC is proposed to compute the backup next-hop set which satisfies the LFA rule. The inputs of the IAC are the network topology $G=(V,E)$ and $T_{c}$, and the output is the backup next-hop set from node $c$ to all  other nodes in the network.
 The IAC requires several iterations. In each iteration,
-at the beginning, the $visited$ attribute of all nodes except $c$ are set to $false$ (lines 2 $\sim$ 5). We change the weight of the link  $(c,x)$  to $-L(c,x)$, and compute the weight change for $(c,x)$ (lines 6 $\sim$ 8), which is  stored in variable $\triangle$. The shortest cost from $c$ to $v$ and the $visited$ attribute of node $v$ are updated accordingly (lines 9 $\sim$ 11).
+at the beginning, the $anchored$ attribute of all nodes except $c$ are set to $floating$ (lines 2 $\sim$ 5). We change the weight of the link  $(c,x)$  to $-L(c,x)$, and compute the weight change for $(c,x)$ (lines 6 $\sim$ 8), which is  stored in variable $\triangle$. The shortest cost from $c$ to $v$ and the $visited$ attribute of node $v$ are updated accordingly (lines 9 $\sim$ 11).
 For $v \in D(T_c,x)$, for each of its unvisited neighbor $u$,
 we compute the  new tentative cost  of $u$. The node $u$ will be inserted into
 the $Q$ if its new tentative cost is smaller than the old value (lines 12 $\sim$ 17).
-An $unvisited$ node $v$ with the lowest tentative cost will be popped out from the priority queue $Q$
+A $floating$ node $v$ with the lowest tentative cost will be popped out from the priority queue $Q$
 by the EXTRACTMIN operation, where node ID is  used as tie breaking.
-It is then added to the tree, marked as $visited$, and used as the $current\ node$ in the iteration,
+It is then added to the tree, marked as $anchored$, and used as the current node in the iteration,
 while its attribute like cost  is also set to
 a permanent value (lines $19 \sim 21$).
 The corresponding cost $C_x(v)$ is computed
 according to Theorem \ref{computeneighborcost} (line 22).
-For each unvisited neighbor $u$ of $v$,
+For each $floating$ neighbor $u$ of $v$,
 we compute the  new tentative cost  of $u$. The node $u$ will be inserted into
 the $Q$ if its new tentative cost is smaller than the old value (lines 23 $\sim$ 27).
 Then, we will restore the weight of the link $(c,x)$ (line 28).

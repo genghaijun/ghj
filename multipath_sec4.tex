@@ -67,10 +67,12 @@ The fail probability of each link $e$
 is randomly generated in the range from 0 to 0.0001.
 All the simulations are conducted on a PC with Intel
 i5 CPU, 1.7GHz and 1.5G Memory.
+\iffalse
 Due to space
 constraints, we only present the results
 for DC rule in the experiment, while the results for LFC and NPC
 are similar.
+\fi
 %Because neither DMPA nor TBFH can implement the NPC rule,  so in the experiment we only compare the performance of the four methods on achieving  DC rule.
 
 %Due to space constraints, we only list data for DC rules.
@@ -413,7 +415,7 @@ A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)}
 \end{tabular}
 \end{table}
 
-Table \ref{Availability} provides the network availability provided by each protection scheme, on the real and measured topologies. From the results, we can see that IAC/IAC-NA has a clear advantage over TBFH and DMPA, and has the same performance as DC.
+Table \ref{Availability} provides the network availability provided by each protection scheme, on the real and measured topologies. From the results, we can see that IAC has a clear advantage over TBFH and DMPA, and has the same performance as Naive.
 
 \begin{figure}[t]
 \centering
