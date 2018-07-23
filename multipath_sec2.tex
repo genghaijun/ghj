@@ -154,17 +154,17 @@ in the notations when the network topology is $G$.
 
 Loop-free Alternate (LFA)\cite{LFA} proposes several criteria for selecting  proper next hops,
 including the Loop-free Criterion (LFC), the Node Protection Condition (NPC) and the Downstream Criterion (DC).
-These criteria are designed to provide alternative paths bypassing the failed component, 
-and guarantee loop-freeness. In what follows, we describe the criteria with regard to a node $c$ receiving 
-packets destined to node $d$ ($c \ne d$), where $c$ detects that the default next hop for $d$ cannot be used, 
-and has to find an alternate next hop among $c$'s neighboring nodes. 
+These criteria are designed to provide alternative paths bypassing the failed component,
+and guarantee loop-freeness. In what follows, we describe the criteria with regard to a node $c$ receiving
+packets destined to node $d$ ($c \ne d$), where $c$ detects that the default next hop for $d$ cannot be used,
+and has to find an alternate next hop among $c$'s neighboring nodes.
 The corresponding graph is illustrated in Fig. \ref{lfaexample}.
 
 
 \begin{figure}[t]
 \centering
 %\includegraphics[width=3in]{realcomputationoverhead}
-\includegraphics[width=3in]{lfaexample}
+\includegraphics[width=1.5in]{lfaexample}
 \caption{An example for explaining LFA}
 \label{lfaexample}
 \end{figure}
@@ -175,23 +175,23 @@ The corresponding graph is illustrated in Fig. \ref{lfaexample}.
 %We will now dive into the details of LFA.
 
 \textbf{LFC:}
-node $c$ can choose any neighboring node $x$ of $c$ satisfying $C_x(d)<C_x(c)+C_{c}(d)$, 
-which means when packets are routed from $x$ to $d$, they will not be routed back to $c$, 
-since $C_{x}(c)+C_{c}(d)$ is the lowest cost of any path from $x$ to $d$ that passing $c$.  
+node $c$ can choose any neighboring node $x$ of $c$ satisfying $C_x(d)<C_x(c)+C_{c}(d)$,
+which means when packets are routed from $x$ to $d$, they will not be routed back to $c$,
+since $C_{x}(c)+C_{c}(d)$ is the lowest cost of any path from $x$ to $d$ that passing $c$.
 
 
 \textbf{NPC:}
-For packets destined to a destination $v$, node $c$ ($c \ne v$)
-can forward them to its any neighboring node $x$ as long as $C_x(v)<C_x(f)+C_f(v)$, where $f$ is the default next hop from $c$ to $v$,
+For packets destined to a destination $v$, node $c$ ($c \ne d$)
+can forward them to its any neighboring node $x$ as long as $C_x(d)<C_x(f)+C_f(d)$, where $f$ is the default next hop from $c$ to $d$,
 and there will be no forwarding loop in the induced forwarding path.
 
 \textbf{DC:}
-For packets destined to a destination $v$, node $c$ ($c \ne v$)
-can forward them to its any neighboring node $x$ as long as $C_x(v)<C_c(v)$,
+For packets destined to a destination $d$, node $c$ ($c \ne d$)
+can forward them to its any neighboring node $x$ as long as $C_x(d)<C_c(d)$,
 and there will be no forwarding loop in the induced forwarding path.
 
 
-The LFC rule can be interpreted as the node $s$ is not on the shortest path from $x$ to $v$, NPC shows that the node $f$ is not on the shortest path from $x$ to $v$. DC rule indicates that the neighbor $x$ is closer to the destination $v$ then the node $s$ itself.
+The LFC rule can be interpreted as the node $s$ is not on the shortest path from $x$ to $d$, NPC shows that the node $f$ is not on the shortest path from $x$ to $d$. DC rule indicates that the neighbor $x$ is closer to the destination $d$ then the node $s$ itself.
 From the description of the three rules, we can see that the neighbor who accords with the NPC rule must conform to the LFC rule, but the reverse is not necessarily true. A neighbor who meets the LFC rule must conform to the DC rule, but vice versa. There is no specific relationship between DC and NPC.
 The following is an example to explain the three rules in LFA.
 Fig. \ref{lfaexample} shows a network topology consisting of 5 nodes and 6 links.
@@ -205,9 +205,9 @@ Node $a$ can also be a valid NPC next hop from $c$ to $e$ because $C_a(e)<C_a(b)
 It can be seen that the node $a$ can be used as  LFC, DC, and NPC next hop from the node $c$ to the destination node $e$.
 
 In order to achieve resilience routing,
-the node $c$ can compute a candidate set of next-hops $N_{c}(v)$
-for each destination $v$ ($v \!\neq\! c$) employing LFA, so that when a packet destined to $v$ arrives at $c$,
-$c$ can select a next-hop from $N_{c}(v)$ and forward this packet to.
+the node $c$ can compute a candidate set of next-hops $N_{c}(d)$
+for each destination $d$ ($d\!\neq\! c$) employing LFA, so that when a packet destined to $d$ arrives at $c$,
+$c$ can select a next-hop from $N_{c}(d)$ and forward this packet to.
 
 
 %Since the performance of routing and forwarding is critical to the Internet, routing protection algorithm has to be highly efficient to avoid becoming a bottleneck. However, the existing approaches often focus on finding more, or  disjoint paths, rather than reducing the computation or the communication overhead, which is the focus of this paper.
@@ -253,8 +253,6 @@ Algorithm&LFC&NPC&DC\\
 DMPA&$\times$&$-$&$\times$\\
 \hline
 TBFH&$\times$&$-$&$\times$\\
-\hline  %在第一行和第二行之间绘制横线
-IAC&$-$ &$-$&$\surd$\\
 \hline % 在表格最下方绘制横线
 IAC&$\surd$ &$\surd$&$\surd$\\
 \hline % 在表格最下方绘制横线
