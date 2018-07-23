@@ -44,17 +44,18 @@ a fair portion of candidate alternates that can be utilized, thus sacrifice thei
 redundancy provision.
 
 In this paper, we propose Incremental Alternates Computation (IAC), an algorithm that can
-compute the full set of alternates within a given graph in a highly efficient way.
-Actually, IAC is a modified incremental shortest-path-first (iSPF) computation
-on a dual graph with respect to the given graph, where the sign of specific link cost
-is simply reversed, i.e., from $x$ to $-x$. We formally prove the property of IAC,
+compute the full set of alternates for a given network topology in a highly efficient way.
+Actually, IAC performs incremental shortest-path-first (iSPF) computation on specific link 
+cost update, 
+%on a dual graph with respect to the given graph, 
+where the sign of some cost is simply reversed, i.e., from $x$ to $-x$. 
+We formally prove the property of IAC,
 and use both synthesized and real-world topologies to evaluate its performance.
 Compared with the naive implementation in typical commercial routers, IAC achieves the same coverage of alternates but
-with at least an $O(k)$ reduction in both time and memory consumption, where $k$ is the degree of a node.
-Compared with TBFH and DMPA, which are latest algorithms proposed for acceleration of computation,
-IAC not only reduces the computation time by around an order of magnitude
-and finds 50\% more available alternates in typical real-world topologies, but also
-provides  node protection capabilities that TBFH and DMPA cannot provide.
+with at least an $O(k)$ reduction in both time and memory consumption, where $k$ is the degree of a node. For real-world topologies, the reduction is typically at least an order of magnitude. 
+Compared with TBFH and DMPA, which are latest algorithms achieving acceleration under limited scenarios,
+IAC not only finds about 50\% more available alternates and speeds up by more than 3 times,
+but also provides node protection capabilities that TBFH and DMPA cannot provide.
 These advantages make IAC a good candidate for both traditional telecommunication networks
 and emerging complex networks that require failure repair and load balancing
 in a highly dynamic environment.
