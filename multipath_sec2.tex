@@ -66,34 +66,89 @@ it will not become a bottleneck.
 
 
 \subsection{Network Model and Basic Notations}
-A link state network is modeled as an undirected graph $G=(V,E)$,
-where $V$ and $E$ respectively denote the set of nodes (routers) and the set of edges (links) in the network.
-Every link $(u,v)\in E$ in the network  has a link weight $L(u,v)$ and
-a link failure probability $r(u,v)$, both of which are non-negative.
-We use $C_c^G(v)$ to denote the lowest cost from node $c$ to node $v$ in the network $G$,
+A link state network is modeled as an undirected graph $G=(V^{G},E^{G})$,
+where $V^{G}$ and $E^G$ respectively denote the set of nodes (routers) and the set of edges (links) in the network.
+Every link $(u,v)\in E^{G}$ in the network  has a link weight $L^{G}(u,v)$ and
+a link failure probability $r^{G}(u,v)$, both of which are non-negative.
+We use $C_c^G(v)$ to denote the lowest cost from node $c$ to node $v$,
 and use $N_{c}^G(v)$ to denote the set of next hops that $c$ can forward to when receiving a packet destined to the node $v$.
-For a neighboring node $u$ of $v$, i.e., $u\in N_{c}(v)$, it is clear that $C_u^G(v)=C_v^G(u)=L(u,v)$.
+For a neighboring node $u$ of $v$, it is clear that $C_u^G(v)=C_v^G(u)=L^{G}(u,v)$.
 
-In traditional link state routing protocols, such as IS-IS or OSPF,
-a node $c$  can construct such a graph from information carried by link state advertisements.
-Then it builds a shortest path tree (SPT) $T_c^G$, where $c$ is the root of the tree, and all other nodes are included,
-with a classic shortest path algorithm such as the Dijkstra's or the Bellman-Ford algorithm\cite{CLRS}.
-In $T_c$, each direct child $x$ of $c$ is $c$'s next hop for packets destined to $x$ and $x$'s descendents,
-i.e., ``$N_{c}(v)=x$ iff $v=x$ or $v$ is $x$'s descendent''.
-For failure repair or multipath transmission,
-we have to design new algorithms that can add more appropriate elements to $N_{c}(v)$.
-We use $D_c^G(v)$ to denote the descendants of node $v$ (itself is included) in $T_c$.
-%$G'=(V,E,(l,m,w))$$C_c(v,(l,m,w))$
+In traditional link state routing protocols such as IS-IS or OSPF,
+a node $c$ constructs such a graph $G$ from states carried by link state advertisements.
+With a shortest path algorithm such as the Dijkstra's or the Bellman-Ford algorithm\cite{CLRS},
+it builds a shortest path tree (SPT) $T_c^G$, where $c$ is the root of the tree, and all other nodes are included.
+We use $D_c^G(x)$ to denote the descendants of node $x$ (including $x$ itself) in $T_c^{G}$,
+then each direct child $x$ of $c$ is $c$'s next hop for packets destined to $x$'s descendents,
+i.e., ``$N_{c}^{G}(v)=x$ iff $(c,x) \in E^{G}$ and $v \in D_{c}^{G}(x)$''.
+For failure repair or multipath transmission,  more appropriate elements should be added to $N_{c}^{G}(v)$.
+
+To support the algorithm design, we also define a dual graph $G_{(u,v)}$ for the prime graph $G$, 
+where the only difference between them is a simple sign reversion of link $(u,v)$'s cost, 
+i.e., $L^{G}(u,v)=-L^{G_{(u,v)}}(u,v)$.
+These notations are summarized in Table \ref{notation}, 
+and when the graph is clear from context, we simply omit the superscript $G$ from them.
+
+\begin{table*}[t]
+\setlength{\belowcaptionskip}{0pt}
+\normalsize
+\caption{Notations}
+\label{notation}
+\centering
+\begin{tabular}{c|c|c}
+\hline
+full notation & when context is clear & definition \\
+\hline
+$G\!=\!(V^{G},E^{G})$ & $G=(V,E)$ & An undirected graph with nodes and edges\\
+%\hline
+%$V$&Set of nodes in the graph\\
+%\hline
+%$E$&Set of links in the graph\\
+%\hline
+%$R(v)$&Router-ID of node $v$\\
+\hline
+$L^{G}(u,v)$ & $L(u,v)$ & The direct link cost between node $u$ and node $v$ \\
+\hline
+$r^{G}(u,v)$ & $r(u,v)$ & The link failure probability between node $u$ and node $v$ \\
+\hline
+% $G'=G^w_{(u,v)}$ &  &  &The network topology when the edge $(l,m)\in E$ change its weight to $w$\\
+%\hline
+$T_c^{G}$ & $T_{c} $ & The shortest path tree rooted at node $c$\\
+\hline
+%$T_{c}^{G'}$ &Shortest path tree rooted at node $c$ in $G'$ \\
+%\hline
+$C_{c}^{G}(v)$ & $C_c(v)$ & The lowest cost from $c$ to $v$ in the graph \\
+\hline
+%$C_c^{G'}(d)$ &The shortest cost from node $c$  to node $d$ in the network $G'$\\
+%\hline
+%$N(v)$&Neighbors of node $v$\\
+%\hline
+$D_{c}^{G}(v)$ & $D_c(v)$ & The descendants of node $v$ (including $v$ itself) in $T_c$\\
+\hline
+%$D_c^{G'}(v)$&Descendants of node $v$ (itself is included) in $T_{c}^{G'}$\\
+%\hline
+$N_{c}^{G}(v)$ & $N_{c}(v)$ & The set of next hops computed by node $c$ for destination $v$\\
+\hline
+%$B_{c}(v)$&Best next-hop computed by node $c$ for destination node $v$\\
+
+%\hline
+%$p(v)$&tentative parent of $v$\\
+%\hline
+%$d(v)$&tentative cost from $c$ to $v$\\
+%\hline
+\end{tabular}
+\end{table*}
 
 
 
+\iffalse
 We use $G'=G^w_{(u,v)}$ to represent a network topology when the edge
 $(u,v)\in E$ change its weight to $w$ in the network $G=(V,E)$, $C_c^{G'}(d)$ is the lowest cost from node $c$  to node $d$ in the network $G'=G^w_{(u,v)}$. $T_{c}^{G'}$ denote the  shortest path tree rooted at node $c$ in the network $G'=G^w_{(u,v)}$.
 We use $D_c^{G'}(v)$ to denote the descendants of node $v$ (itself is included) in $T_{c}^{G'}$.
 For ease of reading, we summarize some  symbols in the Table \ref{notation}.
 In the rest of the paper, we will omit the superscript $G$
 in the notations when the network topology is $G$.
-
+\fi
 
 \subsection{Loop Free Alternates}
 

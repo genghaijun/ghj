@@ -372,7 +372,7 @@ Existing algorithms for computing Loop Free Alternates
 rely on one or more rounds of full shortest path tree computation on a graph,
 and cannot achieve both good coverage of alternates and low computational complexity at the same time.
 Based on some graph properties we newly find, we propose IAC, which can
-compute the full set of alternates based on incremental shortest path computation on a graph with link cost augmentation.
+compute the full set of alternates based on incremental shortest path computation on a dual graph with specific link cost modification.
 Compared with the naive implementation in typical commercial routers, IAC achieves the same coverage of alternates but
 with at least an $O(k)$ reduction in both time and memory consumption, where $k$ is the degree of a node.
 Compared with TBFH and DMPA, which are latest algorithms proposed for acceleration of computation,

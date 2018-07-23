@@ -1,3 +1,4 @@
+\iffalse
 \section{Network Model}\label{model}
 \begin{table*}[t]
 \setlength{\belowcaptionskip}{0pt}
@@ -47,7 +48,7 @@ $B_{c}(v)$&Best next-hop computed by node $c$ for destination node $v$\\
 \hline
 \end{tabular}
 \end{table*}
-\iffalse
+
 In this paper, we will limit our research to intra-domain link state routing protocols, e.g. OSPF and IS-IS. Each router in a single routing area maintains an identical network map which allows them to compute the shortest path to every other router in a routing area. Then each router construct its FIB table employing the above information. When a packet arrives at a router, a destination address based method is using to determine how to forward the packets to its corresponding interface. When the network topology changes, the routers adjacent to the changed component detects the change and then propagates the information to its neighboring router through the link state advertisement (LSA) information. After a period of time, all routers in this routing area are aware of  the change information and update their routing tables accordingly, then the network is at a stable state.
 
 
@@ -84,7 +85,10 @@ $T_{c}(c,x,w)$ denote the new shortest path tree when the edge $(c,x)\in T_c$ ch
 For ease of reading, we summarize some  symbols in the Table \ref{notation}.
 
  $T_{c}$ represent a shortest path tree rooted at $c$, $D(T_{c},v)$ represent the descendants of node $v$ (node $v$ is excluded) in $T_{c}$,
-$C_c(v)$ is the shortest cost from node $c$  to node $v$ in the original network $G$.\fi
+$C_c(v)$ is the shortest cost from node $c$  to node $v$ in the original network $G$.
+\fi
+
+
 \section{iSPF and LFA}\label{back}
 In this section, we will discuss incremental shortest
 path first (iSPF) algorithm and LFA, both of which are the foundation of our
