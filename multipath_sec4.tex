@@ -55,7 +55,6 @@ m&NodePlacement &GrowthTypem & ${alpha}$  \\
 \end{center}
 \end{table}
 \subsection{Computation complexity}
-Theoretical analysis has indicated that the time complexity of IAC is less than that of building of a shortest path tree, which has a great advantage over Naive, TBFH and DMPA. In order to further verify the computational performance, we make simulations on different topologies. In this section, we evaluate the computational overhead of different algorithms. In order to avoid the uncertain factors impact the algorithm¡¯s performance. The computational overhead of an algorithm is defined as the ratio of computation time of the algorithm to that of SPF (shortest path first).
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{realcomputationoverhead}
@@ -63,6 +62,8 @@ Theoretical analysis has indicated that the time complexity of IAC is less than 
 \caption{Computation overhead on real and measured topologies}
 \label{realtopologytime}
 \end{figure}
+Theoretical analysis has indicated that the time complexity of IAC is less than that of building of a shortest path tree, which has a great advantage over Naive, TBFH and DMPA. In order to further verify the computational performance, we make simulations on different topologies. In this section, we evaluate the computational overhead of different algorithms. In order to avoid the uncertain factors impact the algorithm¡¯s performance. The computational overhead of an algorithm is defined as the ratio of computation time of the algorithm to that of SPF (shortest path first).
+
 \iffalse
 \begin{figure}[t]
 \centering
@@ -72,7 +73,7 @@ Theoretical analysis has indicated that the time complexity of IAC is less than 
 \label{rockettopologytime}
 \end{figure}
 \fi
-Fig. \ref{realtopologytime} indicates the computational overhead obtained by different algorithms on real and Rocketfuel topologies. From the Fig. \ref{realtopologytime}, we can see that IAC has the lowest computation overhead among all the algorithms. The computation overhead of IAC is less than computing a SPT, while DMPA need to construct a SPT and TBFH need to compute two SPTs. The computation overhead of DC is proportionally to the average node degree of the network.
+Fig. \ref{realtopologytime} indicates the computational overhead obtained by different algorithms on real and Rocketfuel topologies. From the Fig. \ref{realtopologytime}, we can see that IAC has the lowest computation overhead among all the algorithms. The computation overhead of IAC is less than computing a SPT, while DMPA need to construct a SPT and TBFH need to compute two SPTs. The computation overhead of Naive is proportionally to the average node degree of the network.
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{tscomputationoverhead}
@@ -222,6 +223,12 @@ the cumulative distribution of the  number of backup next hops for CERNET2 and T
 \caption{Protection ratio on real and measured topologies}
 \label{prreal}
 \end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{protectionratiodegree}
+\caption{Protection ratio on generated topologies when topology size is 200}
+\label{prd}
+\end{figure}
 \iffalse
 \begin{figure}[t]
 \centering
@@ -230,16 +237,11 @@ the cumulative distribution of the  number of backup next hops for CERNET2 and T
 \label{prrocket}
 \end{figure}
 \fi
-\begin{figure}[t]
-\centering
-\includegraphics[width=3in]{protectionratiodegree}
-\caption{Protection ratio on generated topologies when topology size is 200}
-\label{prd}
-\end{figure}
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{realnum}
-\caption{Average number of backup next hops on real topologies}
+\caption{Average number of backup next hops on real and measured topologies}
 \label{realnumber}
 \end{figure}
 \begin{figure}[t]
@@ -328,7 +330,7 @@ A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)}
 \hline
 &\multirow{2}{*}{Network}& \multicolumn{4}{|c}{Network Availability($\%$)} \\
 \cline{3-6}
-& & IAC &DC & TBFH &  DMPA\\
+& & IAC &Naive & TBFH &  DMPA\\
 \hline
 \multirow{5}{*}{Real}
 & CERNET2& 99.93&99.93 &97.37& 98.54 \\
