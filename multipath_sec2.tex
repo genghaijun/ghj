@@ -43,9 +43,9 @@ TOD \cite{Yang2018Fast} proposes tunneling on demand (TOD) to handle one or dual
 but needs it additional signaling protocol to establish tunnels.
 
 Besides failure repair, alternate next hops also find applications in multipath
-routing \cite{andersen2002resilient, cho2012independent},
+routing,
 where multiple next hops can increase the bandwidth utilization, achieve load balancing, or
-improve routing resilience and reliability, if loop free are guaranteed.
+improve routing resilience and reliability, if loop free are guaranteed\cite{andersen2002resilient}.
 Equal-Cost Multipath Routing (ECMP) \cite{moy1998rfc} allows packets to be forwarded
 along multiple paths of equal cost but relies on network operators to tune link costs.
 Routing deflection \cite{Yang_Source:2006} extends rules of LFAs to allow more next hops
@@ -55,7 +55,8 @@ and offer forwarding alternatives for each permutation.
 Path splicing\cite{Pathsplicing:2008} creates a set of slices for the network based on random
 link-weight perturbations, and end systems control which slices the routers should use
 by embedding control bits in packet headers.
-Loops can also be avoided by computing Directed Acyclic Graphs (DAG) \cite{20094212373257,  20114214442265},
+Loops can also be avoided by computing Directed Acyclic Graphs (DAG) 
+\cite{20094212373257,  20114214442265, cho2012independent},
 but the complexity also increases significantly.
 
 Due to the simplicity of its mechanism, LFA has been implemented by commercial router
@@ -78,10 +79,10 @@ In traditional link state routing protocols such as IS-IS or OSPF,
 a node $c$ constructs such a graph $G$ from states carried by link state advertisements.
 With a shortest path algorithm such as the Dijkstra's or the Bellman-Ford algorithm\cite{CLRS},
 it builds a shortest path tree (SPT) $T_c^G$, where $c$ is the root of the tree, and all other nodes are included.
-We use $D_c^G(x)$ to denote the descendants of node $x$ (including $x$ itself) in $T_c^{G}$,
+Let $D_c^G(x)$ denote the descendants of node $x$ (including $x$ itself) in $T_c^{G}$,
 then each direct child $x$ of $c$ is $c$'s next hop for packets destined to $x$'s descendents,
 i.e., ``$N_{c}^{G}(v)=x$ iff $(c,x) \in E^{G}$ and $v \in D_{c}^{G}(x)$''.
-For failure repair or multipath transmission,  more appropriate elements should be added to $N_{c}^{G}(v)$.
+For failure repair or multipath transmission, a multi-set $N_{c}^{G}(v)$ should be computed by $c$, for each $v$.
 
 To support the algorithm design, we also define a dual graph $G_{(u,v)}$ for the prime graph $G$,
 where the only difference between them is a simple sign reversion of link $(u,v)$'s cost,
@@ -156,15 +157,14 @@ Loop-free Alternate (LFA)\cite{LFA} proposes several criteria for selecting  pro
 including the Loop-free Criterion (LFC), the Node Protection Condition (NPC) and the Downstream Criterion (DC).
 These criteria are designed to provide alternative paths bypassing the failed component,
 and guarantee loop-freeness. In what follows, we describe the criteria with regard to a node $c$ receiving
-packets destined to node $d$ ($c \ne d$), where $c$ detects that the default next hop for $d$ cannot be used,
-and has to find an alternate next hop among $c$'s neighboring nodes.
+packets destined to node $d$ ($c \ne d$), where $c$ detects that the default next hop for $d$, i.e., $b$, cannot be used,
+and has to compute an alternate next hop $x$ among $c$'s neighboring nodes, and forward those packets to $x$.
 The corresponding graph is illustrated in Fig. \ref{lfaexample}.
 
 
 \begin{figure}[t]
 \centering
-%\includegraphics[width=3in]{realcomputationoverhead}
-\includegraphics[width=1.5in]{lfaexample}
+\includegraphics[width=1.3in]{lfaexample}
 \caption{An example for explaining LFA}
 \label{lfaexample}
 \end{figure}
@@ -175,39 +175,42 @@ The corresponding graph is illustrated in Fig. \ref{lfaexample}.
 %We will now dive into the details of LFA.
 
 \textbf{LFC:}
-node $c$ can choose any neighboring node $x$ of $c$ satisfying $C_x(d)<C_x(c)+C_{c}(d)$,
+$x$ can be chosen when $C_x(d)\!<\!C_x(c)\!+\!C_{c}(d)$,
 which means when packets are routed from $x$ to $d$, they will not be routed back to $c$,
-since $C_{x}(c)+C_{c}(d)$ is the lowest cost of any path from $x$ to $d$ that passing $c$.
-
+since $C_{x}(c)+C_{c}(d)$ is the lowest cost of any path from $x$ to $d$ that passes $c$.
+So the protection route will bypass $c$, thus bypass link $(c,b)$ too.
 
 \textbf{NPC:}
-For packets destined to a destination $v$, node $c$ ($c \ne d$)
-can forward them to its any neighboring node $x$ as long as $C_x(d)<C_x(f)+C_f(d)$, where $f$ is the default next hop from $c$ to $d$,
-and there will be no forwarding loop in the induced forwarding path.
+$x$ can be chosen when $C_x(d)<C_x(b)+C_b(d)$, 
+which means the protection route will bypass $b$, thus also bypass link $(c,b)$.
 
 \textbf{DC:}
-For packets destined to a destination $d$, node $c$ ($c \ne d$)
-can forward them to its any neighboring node $x$ as long as $C_x(d)<C_c(d)$,
-and there will be no forwarding loop in the induced forwarding path.
+$x$ can be chosen when $C_x(d)<C_c(d)$,
+which means the protection route will bypass $c$ (and link $(c,b)$), 
+and the remaining cost to the destination strictly decreases. 
 
+From the explanation above, we can see all of the three criteria can bypass a link failure, 
+while \textbf{NPC} can also bypass a node failure. 
+In addition, \textbf{DC} has a nice property that even when used simultaneously by multiple nodes,
+there will be no loop due to the decreasing cost to the destination, 
+while \textbf{LFC} and \textbf{NPC} can only be used by node $c$ locally. 
+This property makes \textbf{DC} useful in building multipath routing algorithms \cite{TBFH, dmpa, Yang_Source:2006}.
+ 
 
-The LFC rule can be interpreted as the node $s$ is not on the shortest path from $x$ to $d$, NPC shows that the node $f$ is not on the shortest path from $x$ to $d$. DC rule indicates that the neighbor $x$ is closer to the destination $d$ then the node $s$ itself.
-From the description of the three rules, we can see that the neighbor who accords with the NPC rule must conform to the LFC rule, but the reverse is not necessarily true. A neighbor who meets the LFC rule must conform to the DC rule, but vice versa. There is no specific relationship between DC and NPC.
-The following is an example to explain the three rules in LFA.
-Fig. \ref{lfaexample} shows a network topology consisting of 5 nodes and 6 links.
-As shown in Fig. \ref{lfaexample}, the default next hop from node $c$ to node $d$ is $a$,
-the default next hop from node $c$ to node $e$ is $b$, $C_c(d)=4$, $C_b(d)=5$.
-The node $b$ can be used as a valid LFC next hop from the node $c$ to the destination node $d$ since $C_b(d)<C_b(c)+C_c(d)$.
-However the node $b$ is not a valid NFC next hop from the node $c$ to the destination node $d$ since $C_b(d)=C_b(a)+C_a(d)$.
-Since $C_a(e)=4<C_c(e)=5$, node $a$ can be a valid DC next hop from $c$ to $e$.
-Node $a$ can also be a valid LFC next hop from $c$ to $e$ because $C_a(e)<C_c(e)+C_e(c)$.
-Node $a$ can also be a valid NPC next hop from $c$ to $e$ because $C_a(e)<C_a(b)+C_b(e)$.
-It can be seen that the node $a$ can be used as  LFC, DC, and NPC next hop from the node $c$ to the destination node $e$.
+As in the concrete example of Fig. \ref{lfaexample}, let $c$ be the computing node.
+For all packets destined to $d$, 
+$c$ selects node $b$ as its default next hop.
+Since $C_a(d)=5, C_{a}(c)=2$, and $C_{c}(d)=4$, node $a$ satisfies \textbf{LFC}, i.e., $C_a(d)<C_a(c)+C_c(d)$, 
+and can be used as an alternate next hop if the link $(c,b)$ fails. 
+However, node $a$ does not satisfy \textbf{NPC} since $C_a(d)=C_a(b)+C_b(d)$, 
+so if the failed component is node $b$, $a$ cannot be used as an alternate.
+Similarly, since $C_a(d)>C_c(d)$, $a$ cannot be used in \textbf{DC} based multipath routing schemes. 
 
-In order to achieve resilience routing,
-the node $c$ can compute a candidate set of next-hops $N_{c}(d)$
-for each destination $d$ ($d\!\neq\! c$) employing LFA, so that when a packet destined to $d$ arrives at $c$,
-$c$ can select a next-hop from $N_{c}(d)$ and forward this packet to.
+Now consider another destination $e$, and the default next hop on $c$ for destination $e$ will now be $a$.
+Since $C_b(e)<C_b(c)+C_c(e)$, $C_b(e)<C_b(a)+C_a(e)$, and $C_{b}(e)<C_{c}(e)$, 
+$b$ is a valid next hop for destination $e$ according to anyone of \textbf{LFC}, \textbf{NPC}, and \textbf{DC}, 
+so it can be used for local route protection from link failure and node failure, 
+and for \textbf{DC} based  multipath routing.
 
 
 %Since the performance of routing and forwarding is critical to the Internet, routing protection algorithm has to be highly efficient to avoid becoming a bottleneck. However, the existing approaches often focus on finding more, or  disjoint paths, rather than reducing the computation or the communication overhead, which is the focus of this paper.
@@ -240,7 +243,7 @@ In this paper, we focus on protection schemes that (1) are computationally effic
 and (3) preserve as much as possible the benefits
 that multiple next-hop solutions have, such as no cooperation/signaling and load balancing.
 \fi
-\begin{table}
+\begin{table}[b]
 \caption{Comparison of Different Routing Protection Algorithms}
 \label{britetable1}
 \centering
