@@ -74,12 +74,14 @@ Theoretical analysis has indicated that the time complexity of IAC is less than 
 \end{figure}
 \fi
 Fig. \ref{realtopologytime} indicates the computational overhead obtained by different algorithms on real and Rocketfuel topologies. From the Fig. \ref{realtopologytime}, we can see that IAC has the lowest computation overhead among all the algorithms. The computation overhead of IAC is less than computing a SPT, while DMPA need to construct a SPT and TBFH need to compute two SPTs. The computation overhead of Naive is proportionally to the average node degree of the network.
+\iffalse
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{tscomputationoverhead}
 \caption{Computation overhead on generated topologies when average node degree is 6}
 \label{topologysize200}
 \end{figure}
+\fi
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{degcomputationoverhead}
@@ -163,7 +165,9 @@ Fig. \ref{realtopologytime} indicates the computational overhead obtained by dif
 \label{sprint}
 \end{figure}
 \fi
+\iffalse
 Fig. \ref{topologysize200} illustrates the relationship between the computation overhead and topology size on generated topologies when the average node degree is 6. As Fig. \ref{topologysize200} shows, the computation overhead of all the algorithms does not depend on the topology size. The computation overhead of IAC is lowest among all the algorithms.
+\fi
 
 Fig. \ref{nodedegree6} presents the relationship between the computation overhead and average node degree on generated topologies when the topology size is 200.
 As the average node degree increases, the computation overhead of Naive increases accordingly. And also IAC has the highest performance among all the algorithms. Therefore, the above experiment results are consistent with the theoretical analysis described above.
@@ -214,8 +218,8 @@ For both of the above two metrics, larger is better.
 Fig. \ref{prreal} depicts the protection ratio obtained by different algorithms on real and measured topologies.
 Fig. \ref{prd} presents the relationship between the protection ratio and average node degree on generated topologies
 when the topology size is 200.
-Fig .\ref{realnumber} and Fig. \ref{rocketnumber} depicts  the average number of backup next hops obtained by different algorithms on real and measured topologies.
-Fig .\ref{abicumulative} and  Fig .\ref{cercumulative} show
+Fig. \ref{realnumber} depicts  the average number of backup next hops obtained by different algorithms on real and measured topologies.
+Fig. \ref{abicumulative} and  Fig. \ref{cercumulative} show
 the cumulative distribution of the  number of backup next hops for CERNET2 and TORONTO topologies.
 \begin{figure}[t]
 \centering
@@ -244,12 +248,14 @@ the cumulative distribution of the  number of backup next hops for CERNET2 and T
 \caption{Average number of backup next hops on real and measured topologies}
 \label{realnumber}
 \end{figure}
+\iffalse
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{rocketnum}
 \caption{Average number of backup next hops on measured topologies}
 \label{rocketnumber}
 \end{figure}
+\fi
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{CERNET2cumulative}
@@ -262,8 +268,8 @@ the cumulative distribution of the  number of backup next hops for CERNET2 and T
 \caption{Cumulative  distribution of the number of backup next hops on TORONTO topology}
 \label{cercumulative}
 \end{figure}
-We made several conclusions. First, IAC/IAC-NA and DC are more
-flexible than TBFH and DMPA. They have more deflection choices in all
+We made several conclusions. First, IAC is more
+flexible than TBFH and DMPA. It has more deflection choices in all
 the experiment networks. Second, the
 larger networks can provide more opportunities to detour.
 \iffalse
@@ -279,7 +285,7 @@ Since both of the above two metrics cannot accurately describe end-to-end networ
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{nodedegree}
-\caption{Network Availability on Generated Topologies When Topology Size=200}
+\caption{Network availability on generated topologies when topology size=200}
 \label{avdeg}
 \end{figure}
  \subsection{Network availability}
@@ -330,18 +336,18 @@ A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)}
 \hline
 &\multirow{2}{*}{Network}& \multicolumn{4}{|c}{Network Availability($\%$)} \\
 \cline{3-6}
-& & IAC &Naive & TBFH &  DMPA\\
+& &Naive & TBFH &  DMPA&IAC\\
 \hline
 \multirow{5}{*}{Real}
-& Cernet2& 99.93&99.93 &97.37& 98.54 \\
+& Cernet2&99.93 &97.37& 98.54 & 99.93\\
 \cline{2-6}
-& Abilene& 99.97&99.97 &97.34& 98.63\\
+& Abilene&99.97 &97.34& 98.63& 99.97\\
 \cline{2-6}
-& Njlata& 99.93&99.93 &96.87& 97.81 \\
+& Njlata&99.93 &96.87& 97.81& 99.93 \\
 \cline{2-6}
-& Toronto& 99.87&99.87 &97.65& 98.74 \\
+& Toronto&99.87 &97.65& 98.74& 99.87 \\
 \cline{2-6}
-& Usld& 99.94&99.94 &97.34& 98.57 \\
+& Usld&99.94 &97.34& 98.57 & 99.94\\
 \cline{2-6}
 \hline
 \multirow{5}{*}{Measured}
