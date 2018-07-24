@@ -359,7 +359,7 @@ Fig. \ref{spttreedc} is a shortest path tree rooted at node $c$, while Fig. \ref
  $L(c,x)\leftarrow -L(c,x)$\;
  $newdist\leftarrow C_c(x)+\triangle$\;
  $\triangle\leftarrow L(c,x)-weight$\;
- 
+
  ENQUEUE$(\{x,(c,newdist,\triangle)\})$\;
 %\begin{shaded}
 %\hl{(In IAC-NA $L(c,x)=-L(c,x)$)}\;
@@ -414,7 +414,7 @@ $C_{c}^{G_{(c,x)}}(d)\leftarrow C_c(d)+\triangle$\;
 
 \For {each neighbor $q$ of $m$}{
 \If {$C_c(q)>C_{c}^{G_{(c,x)}}(m)+L(m,q)$ }
-{ 
+{
 
 $newdist \leftarrow C_{c}^{G_{(c,x)}}(m)+L(m,q)$\;
 $\triangle\leftarrow newdist-C_c(q)$\;
@@ -424,9 +424,9 @@ ENQUEUE$(q,(m,newdist,\triangle))$\;
 }
  $L(c,x)\leftarrow weight$\;
 }
-\For {$d\in V, d \neq c$}
+\For {$d\in V \land d \neq c$}
 {
-\For{$x\in N(c)$}
+\For{each neighbor $x$ of $c$}
 {
  \If {LFA is satisfied}
  {
@@ -434,7 +434,7 @@ ENQUEUE$(q,(m,newdist,\triangle))$\;
  }
 }
 }
-\Return $N_c(v), (\forall d \in V \land d \neq c)$
+\Return $N_c(d), (\forall d \in V \land d \neq c)$
 \caption{IAC}
 \label{mnpe}
 \end{algorithm}
@@ -469,7 +469,7 @@ ENQUEUE$(q,(m,newdist,\triangle))$\;
 \end{figure*}
 \fi
 We are now in a position to describe the IAC algorithm.
-According to the above discussions, algorithm IAC is proposed to compute all of the backup next-hop set which are satisfied the LFA rule. The inputs of the IAC are the network topology $G=(V,E)$ and $T_{c}$, and the output is the backup next-hop set from node $c$ to all  other nodes in the network. 
+According to the above discussions, algorithm IAC is proposed to compute all of the backup next-hop set which are satisfied the LFA rule. The inputs of the IAC are the network topology $G=(V,E)$ and $T_{c}$, and the output is the backup next-hop set from node $c$ to all  other nodes in the network.
 IAC maintains a priority queue $Q$, which contains a subset of nodes together with three attributes. In particular, each element in $Q$ is
 of the form ${(u,(v,q,\triangle))}$, where $v$ is the potential parent
 for node $u$, $q$ denotes a potential cost for node $u$ , and $\triangle$ is the potential cost change for node $u$ .
@@ -495,7 +495,7 @@ The new shortest path tree is given in the
 Fig. \ref{spttreechange23}.
 We have $d\in D_c(a)$ from Fig. \ref{spttreechange22} , so $C_a(d)=C_c(d)-C_c(a)=3$.
 Because $e \notin D_c(a)$ and $e \in D_c^{G_{(c,a)}}(a)$, we have $C_a(e)=C_c^{G_{(c,a)}}(e)+C_c(a)=6$ from Theorem \ref{computeneighborcost}.
-Since $b \notin D_c(a)$ and $b \notin D_c^{G_{(c,a)}}(a)$, we have $C_a(b)=C_a(c)+C_c(b)=8$ from Theorem \ref{computeneighborcost}.
+Since $b \notin D_c(a)$ and $b \notin D_c^{G_{(c,a)}}(a)$, we have $C_a(b)=C_a(c)+C_c(b)=8$.
 
 \subsection{Theoretical  Analysis}
 \iffalse
@@ -571,12 +571,22 @@ Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in
 the iSPF algorithm can get the correct SPT $T_c^{G'}$.
 \end{theorem}
 \begin{proof}
+Since only the weight of the link $(c,x)$ is changed to $-L(c,x)$,
+assume that there is a negative cycle $P=(c,x,...c)$, the cost
+of the path is smaller than 0.
+Therefore, we have $C_c(x)+Cost(x,c)<0$, where $Cost(x,c)$ denote the cost from $x$ to $c$ in the path $P$.
+Since $C_c(x)=-L(c,x)$, we can get 
+$Cost(x,c)<L(c,x)$, that is to say
+there exists a path from $x$ to $c$ whose cost is smaller than $L(c,x)$, 
+this is impossible. We can conclude that there is no negative cycle in the $G'$.
+Therefore, there must exist a shortest path tree in the $G'$, the Theorem is correct according to \cite{Narv2002New}.
+\iffalse
 We will use inductive reasoning to prove this theorem.\\
 (1)We first prove
 the base case. When the weight of edge $(c,x)$ is changed from $L(c,x)$ to $-L(c,x)$.
 The potential parent for node $x$ is $c$, the potential cost for node $x$ is $-L(c,x)$, the potential cost change for node $x$ is $-2*L(c,x)$. The node $x$ will be enqueued into the $Q$ using ENQUEUE operation. After this operation, the queue has one element in the form of
 $(x,(c,-L(c,x),-2*L(c,x)))$. Because there is no node can decrease its cost by more than $-2*L(c,x)$. Therefore, all of the descendants of node $x$ will be  placed in the correct positions during the first iteration.\\
-(2)The inductive step is the same as in the \cite{Narv2002New}, so we omitted the content.
+(2)The inductive step is the same as in the \cite{Narv2002New}, so we omitted the content.\fi
 \end{proof}
 \begin{figure*}[t]
         \centering
@@ -602,29 +612,37 @@ $(x,(c,-L(c,x),-2*L(c,x)))$. Because there is no node can decrease its cost by m
         \label{theoremexample}
 \end{figure*}
 \begin{theorem}\label{newsptposition}
-Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d(d\neq c, d\neq x)$
+Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d \notin D_c(x)(d\neq c \land d\neq x)$
 \begin{itemize}
 \item[(1)] If $d\in D_c^{G'}(x)$, then we have  $C_x(d)<C_x(c)+C_c(d)$.
  \item[(2)] If $C_x(d)<C_x(c)+C_c(d)$ is satisfied,  then we have $d\in D_c^{G'}(x)$.
 \end{itemize}
 \end{theorem}
 \begin{proof}
-(1)
-If the position of the node $d$ in the new SPT $T_c^{G'}$ is changed, the node $d$ or its ancestor(s) must be enqueued into the $Q$ using ENQUEUE operation.
-Assume that the difference between
-the old cost and the potential new cost for the node $d$ is  $\delta$, the new shortest path cost of node $d$ is $C_c(d)-\delta$.
-Since only the weight of the link $(c,x)$ is changed to $-L(c,x)$, we have $d\in D_c^{G'}(x)$. In $T_c^{G'}$, we have $C_c^{G'}(d)=C_c^{G'}(x)+C_x^{G'}(d)$.
+(1)Since $d \in D_c(x)$ and $d\in D_c^{G'}(x)$, the node $d$ or its ancestor(s) must be enqueued into the $Q$ using ENQUEUE operation.
+Assume that the cost difference for node $d$ is  $\triangle$, the potential cost of node $d$ is $C_c(d)+\triangle$.
+In $T_c^{G'}$, we have $C_c^{G'}(d)=C_c^{G'}(x)+C_x^{G'}(d)$.
 Since $C_c^{G'}(x)=-L(c,x)$, we have $C_c^{G'}(d)=C_x^{G'}(d)-L(c,x)$.
-Because the shortest path from node $x$ to $d$ is not going through node $c$ in $T_c^{G'}$, we have $C_x^{G'}(d)=C_x(d)$.
+Because the shortest path from node $x$ to $d$ is not going through node $c$ in both of the two networks $G'$ and $G$, we have $C_x^{G'}(d)=C_x(d)$.
 Because $C_c^{G'}(d)=C_c(d)-\delta$,
-we can get $C_x(d)-L(c,x)=C_c(d)-\delta$.
-Therefore, $C_x(d)<L(c,x)+C_c(d)$.\\
+we have $C_x(d)-L(c,x)=C_c(d)-\triangle$.
+Therefore, we have $C_x(d)<L(c,x)+C_c(d)$.
+Since $C_c(x)=L(c,x)$, we have $C_x(d)<C_c(x)+C_c(d)$.
+
 (2)
 Since $C_x(d)<C_x(c)+C_c(d)$, the shortest path from node $c$ to node $d$ is not via node $c$.
+When the weight of edge $(c,x)$ is changed from $L(c,x)$ to $-L(c,x)$, there exists a path $P=c,x,...,d$ from $c$ to $d$, and the cost of which is $C_c(x)+C_x(d)$.
+Because $C_c(x)=-L(c,x)$, the cost of path $P$ is $C_x(d)-L(c,x)$.
+Therefore, the potential cost change for node $d$ is $C_c(d)-C_x(d)+L(c,x)>0$.
+The node $d$ will be enqueued into the $Q$ using ENQUEUE operation.
+Since only the weight of the link $(c,x)$ is changed to $-L(c,x)$, we have $d\in D_c^{G'}(x)$.
+\iffalse
+Since , the shortest path from node $c$ to node $d$ is not via node $c$.
 When the weight of edge $(c,x)$ is changed from $L(c,x)$ to $-L(c,x)$,
-the potential cost change for node $x$ is $C_c(d)-C_x(d)+C_x(c)>0$.
+the potential cost change for node $d$ is $C_c(d)-C_x(d)+C_x(c)>0$.
 The node $x$ will be enqueued into the $Q$ using ENQUEUE operation.
-Since only the weight of the link $(c,x)$ is changed to $-L(c,x)$, we have $d\in D_c^{G'}(x)$. Therefore, the position of the node $d$ in the new SPT $T_c^{G'}$ will be changed.
+Since only the weight of the link $(c,x)$ is changed to $-L(c,x)$, we have $d\in D_c^{G'}(x)$.
+\fi
 \end{proof}
 
 
@@ -683,15 +701,17 @@ From Theorem \ref{newsptposition}, we can see that if the shortest path from nei
 The node $d$  must be the descendant of node $x$ in the new shortest path tree when the  weight of $(c,x)$ is changed to $-L(c,x)$.
 Contrarily, if the node $c$ is included in the shortest path from neighboring node $x$ to $d$. The node $d$  must not be the descendant of node $x$ in the new shortest path tree when the  weight of $(c,x)$ is changed to $-L(c,x)$.
 \begin{lemma}\label{fan}
-Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d(d\neq c, d\neq x)$,  if  $d\in D_c^{G'}(x)$, then we have  $C_x(d)=C_x(c)+C_c(d)$.
+Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d \notin D_c(x)(d\neq c \land d\neq x)$
+if  $d\notin D_c^{G'}(x)$, then we have  $C_x(d)=C_x(c)+C_c(d)$.
 \end{lemma}
 \begin{proof}
-From Theorem \ref{newsptposition}, we have $C_x(d)\geq C_x(c)+C_c(d)$ when the position of the node $d$ in the new SPT $T_c^{G'}$ is not changed.
+From Theorem \ref{newsptposition}, we have $C_x(d)\geq C_x(c)+C_c(d)$ when
+both of the conditions $d \in D_c(x)$ and $d\notin D_c^{G'}(x)$ are established simultaneously.
 Because $C_x(d)\leq C_x(c)+C_c(d)$ is satisfied, we have $C_x(d)=C_x(c)+C_c(d)$.
 %Therefore, the lemma can be easily verified.
 \end{proof}
 \begin{theorem}\label{computeneighborcost}
-Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d(d\neq c, d\neq x)$,
+Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d (d\neq c \land d\neq x)$
 \begin{itemize}
 \item[(1)] if $d \in D_c(x)$, then we have $C_{x}(d)=C_{c}(d)-C_{c}(x)$.
 \item[(2)] if $d \notin D_c(x)$ and $d \in D_c^{G'}(x)$, then we have
@@ -701,14 +721,15 @@ Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in
 \end{itemize}
 \end{theorem}
 \begin{proof}
-(1)Since $v \in D_c(x)$, we have $C_{c}(v)=C_{c}(x)+C_{x}(v)$. Therefore, we can easy get $C_{x}(v)=C_{c}(v)-C_{c}(x)$.
+(1) Since $d \in D_c(x)$, we have $C_{c}(d)=C_{c}(x)+C_{x}(d)$. Therefore, we can easy get $C_{x}(d)=C_{c}(d)-C_{c}(x)$.
 
-(2)Since $d \in D_c^{G'}(x)$, we have $C_{c}^{G'}(d)=C_{c}^{G'}(x)+C_{x}^{G'}(d)$.
-From Theorem \ref{newspt}, we can see that $C_{x}^{G'}(d)=C_{x}(d)$.
+(2) Since $d \in D_c^{G'}(x)$, we have $C_{c}^{G'}(d)=C_{c}^{G'}(x)+C_{x}^{G'}(d)$.
+From Theorem \ref{newsptposition}, we can get $C_{x}^{G'}(d)=C_{x}(d)$.
 Therefore, we have $C_{c}^{G'}(d)=C_{c}^{G'}(x)+C_{x}(d)$.
 Because $C_{c}^{G'}(x)=-C_c(x)$, we have
-$C_{x}(d)=C_{c}^{G'}(d)+C_c(x)$.\\
-(3)From lemma \ref{fan}, we can get $C_{x}(d)=C_{c}(d)+C_c(x)$.
+$C_{x}(d)=C_{c}^{G'}(d)+C_c(x)$.
+
+(3) From lemma \ref{fan}, we have $C_{x}(d)=C_{c}(d)+C_c(x)$.
 \end{proof}
 
 \iffalse
@@ -729,7 +750,7 @@ From the Theorem \ref{newspt0}, Theorem \ref{newsptposition0} and DC rule, we ca
 \end{proof}
 
 \fi
-In this section, we will show the performance of the algorithm, including the time complexity and the number of backup next-hop computed by LFA. From theorem \ref{iaccomplexity}, we can see that the computational complexity of IAC is less than that of constructing a shortest path tree. From theorem \ref{fullprooof}, we can see that the IAC can compute all the backup next-hop set which satisfies the LFA Rule. We will describe the Theorem \ref{iaccomplexity} and Theorem \ref{fullprooof} in detail, and also their correctness is proved.
+Now we will show the performance of the algorithm, including the time complexity and the number of backup next-hop computed by LFA. From theorem \ref{iaccomplexity}, we can see that the computational complexity of IAC is less than that of constructing a shortest path tree. From theorem \ref{fullprooof}, we can see that the IAC can compute all the backup next-hop set which satisfies the LFA Rule. We will describe the Theorem \ref{iaccomplexity} and Theorem \ref{fullprooof} in detail, and also their correctness is proved.
 \begin{theorem}\label{iaccomplexity}
 The computational complexity of IAC is less than $O(|E|lg|V|)$ when the queue is implemented as a Heap.
 \end{theorem}
@@ -737,10 +758,10 @@ The computational complexity of IAC is less than $O(|E|lg|V|)$ when the queue is
  To compute all the backup next-hop set from node $c$ to other nodes in the network. The IAC need to run the iSPF algorithm $k$ times, where $k$ is the number of neighbors of node $c$. Let $N_{i}$ and $M_{i}$ respectively indicate the number of nodes that must adjust their costs or parents and the number of edges which anchored to these nodes when the weight of link $(c,i)$ is changed to $-L(c,i)$. Therefore the computational complexity of the Algorithm INC is $\sum_{i=1}^k{M_{i}*lgN_{i}}\leq \sum_{i=1}^k{M_{i}}*lg|V|=O(|E|lg|V|)$. Since $N_{i}<|V|$, therefore the computational complexity of IAC is less than that of SPF.
 \end{proof}
 \begin{theorem}\label{fullprooof}
-Algorithm IAC-NA can compute all the next hop set for node $c$ that satisfies the LFA Rule.
+Algorithm IAC can compute all the next hop set for node $c$ that satisfies the LFA Rule.
 \end{theorem}
 \begin{proof}
-For any node $x\in N(c)$, the $C_x(v), v \in V$ will be calculated when the lines (1-28) of the IAC are executed. As long as we know the above values, we can use the LFA rule to compute all the LFA next hop for node $c$. Therefore, the theorem is established.
+For any neighboring node $x$ of $c$, the $C_x(d), d \in V$ will be calculated when the lines (1-27) of the IAC are executed. As long as we know the above values, we can use the LFA rule to compute all the LFA next hop set for node $c$. Therefore, the Theorem is established.
 \end{proof}
 
 \iffalse
