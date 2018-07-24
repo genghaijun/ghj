@@ -91,13 +91,24 @@ $C_c(v)$ is the shortest cost from node $c$  to node $v$ in the original network
 
 
 
-\section{Incremental Alternates Computation Algorithm}\label{iac}
+\section{Incremental Alternates Computation}\label{iac}
 \iffalse
 Given sets of nodes $N \in V$, $I(N)=\{S(e)\notin N, E(e) \in N\}$, $O(N)=\{S(e)\in N, E(e) \notin N\}$,
 obviously $I(N)=O(N)$ in an undirected connected graph $G$.
 \fi
 
+\subsection{Basic Idea}
+On a router $c$, we focuses on how to efficiently compute alternate next hops for each destination, 
+according to the criteria of \textbf{LFC}, or \textbf{NPC}, or \textbf{DC}, for different scenarios. 
+By carefully investigating each criterion in Section \ref{criteria}, we can see that the difficulty 
+lies in computing, for each destination $d$, the lowest distance from each neighbor $x$ to $d$ (i.e., $C_{x}(d)$), 
+as well as the lowest distance from $x$ to the default next hop $b$ for $d$ (i.e., $C_{x}(b)$).
+All other costs, including $C_{c}(d), C_{b}(d)$ and $C_{x}(c)$, are already available since $c$ maintains
+a shortest path tree rooted at itself.
 
+The computation is actually embedded in a dynamic shortest path tree (SPT) algorithm, which takes 
+a graph and the corresponding SPT as input, and performs incremental shortest path computation 
+with the sign of some specific link cost simply reversed, i.e., from $x$ to $-x$. 
 
 Since each node independently computes its next-hops for all destinations,
 in the rest of the paper, our algorithm will be

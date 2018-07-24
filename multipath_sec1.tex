@@ -45,7 +45,7 @@ redundancy provision.
 
 In this paper, we propose Incremental Alternates Computation (IAC), an algorithm that can
 compute the full set of alternates for a given network topology in a highly efficient way.
-Actually, IAC performs incremental shortest-path-first (iSPF) computation on specific link 
+Actually, IAC performs incremental shortest path computation on specific link 
 cost update, 
 %on a dual graph with respect to the given graph, 
 where the sign of some cost is simply reversed, i.e., from $x$ to $-x$. 
@@ -74,9 +74,9 @@ IAC can completely and efficiently deal with LFA problem.
 \fi
 
 The rest of the paper is organized as follows.
-Section \ref{background} introduces the background of LFA, the graph model and necessary notations. Section \ref{back} explains how incremental shortest path computation works, 
-and Section \ref{iac} describes the details of our IAC algorithm. The evaluation results are 
-presented in Section \ref{evaluation}, and Section \ref{conclusion} concludes the paper.
+Section \ref{background} introduces the background of LFA, the graph model and necessary notations. 
+Section \ref{iac} describes the details of our IAC algorithm with its theoretical analysis,  
+while Section \ref{evaluation} presents our evaluation results. Finally, Section \ref{conclusion} concludes the paper.
 
 
 
