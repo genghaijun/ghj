@@ -284,29 +284,7 @@ For any node $x\in N(c)$, if we can quickly calculate $C_x(v), v\in V$ in the $T
 
 \fi
 
-\begin{figure*}[t]
-        \centering
-        \begin{subfigure}[b]{0.32\textwidth}
-                \centering
-                \includegraphics{nettopology}
-                \caption{Network topology}
-              \label{spttree21}
-        \end{subfigure}
-        \begin{subfigure}[b]{0.32\textwidth}
-                \centering
-                \includegraphics{sptc}
-                \caption{$T_{c}$}
-                \label{spttreechange22}
-        \end{subfigure}
-         \begin{subfigure}[b]{0.32\textwidth}
-                \centering
-                \includegraphics{newsptc}
-                \caption{$T_{c}^{G_{(c,a)}}$}
-                \label{spttreechange23}
-        \end{subfigure}
-        \caption{An example for explaining how ICA works}
-        \label{theoremexample}
-\end{figure*}
+
 %\label{algorithm}
 
 
@@ -338,75 +316,7 @@ For any node $x\in N(c)$, if we can quickly calculate $C_x(v), v\in V$ in the $T
 
 
 
-\begin{algorithm}[htb]
-\KwIn{Network graph $G=(V,E)$}
-\KwIn{Node $c$ running the algorithm}
-\KwOut{$N_c(v), (\forall v \in V \land v \neq c) $}
-%\SetAlgoNoLine
-%\SetAlgoNoEnd
-\For{$x \in N(c)$}{
-\For{$v \in V$}{
- $v.visited \leftarrow floating$\;
- $C'_c(v) \leftarrow C_c(v)$\;
-}
-$c.visited=anchored$\;
- $weight\leftarrow L(c,x) $\;
- $L(c,x)\leftarrow -L(c,x)$;
-%\begin{shaded}
-%\hl{(In IAC-NA $L(c,x)=-L(c,x)$)}\;
-%\end{shaded}
 
- $\triangle\leftarrow weight-L(c,x)$\;
-\For{$m\in D(T_c,x)$}
-{
-$C'_c(m)\leftarrow C'_c(m)-\triangle$\;
-$m.visited=anchored$\;
-}
-\For{$v \in D(T_c,x)$}{
-\For {each neighbor $u$ of $v$}{
-\If {$u.visited=floating$ }
-{
-$newdist \leftarrow C'_c(v)+L(v,u)$\;
-
-\If {$newdist <C'_c(u)$}{
-$\delta \leftarrow newdist-C'_c(u)$
-ENQUEUE$(u,(v,newdist,\delta))$\;}
-}
-}
-}
-\While {$Q$ is not empty}{
-$<v,tc> \leftarrow$ EXTRACTMIN(Q)\;
-$v.visited\leftarrow anchored$\;
-$C'_c(v)\leftarrow tc$\;
-Compute $C_x(v)$ using Theorem \ref{computeneighborcost}\;
-%Add $x$ to $N_c(v)$;\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad
-%\hl{(In IAC-NA Compute $C_x(v)$ using Theorem 9)} \;
-
-\For {each neighbor $u$ of $v$}{
-\If {$u.visited=floating$ }
-{
-$newdist \leftarrow C'_c(v)+L(v,u)$\;
-\If {$newdist <C'_c(u)$}{
-ENQUEUE$(u,(v,newdist,\delta))$\;}
-}
-}
-}
- $L(c,x)\leftarrow weight$\;
-}
-\For {$d\in V, d \neq c$}
-{
-\For{$x\in N(c)$}
-{
- \If {LFA is satisfied}
- {
- Add $x$ to $N_c(d)$\;
- }
-}
-}
-\Return $N_c(v), (\forall d \in V \land d \neq c)$
-\caption{IAC}
-\label{mnpe}
-\end{algorithm}
 \iffalse
 \begin{figure}[h]
 \centering
@@ -421,6 +331,102 @@ We will use a simple example to explain the Theorem \ref{dcbackupnexthop}. Fig. 
 Fig. \ref{spttreedc} is a shortest path tree rooted at node $c$, while Fig. \ref{spttreechange1dc} and \ref{spttreechange2dc} respectively represent the new SPT when the weight of the links $(c,a)$  and $(c,b)$  is changed to $0$. Because $e \notin D(T_{c},a)$ and $e \in D(T'_{c},a)$, we can see that node $a$  can be a viable backup next-hop from   $c$ to $e$. Due to $d \notin D(T_{c},b)$, and $d \in D(T'_{c},b)$ ,  node $b$  can be a viable backup next-hop from $c$  to $d$, and also  we can get ode $b$  can be a viable backup next-hop from $c$  to $g$ in the same way.
 \fi
 \subsection{Algorithm}
+\begin{algorithm}[htb]
+\KwIn{Network graph $G=(V,E)$ and $T_c$}
+\KwOut{$N_c(d), (\forall d \in V \land d \neq c) $}
+%\SetAlgoNoLine
+%\SetAlgoNoEnd
+\For{each neighbor $x$ of $c$}{
+\For{$v \in V$}{
+ %$v.visited \leftarrow floating$\;
+ $C_{c}^{G_{(c,x)}}(v) \leftarrow C_c(v)$\;
+ $P_{c}^{G_{(c,x)}}(v) \leftarrow P_c(v)$\;
+}
+
+%$c.visited=anchored$\;
+ $weight\leftarrow L(c,x) $\;
+ $L(c,x)\leftarrow -L(c,x)$\;
+ $newdist\leftarrow C_c(x)+\triangle$\;
+ $\triangle\leftarrow L(c,x)-weight$\;
+ 
+ ENQUEUE$(\{x,(c,newdist,\triangle)\})$\;
+%\begin{shaded}
+%\hl{(In IAC-NA $L(c,x)=-L(c,x)$)}\;
+%\end{shaded}
+
+
+ \iffalse
+\For{$m\in D(T_c,x)$}
+{
+$C'_c(m)\leftarrow C'_c(m)-\triangle$\;
+%$m.visited=anchored$\;
+}
+\For{$v \in D(T_c,x)$}{
+\For {each neighbor $u$ of $v$}{
+\If {$u.visited=floating$ }
+{
+$newdist \leftarrow C_c(v)+L(v,u)$\;
+
+\If {$newdist <C'_c(u)$}{
+$\delta \leftarrow newdist-C'_c(u)$
+ENQUEUE$(u,(v,newdist,\delta))$\;}
+}
+}
+}
+\fi
+\While {$Q$ is not empty}{
+$\{m,(n,p,\triangle)\}\leftarrow$ EXTRACTMIN(Q)\;
+$P_c^{G_{(c,x)}}(m)\leftarrow n$\;
+%$m.visited\leftarrow anchored$\;
+$C_c^{G_{(c,x)}}(m)\leftarrow p$\;
+
+\For{$d\in D_c(m)$}
+{
+$C_{c}^{G_{(c,x)}}(d)\leftarrow C_c(d)+\triangle$\;
+
+\If {$d \in D_c(x)$}
+{$C_{x}(d)\leftarrow C_{c}(d)-C_{c}(x)$\;
+}
+
+\If {$d \notin D_c(x) \land d \in D_c^{G_{(c,x)}}(x)$}
+{$C_{x}(d)\leftarrow C_{c}^{G_{(c,x)}}(d)+C_{c}(x)$\;
+}
+\If {$d \notin D_c(x) \land d \notin D_c^{G_{(c,x)}}(x)$}
+{$C_{x}(d)\leftarrow C_{c}(d)+C_c(x)$\;
+}
+
+}
+
+%Compute $C_x(v)$ using Theorem \ref{computeneighborcost}\;
+%Add $x$ to $N_c(v)$;\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad
+%\hl{(In IAC-NA Compute $C_x(v)$ using Theorem 9)} \;
+
+\For {each neighbor $q$ of $m$}{
+\If {$C_c(q)>C_{c}^{G_{(c,x)}}(m)+L(m,q)$ }
+{ 
+
+$newdist \leftarrow C_{c}^{G_{(c,x)}}(m)+L(m,q)$\;
+$\triangle\leftarrow newdist-C_c(q)$\;
+ENQUEUE$(q,(m,newdist,\triangle))$\;
+}
+}
+}
+ $L(c,x)\leftarrow weight$\;
+}
+\For {$d\in V, d \neq c$}
+{
+\For{$x\in N(c)$}
+{
+ \If {LFA is satisfied}
+ {
+ ADD $x$ to $N_c(d)$\;
+ }
+}
+}
+\Return $N_c(v), (\forall d \in V \land d \neq c)$
+\caption{IAC}
+\label{mnpe}
+\end{algorithm}
 \iffalse
 \begin{figure*}[t]
 \begin{subfigure}[b]{0.20\textwidth}
@@ -452,24 +458,34 @@ Fig. \ref{spttreedc} is a shortest path tree rooted at node $c$, while Fig. \ref
 \end{figure*}
 \fi
 We are now in a position to describe the IAC algorithm.
-According to the above discussions, algorithm IAC is proposed to compute the backup next-hop set which satisfies the LFA rule. The inputs of the IAC are the network topology $G=(V,E)$ and $T_{c}$, and the output is the backup next-hop set from node $c$ to all  other nodes in the network.
+According to the above discussions, algorithm IAC is proposed to compute all of the backup next-hop set which are satisfied the LFA rule. The inputs of the IAC are the network topology $G=(V,E)$ and $T_{c}$, and the output is the backup next-hop set from node $c$ to all  other nodes in the network. 
+IAC maintains a priority queue $Q$, which contains a subset of nodes together with three attributes. In particular, each element in $Q$ is
+of the form ${(u,(v,q,\triangle))}$, where $v$ is the potential parent
+for node $u$, $q$ denotes a potential cost for node $u$ , and $\triangle$ is the potential cost change for node $u$ .
 The IAC requires several iterations. In each iteration,
-at the beginning, the $anchored$ attribute of all nodes except $c$ are set to $floating$ (lines 2 $\sim$ 5). We change the weight of the link  $(c,x)$  to $-L(c,x)$, and compute the weight change for $(c,x)$ (lines 6 $\sim$ 8), which is  stored in variable $\triangle$. The shortest cost from $c$ to $v$ and the $visited$ attribute of node $v$ are updated accordingly (lines 9 $\sim$ 11).
-For $v \in D(T_c,x)$, for each of its unvisited neighbor $u$,
-we compute the  new tentative cost  of $u$. The node $u$ will be inserted into
-the $Q$ if its new tentative cost is smaller than the old value (lines 12 $\sim$ 17).
-A $floating$ node $v$ with the lowest tentative cost will be popped out from the priority queue $Q$
-by the EXTRACTMIN operation, where node ID is  used as tie breaking.
-It is then added to the tree, marked as $anchored$, and used as the current node in the iteration,
-while its attribute like cost  is also set to
-a permanent value (lines $19 \sim 21$).
-The corresponding cost $C_x(v)$ is computed
-according to Theorem \ref{computeneighborcost} (line 22).
-For each $floating$ neighbor $u$ of $v$,
-we compute the  new tentative cost  of $u$. The node $u$ will be inserted into
-the $Q$ if its new tentative cost is smaller than the old value (lines 23 $\sim$ 27).
-Then, we will restore the weight of the link $(c,x)$ (line 28).
-At last lines 29-32 are using to compute all the LFA next hop set for node $c$.
+at the beginning,  both of the parameters $C_{c}^{G_{(c,x)}}(v), v\in V$  and  $P_{c}^{G_{(c,x)}}(v)$ are initialized
+(lines 2 $\sim$ 4). We change the weight of the link  $(c,x)$  to $-L(c,x)$, and compute the cost change for $(c,x)$ (lines 5 $\sim$ 8), which is stored in variable $\triangle$.
+The node $x$ id enqueued into the $Q$ by the ENQUEUE operation with its potential new parent $c$ , its potential new cost $newdist$, and the cost change $\triangle$ (line 9).
+A node $m$ with the lowest potential cost change will be popped out from the priority queue $Q$ by the EXTRACTMIN operation, where node ID is  used as tie breaking.
+It is then added to the tree, and used as the current node in the iteration, while its attributes like lowest cost and parent  are also set to a permanent value in the $G_{(c,x)}$ (lines $12 \sim 13$).
+For all the nodes $d \in D_c(m)$, their cost is updated accordingly (line 15), and the corresponding cost $C_x(d)$ is then computed (lines $16 \sim 21$).
+For each neighbor $q$ of $m$, we compute the  potential cost of $q$. The node $q$ will be inserted into the $Q$ if its new potential cost is smaller than the old value (lines 22 $\sim$ 26).
+Then, we will restore the weight of the link $(c,x)$ (line 27).
+At last lines 28-31 are using to compute all the LFA next hop set for node $c$.
+\subsection{Example}
+In this section, we will employ a simple example to explain how ICA works. Fig. \ref{spttree21} shows a network topology consisting of 5 nodes and 6 edges. Fig. \ref{spttreechange22} shows the shortest path tree $T_c$ rooted at the node $c$.
+Here we will describe how to compute $T_c^{G(c,a)}$ based on $T_c$.
+First, the root node $c$ is marked as $anchored$, all of the nodes except $c$ are marked as $floating$.
+For all the $floating$ nodes,
+we check whether they have direst link to the anchored nodes, and calculate the new cost and the change in cost, which gives
+queue \{$(a,(c,-3,-6))$\}.
+In the first iteration, $(a,(c,-3,-6))$ will be selected and  $a$ will be marked as $anchored$. The original subtree rooted at $d$  is considered together. Therefore the node $d$ is selected and marked as $anchored$ at the same time. Since $d$ has an outing edge to $e$, the new cost and $\delta$ of $e$ is calculated, which gives queue \{$(e,(e,3,-5))$\}. Node $d$ is marked as anchored in the next iteration.
+The new shortest path tree is given in the
+Fig. \ref{spttreechange23}.
+We have $d\in D_c(a)$ from Fig. \ref{spttreechange22} , so $C_a(d)=C_c(d)-C_c(a)=3$.
+Because $e \notin D_c(a)$ and $e \in D_c^{G_{(c,a)}}(a)$, we have $C_a(e)=C_c^{G_{(c,a)}}(e)+C_c(a)=6$ from Theorem \ref{computeneighborcost}.
+Since $b \notin D_c(a)$ and $b \notin D_c^{G_{(c,a)}}(a)$, we have $C_a(b)=C_a(c)+C_c(b)=8$ from Theorem \ref{computeneighborcost}.
+
 \subsection{Theoretical  Analysis}
 \iffalse
 \begin{definition}
@@ -501,7 +517,7 @@ Given a shortest path tree $T_c$, for any node $d(d\neq c, d\neq x)$, where $x \
 (1)
 If the position of the node $d$ in the new SPT $T_c(c,x,0)$ is changed, the node $d$ or its ancestor(s) must be enqueued into the $Q$ using ENQUEUE operation.
 Assume that the difference between
-the old distance and the potential new distance for the node $d$ is  $\delta$, the new shortest path cost of node $d$ is $C_c(d)-\delta$.
+the old cost and the potential new cost for the node $d$ is  $\delta$, the new shortest path cost of node $d$ is $C_c(d)-\delta$.
 Since only the weight of the link $(c,x)$ is changed to 0, we have $d\in D(T_c(c,x,0),x)$. In $T_c(c,x,0)$, we have $C_c(d,(c,x,0))=C_c(x,(c,x,0))+C_x(d,(c,x,0))$.
 Since $C_c(x,(c,x,0))=0$, we have $C_c(d,(c,x,0))=C_x(d,(c,x,0))$.
 Because the shortest path from node $x$ to $d$ is not going through node $c$ in $T_c(c,x,0)$, we have $C_x(d,(c,x,0))=C_x(d)$.
@@ -512,7 +528,7 @@ Therefore, we have $C_x(d)<C_c(d)$.\\
 Since $C_x(d)<C_c(d)$, the shortest path from node $c$ to node $d$ is not via node $c$.
 When the weight of edge $(c,x)$ is changed from $L(c,x)$ to $0$, there exists a path $P=c,x,...,d$ from $c$ to $d$, and the cost of which is $C_c(x)+C_x(d)$.
 Because $C_c(x)=0$, the cost of path $P$ is $C_x(d)$.
-Therefore, the potential distance change for node $x$ is $C_c(d)-C_x(d)>0$.
+Therefore, the potential cost change for node $x$ is $C_c(d)-C_x(d)>0$.
 The node $x$ will be enqueued into the $Q$ using ENQUEUE operation.
 Since only the weight of the link $(c,x)$ is changed to 0, we have $d\in D(T_c(c,x,0),x)$. Therefore, the position of the node $d$ in the new SPT $T_c(c,x,0)$ will be changed.
 \end{proof}
@@ -547,11 +563,33 @@ the iSPF algorithm can get the correct SPT $T_c^{G'}$.
 We will use inductive reasoning to prove this theorem.\\
 (1)We first prove
 the base case. When the weight of edge $(c,x)$ is changed from $L(c,x)$ to $-L(c,x)$.
-The potential parent for node $x$ is $c$, the potential distance for node $x$ is $-L(c,x)$, the potential distance change for node $x$ is $-2*L(c,x)$. The node $x$ will be enqueued into the $Q$ using ENQUEUE operation. After this operation, the queue has one element in the form of
+The potential parent for node $x$ is $c$, the potential cost for node $x$ is $-L(c,x)$, the potential cost change for node $x$ is $-2*L(c,x)$. The node $x$ will be enqueued into the $Q$ using ENQUEUE operation. After this operation, the queue has one element in the form of
 $(x,(c,-L(c,x),-2*L(c,x)))$. Because there is no node can decrease its cost by more than $-2*L(c,x)$. Therefore, all of the descendants of node $x$ will be  placed in the correct positions during the first iteration.\\
 (2)The inductive step is the same as in the \cite{Narv2002New}, so we omitted the content.
 \end{proof}
-
+\begin{figure*}[t]
+        \centering
+        \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics{nettopology}
+                \caption{Network topology}
+              \label{spttree21}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics{sptc}
+                \caption{$T_{c}$}
+                \label{spttreechange22}
+        \end{subfigure}
+         \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics{newsptc}
+                \caption{$T_{c}^{G_{(c,a)}}$}
+                \label{spttreechange23}
+        \end{subfigure}
+        \caption{An example for explaining how ICA works}
+        \label{theoremexample}
+\end{figure*}
 \begin{theorem}\label{newsptposition}
 Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d(d\neq c, d\neq x)$
 \begin{itemize}
@@ -563,7 +601,7 @@ Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in
 (1)
 If the position of the node $d$ in the new SPT $T_c^{G'}$ is changed, the node $d$ or its ancestor(s) must be enqueued into the $Q$ using ENQUEUE operation.
 Assume that the difference between
-the old distance and the potential new distance for the node $d$ is  $\delta$, the new shortest path cost of node $d$ is $C_c(d)-\delta$.
+the old cost and the potential new cost for the node $d$ is  $\delta$, the new shortest path cost of node $d$ is $C_c(d)-\delta$.
 Since only the weight of the link $(c,x)$ is changed to $-L(c,x)$, we have $d\in D_c^{G'}(x)$. In $T_c^{G'}$, we have $C_c^{G'}(d)=C_c^{G'}(x)+C_x^{G'}(d)$.
 Since $C_c^{G'}(x)=-L(c,x)$, we have $C_c^{G'}(d)=C_x^{G'}(d)-L(c,x)$.
 Because the shortest path from node $x$ to $d$ is not going through node $c$ in $T_c^{G'}$, we have $C_x^{G'}(d)=C_x(d)$.
@@ -573,7 +611,7 @@ Therefore, $C_x(d)<L(c,x)+C_c(d)$.\\
 (2)
 Since $C_x(d)<C_x(c)+C_c(d)$, the shortest path from node $c$ to node $d$ is not via node $c$.
 When the weight of edge $(c,x)$ is changed from $L(c,x)$ to $-L(c,x)$,
-the potential distance change for node $x$ is $C_c(d)-C_x(d)+C_x(c)>0$.
+the potential cost change for node $x$ is $C_c(d)-C_x(d)+C_x(c)>0$.
 The node $x$ will be enqueued into the $Q$ using ENQUEUE operation.
 Since only the weight of the link $(c,x)$ is changed to $-L(c,x)$, we have $d\in D_c^{G'}(x)$. Therefore, the position of the node $d$ in the new SPT $T_c^{G'}$ will be changed.
 \end{proof}
@@ -792,7 +830,7 @@ Therefore, the complexity of Algorithm \ref{DMPA} is in $O(|V|lg|V|+|E|)$.
 
 In this section, we will explain the time complexity of MPA in detail.
 In order to maintain nodes, which need to be updated the positions (parents) and costs, we adopt a priority queue.
-We define $N_{n}$ is the node number which must change their distance or parent attributes (or both),
+We define $N_{n}$ is the node number which must change their cost or parent attributes (or both),
 and $N_{e}$ is the edge number that may cause any node in
 the queue to change its cost (This is implemented by the decrease-key operation of the priority queue).
 Assume the time needed by ENQUEUE to enqueue a node is $T_e$, the time
@@ -946,19 +984,6 @@ The computational complexity of IAC-NA is less than $O(|E|lg|V|)$ when the queue
 \end{theorem}
 The proof for Theorem \ref{mpnecomplexity} is similar with that of Theorem \ref{iaccomplexity}, so we omit it.
 \fi
-\subsection{Example}
-In this section, we will employ a simple example to explain how ICA works. Fig. \ref{spttree21} shows a network topology consisting of 5 nodes and 6 edges. Fig. \ref{spttreechange22} shows the shortest path tree $T_c$ rooted at the node $c$. 
-Here we will describe how to compute $T_c^{G(c,a)}$ based on $T_c$.
-First, the root node $c$ is marked as $anchored$, all of the nodes except $c$ are marked as $floating$.
-For all the $floating$ nodes,
-we check whether they have direst link to the anchored nodes, and calculate the new distance and the change in distance, which gives
-queue \{$(a,(c,-3,-6))$\}.
-In the first iteration, $(a,(c,-3,-6))$ will be selected and  $a$ will be marked as $anchored$. The original subtree rooted at $d$  is considered together. Therefore the node $d$ is selected and marked as $anchored$ at the same time. Since $d$ has an outing edge to $e$, the new distance and $\delta$ of $e$ is calculated, which gives queue \{$(e,(e,3,-5))$\}. Node $d$ is marked as anchored in the next iteration.
-The new shortest path tree is given in the
-Fig. \ref{spttreechange23}.
-We have $d\in D_c(a)$ from Fig. \ref{spttreechange22} , so $C_a(d)=C_c(d)-C_c(a)=3$.
-Because $e \notin D_c(a)$ and $e \in D_c^{G_{(c,a)}}(a)$, we have $C_a(e)=C_c^{G_{(c,a)}}(e)+C_c(a)=6$ from Theorem \ref{computeneighborcost}.
-Since $b \notin D_c(a)$ and $b \notin D_c^{G_{(c,a)}}(a)$, we have $C_a(b)=C_a(c)+C_c(b)=8$ from Theorem \ref{computeneighborcost}.
 
 
 \iffalse
@@ -973,12 +998,12 @@ widely deployed in today¡¯s Internet calculate a shortest path tree (SPT) from e
 The incremental shortest path first algorithm (iSPF) maintains
 a queue $Q$, each element in the queue is
 of the form $(n,(p,d,\delta))$ , where $p$ denotes a potential parent
-for node $n$, $d$ denotes a potential distance for node  $n$ , and $\delta$ denotes the potential distance change for node  $n$.
+for node $n$, $d$ denotes a potential cost for node  $n$ , and $\delta$ denotes the potential cost change for node  $n$.
 The  iSPF \cite{Narv2002New} is carried out as following steps:\\
 (1)
 Finding all the potentially affected nodes and marking them  \textsl{floating}.\\
-(2) Computing the potential new distance, parent and the distance change $\delta$ between
-the old distance and the potential new distance for the potentially affected nodes.\\
+(2) Computing the potential new cost, parent and the cost change $\delta$ between
+the old cost and the potential new cost for the potentially affected nodes.\\
 (3) In each iteration, a node with the smallest $\delta$ (least positive or most negative) is selected, and then a subtree, instead of only
 one node, is appended to the new SPT. All of the above nodes are marked  \textsl{anchored}.
 \begin{figure*}[t]
@@ -1032,26 +1057,26 @@ one node, is appended to the new SPT. All of the above nodes are marked  \textsl
 
 Perhaps the most intuitive way to demonstrate iSPF is through an
 example. Consider the network topology depicted in Fig. \ref{spttree11}, which is composed of 6 nodes and 8 links. The letter besides the node is its label.
-The solid lines are the links in the shortest path tree which is rooted at node $c$, while the dotted lines are the links  not in the above shortest path tree. The number inside the circle is the shortest distance from node $c$ to that node.
+The solid lines are the links in the shortest path tree which is rooted at node $c$, while the dotted lines are the links  not in the above shortest path tree. The number inside the circle is the shortest cost from node $c$ to that node.
 
 At some point, the weight of the edge $(c,a)$ is changed from 8 to 2.
 Nodes except $c$ all affected nodes and are marked as \textsl{floating}.
 Only the root node $c$ is marked as \textsl{anchored}. For all the \textsl{floating} nodes,
-we check whether they have links to the \textsl{anchored} nodes, and calculate the new distance and the change  in distance. If the change in distance is smaller than 0, the node will be enqueued into the $Q$.
+we check whether they have links to the \textsl{anchored} nodes, and calculate the new cost and the change  in cost. If the change in cost is smaller than 0, the node will be enqueued into the $Q$.
 In the first iteration, the $Q$ has only one element with the form of
 \{$(a,(c,2,-6))$\}.
-In the next iteration, $(a,(c,2,6))$ will be selected and $a$ will be marked as \textsl{anchored}. Since $a$ has an outing edge to $e$ and $b$, the new distance and $\delta$ of $b$ and $e$ is calculated, which gives queue \{$(b,(a,6,-1)),(e,(a,7,-3))$\}. Then $e$ is selected, instead of only marking $e$ as \textsl{anchored}, the original subtree rooted at $e$  is considered together. Therefore the node $f$ is selected and marked as \textsl{anchored} at the same time. Since $e$ has an outing edge to $d$, the new distance and $\delta$ of $d$ is calculated, which gives queue \{$(b,(a,6,-1)),(d,(e,9,-2))$\}. Since node $d$ has the
-largest potential shortest distance decrease, node $d$ is marked as \textsl{anchored}.
+In the next iteration, $(a,(c,2,6))$ will be selected and $a$ will be marked as \textsl{anchored}. Since $a$ has an outing edge to $e$ and $b$, the new cost and $\delta$ of $b$ and $e$ is calculated, which gives queue \{$(b,(a,6,-1)),(e,(a,7,-3))$\}. Then $e$ is selected, instead of only marking $e$ as \textsl{anchored}, the original subtree rooted at $e$  is considered together. Therefore the node $f$ is selected and marked as \textsl{anchored} at the same time. Since $e$ has an outing edge to $d$, the new cost and $\delta$ of $d$ is calculated, which gives queue \{$(b,(a,6,-1)),(d,(e,9,-2))$\}. Since node $d$ has the
+largest potential shortest cost decrease, node $d$ is marked as \textsl{anchored}.
 In the next iteration, node $b$ is selected.
 The new shortest path tree is depicted in the
 Fig. \ref{spttreechange12}.
 
 
 Here we will describe a special example, when a single link changes its weight to the opposite number. For example, the weight of the edge $(c,a)$ is changed from 8 to -8. Only the root node $c$ is marked as anchored. For all the floating nodes,
-we check whether they have links to the anchored nodes, and calculate the new distance and the change in distance, which gives
+we check whether they have links to the anchored nodes, and calculate the new cost and the change in cost, which gives
 queue \{$(a,(c,2,-16))$\}.
-In the next iteration, $(a,(c,2,-16))$ will be selected and  $a$ will be marked as anchored. Since $a$ has an outing edge to $e$ and $b$, the new distance and $\delta$ of $e$ and $b$ is calculated, which gives queue \{$(a,(b,-4,-11)),(e,(a,-3,-13))$\}. Then $e$ is selected, instead of only marking $e$ as anchored, the original subtree rooted at $e$  is considered together. Therefore the node $f$ is selected and marked as anchored at the same time. Since $e$ has an outing edge to $d$, the new distance and $\delta$ of $d$ is calculated, which gives queue \{$(a,(b,-4,-11)),(d,(e,-1,-12))$\}. Since node $d$ has the
-largest potential shortest distance decrease, node $d$ is marked as anchored.
+In the next iteration, $(a,(c,2,-16))$ will be selected and  $a$ will be marked as anchored. Since $a$ has an outing edge to $e$ and $b$, the new cost and $\delta$ of $e$ and $b$ is calculated, which gives queue \{$(a,(b,-4,-11)),(e,(a,-3,-13))$\}. Then $e$ is selected, instead of only marking $e$ as anchored, the original subtree rooted at $e$  is considered together. Therefore the node $f$ is selected and marked as anchored at the same time. Since $e$ has an outing edge to $d$, the new cost and $\delta$ of $d$ is calculated, which gives queue \{$(a,(b,-4,-11)),(d,(e,-1,-12))$\}. Since node $d$ has the
+largest potential shortest cost decrease, node $d$ is marked as anchored.
 In the next iteration, node $b$ is selected.
 The new shortest path tree is given in the
 Fig. \ref{spttreechange13}.
