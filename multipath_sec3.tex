@@ -89,267 +89,7 @@ $C_c(v)$ is the shortest cost from node $c$  to node $v$ in the original network
 \fi
 
 
-\section{iSPF and LFA}\label{back}
-In this section, we will discuss incremental shortest
-path first (iSPF) algorithm and LFA, both of which are the foundation of our
-work.
-\subsection{Incremental Shortest Path First Algorithm}
-The OSPF and IS-IS routing protocols which are
-widely deployed in today¡¯s Internet calculate a shortest path tree (SPT) from each router to other routers in an autonomous system (AS). Lots of commercial routers have adopted dynamic SPT algorithms which employ the structure of the previously computed SPT rather than recomputed an new SPT from scratch when the network topology changes. The reason is that when network topology changes, the new computed SPT does not differ conspicuously from the old one.
 
-The incremental shortest path first algorithm (iSPF) maintains
-a queue $Q$, each element in the queue is
-of the form $(n,(p,d,\delta))$ , where $p$ denotes a potential parent
-for node $n$, $d$ denotes a potential distance for node  $n$ , and $\delta$ denotes the potential distance change for node  $n$.
-The  iSPF \cite{Narv2002New} is carried out as following steps:\\
-(1)
-Finding all the potentially affected nodes and marking them  \textsl{floating}.\\
-(2) Computing the potential new distance, parent and the distance change $\delta$ between
-the old distance and the potential new distance for the potentially affected nodes.\\
-(3) In each iteration, a node with the smallest $\delta$ (least positive or most negative) is selected, and then a subtree, instead of only
-one node, is appended to the new SPT. All of the above nodes are marked  \textsl{anchored}.
-\begin{figure*}[t]
-        \begin{subfigure}[b]{0.33\textwidth}
-                \centering
-                \includegraphics{ispfspt}
-                \centering
-                \caption{$T_{c}$}
-              \label{spttree11}
-        \end{subfigure}
-        \begin{subfigure}[b]{0.33\textwidth}
-                \centering
-                \includegraphics{ispfchange}
-                \caption{shortest path tree when the $L(c,a)=2$}
-                \label{spttreechange12}
-        \end{subfigure}
-         \begin{subfigure}[b]{0.33\textwidth}
-                \centering
-                \includegraphics{ispfchange2}
-                \caption{$T_{c}^{G_{(c,a)}}$}
-                \label{spttreechange13}
-        \end{subfigure}
-        \caption{An example for explaining iSPF}
-        \label{ex}
-\end{figure*}
-\iffalse
-\begin{figure}[t]
-
-\centering
-%\includegraphics[width=3in]{realcomputationoverhead}
-\includegraphics[width=3in]{ispfspt}
-\caption{Shortest path tree rooted at $A$ before link change}
-\label{ispfsptA}
-\end{figure}
-\begin{figure}[t]
-\centering
-%\includegraphics[width=3in]{realcomputationoverhead}
-\includegraphics[width=3in]{ispfchange}
-\caption{Shortest path tree rooted at $A$ when the weight of $(A,C)$ is changed to 2}
-\label{ispfchangeA}
-\end{figure}
-
-\begin{figure}[t]
-\centering
-%\includegraphics[width=3in]{realcomputationoverhead}
-\includegraphics[width=3in]{ispfchange2}
-\caption{Shortest path tree rooted at $A$ when the weight of $(A,C)$ is changed to -8}
-\label{ispfchangeB}
-\end{figure}
-\fi
-
-Perhaps the most intuitive way to demonstrate iSPF is through an
-example. Consider the network topology depicted in Fig. \ref{spttree11}, which is composed of 6 nodes and 8 links. The letter besides the node is its label.
-The solid lines are the links in the shortest path tree which is rooted at node $c$, while the dotted lines are the links  not in the above shortest path tree. The number inside the circle is the shortest distance from node $c$ to that node.
-
-At some point, the weight of the edge $(c,a)$ is changed from 8 to 2.
-Nodes except $c$ all affected nodes and are marked as \textsl{floating}.
-Only the root node $c$ is marked as \textsl{anchored}. For all the \textsl{floating} nodes,
-we check whether they have links to the \textsl{anchored} nodes, and calculate the new distance and the change  in distance. If the change in distance is smaller than 0, the node will be enqueued into the $Q$.
-In the first iteration, the $Q$ has only one element with the form of
-\{$(a,(c,2,-6))$\}.
-In the next iteration, $(a,(c,2,6))$ will be selected and $a$ will be marked as \textsl{anchored}. Since $a$ has an outing edge to $e$ and $b$, the new distance and $\delta$ of $b$ and $e$ is calculated, which gives queue \{$(b,(a,6,-1)),(e,(a,7,-3))$\}. Then $e$ is selected, instead of only marking $e$ as \textsl{anchored}, the original subtree rooted at $e$  is considered together. Therefore the node $f$ is selected and marked as \textsl{anchored} at the same time. Since $e$ has an outing edge to $d$, the new distance and $\delta$ of $d$ is calculated, which gives queue \{$(b,(a,6,-1)),(d,(e,9,-2))$\}. Since node $d$ has the
-largest potential shortest distance decrease, node $d$ is marked as \textsl{anchored}.
-In the next iteration, node $b$ is selected.
-The new shortest path tree is depicted in the
-Fig. \ref{spttreechange12}.
-
-
-Here we will describe a special example, when a single link changes its weight to the opposite number. For example, the weight of the edge $(c,a)$ is changed from 8 to -8. Only the root node $c$ is marked as anchored. For all the floating nodes,
-we check whether they have links to the anchored nodes, and calculate the new distance and the change in distance, which gives
-queue \{$(a,(c,2,-16))$\}.
-In the next iteration, $(a,(c,2,-16))$ will be selected and  $a$ will be marked as anchored. Since $a$ has an outing edge to $e$ and $b$, the new distance and $\delta$ of $e$ and $b$ is calculated, which gives queue \{$(a,(b,-4,-11)),(e,(a,-3,-13))$\}. Then $e$ is selected, instead of only marking $e$ as anchored, the original subtree rooted at $e$  is considered together. Therefore the node $f$ is selected and marked as anchored at the same time. Since $e$ has an outing edge to $d$, the new distance and $\delta$ of $d$ is calculated, which gives queue \{$(a,(b,-4,-11)),(d,(e,-1,-12))$\}. Since node $d$ has the
-largest potential shortest distance decrease, node $d$ is marked as anchored.
-In the next iteration, node $b$ is selected.
-The new shortest path tree is given in the
-Fig. \ref{spttreechange13}.
-\subsection{Some properties of the iSPF}
-\begin{definition}
-Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$,
-for any node $d\in V, d \neq c, d\in D_c(x)$,
-we say the node $d$ change its position in $T_c^{G'}$, if and only if the
-$d\in D_c^{G'}(x)$ is satisfied.
-\end{definition}
-\iffalse
-\begin{theorem}\label{newspt0}
-Given a shortest path tree $T_c$,
-when the edge $(c,x)\in T_c$ change its weight to 0, the iSPF algorithm can get the correct new SPT $T_c(c,x,0)$.
-\end{theorem}
-\begin{proof}
-The proof for this theorem is exactly the same as that of \cite{Narv2002New}, so the proof is omitted here.
-\end{proof}
-\begin{definition}
-Given a shortest path tree $T_c$, we say a node $d$ change its position in $T_c(c,x,w)$, if and only if the shortest path from $c$ to $d$ is different in the  two trees.
-\end{definition}
-\begin{theorem}\label{newsptposition0}
-Given a shortest path tree $T_c$, for any node $d(d\neq c, d\neq x)$, where $x \in N(c)$
-\begin{itemize}
-\item[(1)] If the position of the node $d$ in the new SPT $T_c(c,x,0)$ is  changed, then we have  $C_x(d)<C_c(d)$.
- \item[(2)] If $C_x(d)<C_c(d)$ is satisfied,  then the position of the node $d$ in the new SPT $T_c(c,x,0)$ will be changed.
-\end{itemize}
-\end{theorem}
-\begin{proof}
-(1)
-If the position of the node $d$ in the new SPT $T_c(c,x,0)$ is changed, the node $d$ or its ancestor(s) must be enqueued into the $Q$ using ENQUEUE operation.
-Assume that the difference between
-the old distance and the potential new distance for the node $d$ is  $\delta$, the new shortest path cost of node $d$ is $C_c(d)-\delta$.
-Since only the weight of the link $(c,x)$ is changed to 0, we have $d\in D(T_c(c,x,0),x)$. In $T_c(c,x,0)$, we have $C_c(d,(c,x,0))=C_c(x,(c,x,0))+C_x(d,(c,x,0))$.
-Since $C_c(x,(c,x,0))=0$, we have $C_c(d,(c,x,0))=C_x(d,(c,x,0))$.
-Because the shortest path from node $x$ to $d$ is not going through node $c$ in $T_c(c,x,0)$, we have $C_x(d,(c,x,0))=C_x(d)$.
-Because $C_x(d,(c,x,0))=C_c(d)-\delta$,
-we can get $C_x(d)=C_c(d)-\delta$.
-Therefore, we have $C_x(d)<C_c(d)$.\\
-(2)
-Since $C_x(d)<C_c(d)$, the shortest path from node $c$ to node $d$ is not via node $c$.
-When the weight of edge $(c,x)$ is changed from $L(c,x)$ to $0$, there exists a path $P=c,x,...,d$ from $c$ to $d$, and the cost of which is $C_c(x)+C_x(d)$.
-Because $C_c(x)=0$, the cost of path $P$ is $C_x(d)$.
-Therefore, the potential distance change for node $x$ is $C_c(d)-C_x(d)>0$.
-The node $x$ will be enqueued into the $Q$ using ENQUEUE operation.
-Since only the weight of the link $(c,x)$ is changed to 0, we have $d\in D(T_c(c,x,0),x)$. Therefore, the position of the node $d$ in the new SPT $T_c(c,x,0)$ will be changed.
-\end{proof}
-\fi
-\iffalse
-\begin{theorem}\label{newspttree0}
-Given a $T_{c}$, $x \in N(c)$, for any node $d(d\neq c, d\neq x)$,
-if the
-\begin{itemize}
-\item[(1)] if $d \notin D(T_{c},x)$ and $C_x(d)<C_c(d)$, then we have  $d\in D(T_c(c,x,0),x)$.
-\item[(2)] if $d \notin D(T_{c},x)$ and $d \notin D(T_c(c,x,0),x)$, then we have $C_x(d)<C_c(d)$.
-\end{itemize}
-\end{theorem}
-\begin{proof}
-
-\end{proof}
-\fi
-
-
-
-
-
-
-
-We have already known that Dijkstra's algorithm \cite{Dijkstra1959A} is not applicable with the networks whose link have negative weights. From the above example, when the link $(c,a)$ change its weight to $-L(c,a)$, the correct new shortest path tree can be constructed using iSPF. Theorem \ref{newspt} indicates that this is not a special case.
-\begin{theorem}\label{newspt}
-Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$,
-the iSPF algorithm can get the correct SPT $T_c^{G'}$.
-\end{theorem}
-\begin{proof}
-We will use inductive reasoning to prove this theorem.\\
-(1)We first prove
-the base case. When the weight of edge $(c,x)$ is changed from $L(c,x)$ to $-L(c,x)$.
-The potential parent for node $x$ is $c$, the potential distance for node $x$ is $-L(c,x)$, the potential distance change for node $x$ is $-2*L(c,x)$. The node $x$ will be enqueued into the $Q$ using ENQUEUE operation. After this operation, the queue has one element in the form of
-$(x,(c,-L(c,x),-2*L(c,x)))$. Because there is no node can decrease its cost by more than $-2*L(c,x)$. Therefore, all of the descendants of node $x$ will be  placed in the correct positions during the first iteration.\\
-(2)The inductive step is the same as in the \cite{Narv2002New}, so we omitted the content.
-\end{proof}
-
-\begin{theorem}\label{newsptposition}
-Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d(d\neq c, d\neq x)$
-\begin{itemize}
-\item[(1)] If the position of the node $d$ in the new SPT $T_c^{G'}$ is  changed, then we have  $C_x(d)<C_x(c)+C_c(d)$.
- \item[(2)] If $C_x(d)<C_x(c)+C_c(d)$ is satisfied,  then the position of the node $d$ in the new SPT $T_c^{G'}$ will be changed.
-\end{itemize}
-\end{theorem}
-\begin{proof}
-(1)
-If the position of the node $d$ in the new SPT $T_c^{G'}$ is changed, the node $d$ or its ancestor(s) must be enqueued into the $Q$ using ENQUEUE operation.
-Assume that the difference between
-the old distance and the potential new distance for the node $d$ is  $\delta$, the new shortest path cost of node $d$ is $C_c(d)-\delta$.
-Since only the weight of the link $(c,x)$ is changed to $-L(c,x)$, we have $d\in D_c^{G'}(x)$. In $T_c^{G'}$, we have $C_c^{G'}(d)=C_c^{G'}(x)+C_x^{G'}(d)$.
-Since $C_c^{G'}(x)=-L(c,x)$, we have $C_c^{G'}(d)=C_x^{G'}(d)-L(c,x)$.
-Because the shortest path from node $x$ to $d$ is not going through node $c$ in $T_c^{G'}$, we have $C_x^{G'}(d)=C_x(d)$.
-Because $C_c^{G'}(d)=C_c(d)-\delta$,
-we can get $C_x(d)-L(c,x)=C_c(d)-\delta$.
-Therefore, $C_x(d)<L(c,x)+C_c(d)$.\\
-(2)
-Since $C_x(d)<C_x(c)+C_c(d)$, the shortest path from node $c$ to node $d$ is not via node $c$.
-When the weight of edge $(c,x)$ is changed from $L(c,x)$ to $-L(c,x)$,
-the potential distance change for node $x$ is $C_c(d)-C_x(d)+C_x(c)>0$.
-The node $x$ will be enqueued into the $Q$ using ENQUEUE operation.
-Since only the weight of the link $(c,x)$ is changed to $-L(c,x)$, we have $d\in D_c^{G'}(x)$. Therefore, the position of the node $d$ in the new SPT $T_c^{G'}$ will be changed.
-\end{proof}
-
-
-
-
-
-
-
-\iffalse
-\begin{theorem}
-Given a $T_{c}$, $x \in N(c)$, for any node $d(d\neq c, d\neq x)$
-\begin{itemize}
-\item[(1)] if $v \notin D(T_{c},x)$ and $C_x(v)<C_c(v)+C_x(c)$, then we have  $v\in D(T_c(c,x,-L(c,x)),x)$.
-\item[(2)] if $v \notin D(T_{c},x)$ and $C_x(v)=C_c(v)+C_x(c)$, then we have  $v\notin D(T_c(c,x,-L(c,x)),x)$.
-\end{itemize}
-\end{theorem}
-
-\begin{theorem}\label{newsptposition1}
-Given a $T_{c}$, $x \in N(c)$, for any node $d(d\neq c, d\neq x)$
-\begin{itemize}
-\item[(1)] If the position of the node $d$ in the new SPT $T_c(c,x,0)$ is  changed, then we have  $C_x(d)<C_c(d)+C_x(c)$.
-\item[(2)] if $C_x(d)<C_c(d)+C_x(c)$ is satisfied,  then the position of the node $d$ in the new SPT $T_c(c,x,-L(c,x))$ is  changed.
-\end{itemize}
-\end{theorem}
-\begin{proof}
-\end{proof}
-\begin{theorem}\label{newspttree1}
-Given a $T_{c}$, $x \in N(c)$, for any node $v(v\neq c, v\neq x)$
-\begin{itemize}
-\item[(1)] if $v \notin D(T_{c},x)$ and $C_x(v)<C_c(v)+C_x(v)$, then we have  $v\in D(T_c(c,x,-L(c,x)),x)$.
-\item[(2)] if $v \notin D(T_{c},x)$ and $v \notin D(T_c(c,x,-L(c,x)),x)$, then we have $C_x(v)<C_c(v)+C_x(v)$.
-\end{itemize}
-\end{theorem}
-\begin{proof}
-\end{proof}
-\begin{lemma}\label{nochange}
-For any node $m$ in the $G$, if $C_x(v)=C_c(v)+C_x(c)\geq C_c(m)$, the position of the node $m$ will be not changed in the new SPT $T_c(c,x,-L(c,x))$.
-\end{lemma}
-\begin{proof}
-From theorem \ref{newspt}, we can easily get this lemma. Because $C_x(v)= C_c(v)+C_x(c)= C_c(m)$, the node $x$ will not be enqueued into the Queue.
-\end{proof}
-\begin{theorem}\label{newspttree}
-Given a $T_{c}$, $x \in N(c)$, for any node $v(v\neq c, v\neq x)$
-\begin{itemize}
-\item[(1)] if $v \notin D(T_{c},x)$ and $C_x(v)<C_c(v)+C_x(c)$, then we have  $v\in D(T_c(c,x,-L(c,x)),x)$.
-\item[(2)] if $v \notin D(T_{c},x)$ and $C_x(v)=C_c(v)+C_x(c)$, then we have  $v\notin D(T_c(c,x,-L(c,x)),x)$.
-\end{itemize}
-\end{theorem}
-\begin{proof}
-(1)We will prove the first part of this theorem  by contradiction. If  $v\notin D(T_c(c,x,-L(c,x)),x)$, from Lemma \ref{nochange} we have $C_x(v)\geq C_c(v)+C_x(c)$. This contradict the $C_x(v)<C_c(v)+C_x(c)$.\\
-(2)From Lemma \ref{nochange} we can get the second part of this theorem is correct.
-\end{proof}
-\fi
-%$v\in D(T_c(c,x,-L(c,x)),B_c(v))$,
-From Theorem \ref{newsptposition}, we can see that if the shortest path from neighboring node $x$ to $d$ is not going through node $c$.
-The node $d$  must be the descendant of node $x$ in the new shortest path tree when the  weight of $(c,x)$ is changed to $-L(c,x)$.
-Contrarily, if the node $c$ is included in the shortest path from neighboring node $x$ to $d$. The node $d$  must not be the descendant of node $x$ in the new shortest path tree when the  weight of $(c,x)$ is changed to $-L(c,x)$.
-\begin{lemma}\label{fan}
-Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d(d\neq c, d\neq x)$,  if  the position of the node $d$ in the new SPT $T_c^{G'}$ is not changed, then we have  $C_x(d)=C_x(c)+C_c(d)$.
-\end{lemma}
-\begin{proof}
-From Theorem \ref{newsptposition}, we have $C_x(d)\geq C_x(c)+C_c(d)$ when the position of the node $d$ in the new SPT $T_c^{G'}$ is not changed.
-Because $C_x(d)\leq C_x(c)+C_c(d)$ is satisfied, we have $C_x(d)=C_x(c)+C_c(d)$.
-%Therefore, the lemma can be easily verified.
-\end{proof}
 
 \section{Incremental Alternates Computation Algorithm}\label{iac}
 \iffalse
@@ -469,8 +209,9 @@ using as little CPU time as possible.
 For the actual deployment on the Internet, a LFA-based scheme should introduce a small additional burden on the current deployed routing protocol. This paper is dedicated to finding an efficient LFA-based scheme which is suitable for deploying on an ISP network. In particular, we focus on the following problem:
 \textbf{\emph{Given a computing node $c$ and $T_c$, can we find an efficient LFA-based algorithmic technique and the algorithm conforms to the following two conditions:
 (1)The time complexity of the algorithm is less than constructing a shortest path tree.
-(2) It can provide the same network availability with LFA.
+(2) It can provide the same protection ratio with LFA.
 }}
+\iffalse
 \subsection{Algorithm Specification}
 \iffalse
 Before diving into the detail of IAC algorithm, we first describe DMPA.
@@ -536,12 +277,19 @@ We first provide two theorems before formally describing the details of the algo
 
 
 Our main concerns are computational efficiency and network availability, as these are critical for the Algorithm. Based on the existing work on this research area, we for the first time propose an algorithm whose complexity is less than that of Dijkstra's algorithm and without degrading the  network availability of LFA.
+
+For any node $x\in N(c)$, if we can quickly calculate $C_x(v), v\in V$ in the $T_{c}$, then a efficient LFA-based method can be achieved. Therefore, the problem that needs to be solved in this paper can be described as follows: For any node $x\in N(c)$,  if $T_{c}$ it is given, whether could we find an efficient algorithm which can quickly compute $C_x(v), v\in V$ or not. Theorem \ref{computeneighborcost} answers how to solve the above problem and gives proof.
+
+
+
+\fi
+
 \begin{figure*}[t]
         \centering
         \begin{subfigure}[b]{0.32\textwidth}
                 \centering
                 \includegraphics{nettopology}
-                \caption{network topology}
+                \caption{Network topology}
               \label{spttree21}
         \end{subfigure}
         \begin{subfigure}[b]{0.32\textwidth}
@@ -556,58 +304,10 @@ Our main concerns are computational efficiency and network availability, as thes
                 \caption{$T_{c}^{G_{(c,a)}}$}
                 \label{spttreechange23}
         \end{subfigure}
-        \caption{An example for explaining  Theorem \ref{computeneighborcost}}
+        \caption{An example for explaining how ICA works}
         \label{theoremexample}
 \end{figure*}
-\label{algorithm}
-For any node $x\in N(c)$, if we can quickly calculate $C_x(v), v\in V$ in the $T_{c}$, then a efficient LFA-based method can be achieved. Therefore, the problem that needs to be solved in this paper can be described as follows: For any node $x\in N(c)$,  if $T_{c}$ it is given, whether could we find an efficient algorithm which can quickly compute $C_x(v), v\in V$ or not. Theorem \ref{computeneighborcost} answers how to solve the above problem and gives proof.
-\begin{theorem}\label{computeneighborcost}
-Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d(d\neq c, d\neq x)$,
-\begin{itemize}
-\item[(1)] if $d \in D_c(x)$, then we have $C_{x}(d)=C_{c}(d)-C_{c}(x)$.
-\item[(2)] if $d \notin D_c(x)$ and $d \in D_c^{G'}(x)$, then we have
- $C_{x}(d)=C_{c}^{G'}(d)+C_{c}(x)$.
-\item[(3)] if $d \notin D_c(x)$ and $d \notin D_c^{G'}(x)$, then we have
- $C_{x}(d)=C_{c}(d)+C_c(x)$.
-\end{itemize}
-\end{theorem}
-\begin{proof}
-(1)Since $v \in D_c(x)$, we have $C_{c}(v)=C_{c}(x)+C_{x}(v)$. Therefore, we can easy get $C_{x}(v)=C_{c}(v)-C_{c}(x)$.
-
-(2)Since $d \in D_c^{G'}(x)$, we have $C_{c}^{G'}(d)=C_{c}^{G'}(x)+C_{x}^{G'}(d)$.
-From Theorem \ref{newspt}, we can see that $C_{x}^{G'}(d)=C_{x}(d)$.
-Therefore, we have $C_{c}^{G'}(d)=C_{c}^{G'}(x)+C_{x}(d)$.
-Because $C_{c}^{G'}(x)=-C_c(x)$, we have
-$C_{x}(d)=C_{c}^{G'}(d)+C_c(x)$.\\
-(3)From lemma \ref{fan}, we can get $C_{x}(d)=C_{c}(d)+C_c(x)$.
-\end{proof}
-We will employ a simple example to explain the Theorem \ref{computeneighborcost}. Fig. \ref{spttree21} shows a network topology consisting of 5 nodes and 6 edges. Fig. \ref{spttreechange22} shows the shortest path tree $T_c$ rooted at the node $c$. Figure  \ref{spttreechange23}shows the shortest path tree constructed using iSPF when the weight of link $(c,a)$ is changed to -3. We have $d\in D_c(a)$ from Fig. \ref{spttreechange22} , so $C_a(d)=C_c(d)-C_c(a)=3$.
-Because $e \notin D_c(a)$ and $e \in D_c^{G_{(c,a)}}(a)$, we have $C_a(e)=C_c^{G_{(c,a)}}(e)+C_c(a)=6$ from Theorem \ref{computeneighborcost}.
-Since $b \notin D_c(a)$ and $b \notin D_c^{G_{(c,a)}}(a)$, we have $C_a(b)=C_a(c)+C_c(b)=8$ from Theorem \ref{computeneighborcost}.
-\iffalse
-\begin{theorem}\label{dcextend}
-Given a computing node $c$ and $T_{c}$, for any node $x \in N(c)$ , $T'(c)$ is the new shortest path tree rooted at node $c$  when the weight of link $(c,x)$ is changed to 0. For any node $v(v\neq c, v\neq x)$, if $v \notin D(T_{c},x)$ and $v \in D(T'_{c},x)$, then we can get $C_{x}(v)<C_{c}(v)$.
-\end{theorem}
-\begin{proof}
-Assuming that  $B_{c}(v)=y, y\neq x$ in the $T_{c}$, we have $C_{c}(v)=C_{c}(y)+C_{y}(v)$.
-Since $v \in D(T'_{c},x)$, we can obtain $C'_{c}(v)=C_{c}(x)+C_{x}(v)$, where  $C'_{c}(v)$ is the cost from node $c$ to node $v$ in the $T'_{c}$. Because the weight of link $(c,x)$ in the $T'_{c}$ is 0, we can get  $C'_{c}(v)=C_{x}(v)$(1). According to that $v \notin D(T_{c},x)$ and $v \in D(T'_{c},x)$ , we can obtain $C'_{c}(v)<C_{c}(v)$  (2). Combining the equation (1) with (2), we have $C_{x}(v)<C_{c}(v)$.
-\end{proof}
-\fi
-\iffalse
-\begin{theorem}\label{dcbackupnexthop}
-Given a shortest path tree $T_c$, for any node $d(d\neq c, d\neq x)$, if $d \notin D(T_{c},x)$ and $v \in D(T_{c}(c,x,0),x)$, then we can get $N_c(d)=N_c(d)\cup {x}$.
-\end{theorem}
-\begin{proof}
-From the Theorem \ref{newspt0}, Theorem \ref{newsptposition0} and DC rule, we can see that the node   $x$ is a viable backup next-hop from node $c$ to node $d$, therefore we have $N_c(d)=N_c(d)\cup {x}$.
-\end{proof}
-
-\fi
-
-
-
-
-
-
+%\label{algorithm}
 
 
 
@@ -703,7 +403,7 @@ ENQUEUE$(u,(v,newdist,\delta))$\;}
  }
 }
 }
-\Return $N_c(v), (\forall v \in V \land v \neq c)$
+\Return $N_c(v), (\forall d \in V \land d \neq c)$
 \caption{IAC}
 \label{mnpe}
 \end{algorithm}
@@ -771,6 +471,215 @@ the $Q$ if its new tentative cost is smaller than the old value (lines 23 $\sim$
 Then, we will restore the weight of the link $(c,x)$ (line 28).
 At last lines 29-32 are using to compute all the LFA next hop set for node $c$.
 \subsection{Theoretical  Analysis}
+\iffalse
+\begin{definition}
+Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$,
+for any node $d\in V, d \neq c, d\in D_c(x)$,
+we say the node $d$ change its position in $T_c^{G'}$, if and only if the
+$d\in D_c^{G'}(x)$ is satisfied.
+\end{definition}
+\fi
+\iffalse
+\begin{theorem}\label{newspt0}
+Given a shortest path tree $T_c$,
+when the edge $(c,x)\in T_c$ change its weight to 0, the iSPF algorithm can get the correct new SPT $T_c(c,x,0)$.
+\end{theorem}
+\begin{proof}
+The proof for this theorem is exactly the same as that of \cite{Narv2002New}, so the proof is omitted here.
+\end{proof}
+\begin{definition}
+Given a shortest path tree $T_c$, we say a node $d$ change its position in $T_c(c,x,w)$, if and only if the shortest path from $c$ to $d$ is different in the  two trees.
+\end{definition}
+\begin{theorem}\label{newsptposition0}
+Given a shortest path tree $T_c$, for any node $d(d\neq c, d\neq x)$, where $x \in N(c)$
+\begin{itemize}
+\item[(1)] If the position of the node $d$ in the new SPT $T_c(c,x,0)$ is  changed, then we have  $C_x(d)<C_c(d)$.
+ \item[(2)] If $C_x(d)<C_c(d)$ is satisfied,  then the position of the node $d$ in the new SPT $T_c(c,x,0)$ will be changed.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+(1)
+If the position of the node $d$ in the new SPT $T_c(c,x,0)$ is changed, the node $d$ or its ancestor(s) must be enqueued into the $Q$ using ENQUEUE operation.
+Assume that the difference between
+the old distance and the potential new distance for the node $d$ is  $\delta$, the new shortest path cost of node $d$ is $C_c(d)-\delta$.
+Since only the weight of the link $(c,x)$ is changed to 0, we have $d\in D(T_c(c,x,0),x)$. In $T_c(c,x,0)$, we have $C_c(d,(c,x,0))=C_c(x,(c,x,0))+C_x(d,(c,x,0))$.
+Since $C_c(x,(c,x,0))=0$, we have $C_c(d,(c,x,0))=C_x(d,(c,x,0))$.
+Because the shortest path from node $x$ to $d$ is not going through node $c$ in $T_c(c,x,0)$, we have $C_x(d,(c,x,0))=C_x(d)$.
+Because $C_x(d,(c,x,0))=C_c(d)-\delta$,
+we can get $C_x(d)=C_c(d)-\delta$.
+Therefore, we have $C_x(d)<C_c(d)$.\\
+(2)
+Since $C_x(d)<C_c(d)$, the shortest path from node $c$ to node $d$ is not via node $c$.
+When the weight of edge $(c,x)$ is changed from $L(c,x)$ to $0$, there exists a path $P=c,x,...,d$ from $c$ to $d$, and the cost of which is $C_c(x)+C_x(d)$.
+Because $C_c(x)=0$, the cost of path $P$ is $C_x(d)$.
+Therefore, the potential distance change for node $x$ is $C_c(d)-C_x(d)>0$.
+The node $x$ will be enqueued into the $Q$ using ENQUEUE operation.
+Since only the weight of the link $(c,x)$ is changed to 0, we have $d\in D(T_c(c,x,0),x)$. Therefore, the position of the node $d$ in the new SPT $T_c(c,x,0)$ will be changed.
+\end{proof}
+\fi
+\iffalse
+\begin{theorem}\label{newspttree0}
+Given a $T_{c}$, $x \in N(c)$, for any node $d(d\neq c, d\neq x)$,
+if the
+\begin{itemize}
+\item[(1)] if $d \notin D(T_{c},x)$ and $C_x(d)<C_c(d)$, then we have  $d\in D(T_c(c,x,0),x)$.
+\item[(2)] if $d \notin D(T_{c},x)$ and $d \notin D(T_c(c,x,0),x)$, then we have $C_x(d)<C_c(d)$.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+
+\end{proof}
+
+
+
+
+
+
+
+
+We have already known that Dijkstra's algorithm \cite{Dijkstra1959A} is not applicable with the networks whose link have negative weights. From the above example, when the link $(c,a)$ change its weight to $-L(c,a)$, the correct new shortest path tree can be constructed using iSPF. Theorem \ref{newspt} indicates that this is not a special case.
+\fi
+\begin{theorem}\label{newspt}
+Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$,
+the iSPF algorithm can get the correct SPT $T_c^{G'}$.
+\end{theorem}
+\begin{proof}
+We will use inductive reasoning to prove this theorem.\\
+(1)We first prove
+the base case. When the weight of edge $(c,x)$ is changed from $L(c,x)$ to $-L(c,x)$.
+The potential parent for node $x$ is $c$, the potential distance for node $x$ is $-L(c,x)$, the potential distance change for node $x$ is $-2*L(c,x)$. The node $x$ will be enqueued into the $Q$ using ENQUEUE operation. After this operation, the queue has one element in the form of
+$(x,(c,-L(c,x),-2*L(c,x)))$. Because there is no node can decrease its cost by more than $-2*L(c,x)$. Therefore, all of the descendants of node $x$ will be  placed in the correct positions during the first iteration.\\
+(2)The inductive step is the same as in the \cite{Narv2002New}, so we omitted the content.
+\end{proof}
+
+\begin{theorem}\label{newsptposition}
+Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d(d\neq c, d\neq x)$
+\begin{itemize}
+\item[(1)] If $d\in D_c^{G'}(x)$, then we have  $C_x(d)<C_x(c)+C_c(d)$.
+ \item[(2)] If $C_x(d)<C_x(c)+C_c(d)$ is satisfied,  then we have $d\in D_c^{G'}(x)$.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+(1)
+If the position of the node $d$ in the new SPT $T_c^{G'}$ is changed, the node $d$ or its ancestor(s) must be enqueued into the $Q$ using ENQUEUE operation.
+Assume that the difference between
+the old distance and the potential new distance for the node $d$ is  $\delta$, the new shortest path cost of node $d$ is $C_c(d)-\delta$.
+Since only the weight of the link $(c,x)$ is changed to $-L(c,x)$, we have $d\in D_c^{G'}(x)$. In $T_c^{G'}$, we have $C_c^{G'}(d)=C_c^{G'}(x)+C_x^{G'}(d)$.
+Since $C_c^{G'}(x)=-L(c,x)$, we have $C_c^{G'}(d)=C_x^{G'}(d)-L(c,x)$.
+Because the shortest path from node $x$ to $d$ is not going through node $c$ in $T_c^{G'}$, we have $C_x^{G'}(d)=C_x(d)$.
+Because $C_c^{G'}(d)=C_c(d)-\delta$,
+we can get $C_x(d)-L(c,x)=C_c(d)-\delta$.
+Therefore, $C_x(d)<L(c,x)+C_c(d)$.\\
+(2)
+Since $C_x(d)<C_x(c)+C_c(d)$, the shortest path from node $c$ to node $d$ is not via node $c$.
+When the weight of edge $(c,x)$ is changed from $L(c,x)$ to $-L(c,x)$,
+the potential distance change for node $x$ is $C_c(d)-C_x(d)+C_x(c)>0$.
+The node $x$ will be enqueued into the $Q$ using ENQUEUE operation.
+Since only the weight of the link $(c,x)$ is changed to $-L(c,x)$, we have $d\in D_c^{G'}(x)$. Therefore, the position of the node $d$ in the new SPT $T_c^{G'}$ will be changed.
+\end{proof}
+
+
+
+
+
+
+
+\iffalse
+\begin{theorem}
+Given a $T_{c}$, $x \in N(c)$, for any node $d(d\neq c, d\neq x)$
+\begin{itemize}
+\item[(1)] if $v \notin D(T_{c},x)$ and $C_x(v)<C_c(v)+C_x(c)$, then we have  $v\in D(T_c(c,x,-L(c,x)),x)$.
+\item[(2)] if $v \notin D(T_{c},x)$ and $C_x(v)=C_c(v)+C_x(c)$, then we have  $v\notin D(T_c(c,x,-L(c,x)),x)$.
+\end{itemize}
+\end{theorem}
+
+\begin{theorem}\label{newsptposition1}
+Given a $T_{c}$, $x \in N(c)$, for any node $d(d\neq c, d\neq x)$
+\begin{itemize}
+\item[(1)] If the position of the node $d$ in the new SPT $T_c(c,x,0)$ is  changed, then we have  $C_x(d)<C_c(d)+C_x(c)$.
+\item[(2)] if $C_x(d)<C_c(d)+C_x(c)$ is satisfied,  then the position of the node $d$ in the new SPT $T_c(c,x,-L(c,x))$ is  changed.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+\end{proof}
+\begin{theorem}\label{newspttree1}
+Given a $T_{c}$, $x \in N(c)$, for any node $v(v\neq c, v\neq x)$
+\begin{itemize}
+\item[(1)] if $v \notin D(T_{c},x)$ and $C_x(v)<C_c(v)+C_x(v)$, then we have  $v\in D(T_c(c,x,-L(c,x)),x)$.
+\item[(2)] if $v \notin D(T_{c},x)$ and $v \notin D(T_c(c,x,-L(c,x)),x)$, then we have $C_x(v)<C_c(v)+C_x(v)$.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+\end{proof}
+\begin{lemma}\label{nochange}
+For any node $m$ in the $G$, if $C_x(v)=C_c(v)+C_x(c)\geq C_c(m)$, the position of the node $m$ will be not changed in the new SPT $T_c(c,x,-L(c,x))$.
+\end{lemma}
+\begin{proof}
+From theorem \ref{newspt}, we can easily get this lemma. Because $C_x(v)= C_c(v)+C_x(c)= C_c(m)$, the node $x$ will not be enqueued into the Queue.
+\end{proof}
+\begin{theorem}\label{newspttree}
+Given a $T_{c}$, $x \in N(c)$, for any node $v(v\neq c, v\neq x)$
+\begin{itemize}
+\item[(1)] if $v \notin D(T_{c},x)$ and $C_x(v)<C_c(v)+C_x(c)$, then we have  $v\in D(T_c(c,x,-L(c,x)),x)$.
+\item[(2)] if $v \notin D(T_{c},x)$ and $C_x(v)=C_c(v)+C_x(c)$, then we have  $v\notin D(T_c(c,x,-L(c,x)),x)$.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+(1)We will prove the first part of this theorem  by contradiction. If  $v\notin D(T_c(c,x,-L(c,x)),x)$, from Lemma \ref{nochange} we have $C_x(v)\geq C_c(v)+C_x(c)$. This contradict the $C_x(v)<C_c(v)+C_x(c)$.\\
+(2)From Lemma \ref{nochange} we can get the second part of this theorem is correct.
+\end{proof}
+\fi
+%$v\in D(T_c(c,x,-L(c,x)),B_c(v))$,
+From Theorem \ref{newsptposition}, we can see that if the shortest path from neighboring node $x$ to $d$ is not going through node $c$.
+The node $d$  must be the descendant of node $x$ in the new shortest path tree when the  weight of $(c,x)$ is changed to $-L(c,x)$.
+Contrarily, if the node $c$ is included in the shortest path from neighboring node $x$ to $d$. The node $d$  must not be the descendant of node $x$ in the new shortest path tree when the  weight of $(c,x)$ is changed to $-L(c,x)$.
+\begin{lemma}\label{fan}
+Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d(d\neq c, d\neq x)$,  if  $d\in D_c^{G'}(x)$, then we have  $C_x(d)=C_x(c)+C_c(d)$.
+\end{lemma}
+\begin{proof}
+From Theorem \ref{newsptposition}, we have $C_x(d)\geq C_x(c)+C_c(d)$ when the position of the node $d$ in the new SPT $T_c^{G'}$ is not changed.
+Because $C_x(d)\leq C_x(c)+C_c(d)$ is satisfied, we have $C_x(d)=C_x(c)+C_c(d)$.
+%Therefore, the lemma can be easily verified.
+\end{proof}
+\begin{theorem}\label{computeneighborcost}
+Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, for any node $d(d\neq c, d\neq x)$,
+\begin{itemize}
+\item[(1)] if $d \in D_c(x)$, then we have $C_{x}(d)=C_{c}(d)-C_{c}(x)$.
+\item[(2)] if $d \notin D_c(x)$ and $d \in D_c^{G'}(x)$, then we have
+ $C_{x}(d)=C_{c}^{G'}(d)+C_{c}(x)$.
+\item[(3)] if $d \notin D_c(x)$ and $d \notin D_c^{G'}(x)$, then we have
+ $C_{x}(d)=C_{c}(d)+C_c(x)$.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+(1)Since $v \in D_c(x)$, we have $C_{c}(v)=C_{c}(x)+C_{x}(v)$. Therefore, we can easy get $C_{x}(v)=C_{c}(v)-C_{c}(x)$.
+
+(2)Since $d \in D_c^{G'}(x)$, we have $C_{c}^{G'}(d)=C_{c}^{G'}(x)+C_{x}^{G'}(d)$.
+From Theorem \ref{newspt}, we can see that $C_{x}^{G'}(d)=C_{x}(d)$.
+Therefore, we have $C_{c}^{G'}(d)=C_{c}^{G'}(x)+C_{x}(d)$.
+Because $C_{c}^{G'}(x)=-C_c(x)$, we have
+$C_{x}(d)=C_{c}^{G'}(d)+C_c(x)$.\\
+(3)From lemma \ref{fan}, we can get $C_{x}(d)=C_{c}(d)+C_c(x)$.
+\end{proof}
+
+\iffalse
+\begin{theorem}\label{dcextend}
+Given a computing node $c$ and $T_{c}$, for any node $x \in N(c)$ , $T'(c)$ is the new shortest path tree rooted at node $c$  when the weight of link $(c,x)$ is changed to 0. For any node $v(v\neq c, v\neq x)$, if $v \notin D(T_{c},x)$ and $v \in D(T'_{c},x)$, then we can get $C_{x}(v)<C_{c}(v)$.
+\end{theorem}
+\begin{proof}
+Assuming that  $B_{c}(v)=y, y\neq x$ in the $T_{c}$, we have $C_{c}(v)=C_{c}(y)+C_{y}(v)$.
+Since $v \in D(T'_{c},x)$, we can obtain $C'_{c}(v)=C_{c}(x)+C_{x}(v)$, where  $C'_{c}(v)$ is the cost from node $c$ to node $v$ in the $T'_{c}$. Because the weight of link $(c,x)$ in the $T'_{c}$ is 0, we can get  $C'_{c}(v)=C_{x}(v)$(1). According to that $v \notin D(T_{c},x)$ and $v \in D(T'_{c},x)$ , we can obtain $C'_{c}(v)<C_{c}(v)$  (2). Combining the equation (1) with (2), we have $C_{x}(v)<C_{c}(v)$.
+\end{proof}
+\fi
+\iffalse
+\begin{theorem}\label{dcbackupnexthop}
+Given a shortest path tree $T_c$, for any node $d(d\neq c, d\neq x)$, if $d \notin D(T_{c},x)$ and $v \in D(T_{c}(c,x,0),x)$, then we can get $N_c(d)=N_c(d)\cup {x}$.
+\end{theorem}
+\begin{proof}
+From the Theorem \ref{newspt0}, Theorem \ref{newsptposition0} and DC rule, we can see that the node   $x$ is a viable backup next-hop from node $c$ to node $d$, therefore we have $N_c(d)=N_c(d)\cup {x}$.
+\end{proof}
+
+\fi
 In this section, we will show the performance of the algorithm, including the time complexity and the number of backup next-hop computed by LFA. From theorem \ref{iaccomplexity}, we can see that the computational complexity of IAC is less than that of constructing a shortest path tree. From theorem \ref{fullprooof}, we can see that the IAC can compute all the backup next-hop set which satisfies the LFA Rule. We will describe the Theorem \ref{iaccomplexity} and Theorem \ref{fullprooof} in detail, and also their correctness is proved.
 \begin{theorem}\label{iaccomplexity}
 The computational complexity of IAC is less than $O(|E|lg|V|)$ when the queue is implemented as a Heap.
@@ -1036,4 +945,115 @@ The LFA rule is used to calculate the backup next hop set from the node $c$ to a
 The computational complexity of IAC-NA is less than $O(|E|lg|V|)$ when the queue is implemented as a Heap.
 \end{theorem}
 The proof for Theorem \ref{mpnecomplexity} is similar with that of Theorem \ref{iaccomplexity}, so we omit it.
+\fi
+\subsection{Example}
+In this section, we will employ a simple example to explain how ICA works. Fig. \ref{spttree21} shows a network topology consisting of 5 nodes and 6 edges. Fig. \ref{spttreechange22} shows the shortest path tree $T_c$ rooted at the node $c$. 
+Here we will describe how to compute $T_c^{G(c,a)}$ based on $T_c$.
+First, the root node $c$ is marked as $anchored$, all of the nodes except $c$ are marked as $floating$.
+For all the $floating$ nodes,
+we check whether they have direst link to the anchored nodes, and calculate the new distance and the change in distance, which gives
+queue \{$(a,(c,-3,-6))$\}.
+In the first iteration, $(a,(c,-3,-6))$ will be selected and  $a$ will be marked as $anchored$. The original subtree rooted at $d$  is considered together. Therefore the node $d$ is selected and marked as $anchored$ at the same time. Since $d$ has an outing edge to $e$, the new distance and $\delta$ of $e$ is calculated, which gives queue \{$(e,(e,3,-5))$\}. Node $d$ is marked as anchored in the next iteration.
+The new shortest path tree is given in the
+Fig. \ref{spttreechange23}.
+We have $d\in D_c(a)$ from Fig. \ref{spttreechange22} , so $C_a(d)=C_c(d)-C_c(a)=3$.
+Because $e \notin D_c(a)$ and $e \in D_c^{G_{(c,a)}}(a)$, we have $C_a(e)=C_c^{G_{(c,a)}}(e)+C_c(a)=6$ from Theorem \ref{computeneighborcost}.
+Since $b \notin D_c(a)$ and $b \notin D_c^{G_{(c,a)}}(a)$, we have $C_a(b)=C_a(c)+C_c(b)=8$ from Theorem \ref{computeneighborcost}.
+
+
+\iffalse
+\section{iSPF and LFA}\label{back}
+In this section, we will discuss incremental shortest
+path first (iSPF) algorithm and LFA, both of which are the foundation of our
+work.
+\subsection{Incremental Shortest Path First Algorithm}
+The OSPF and IS-IS routing protocols which are
+widely deployed in today¡¯s Internet calculate a shortest path tree (SPT) from each router to other routers in an autonomous system (AS). Lots of commercial routers have adopted dynamic SPT algorithms which employ the structure of the previously computed SPT rather than recomputed an new SPT from scratch when the network topology changes. The reason is that when network topology changes, the new computed SPT does not differ conspicuously from the old one.
+
+The incremental shortest path first algorithm (iSPF) maintains
+a queue $Q$, each element in the queue is
+of the form $(n,(p,d,\delta))$ , where $p$ denotes a potential parent
+for node $n$, $d$ denotes a potential distance for node  $n$ , and $\delta$ denotes the potential distance change for node  $n$.
+The  iSPF \cite{Narv2002New} is carried out as following steps:\\
+(1)
+Finding all the potentially affected nodes and marking them  \textsl{floating}.\\
+(2) Computing the potential new distance, parent and the distance change $\delta$ between
+the old distance and the potential new distance for the potentially affected nodes.\\
+(3) In each iteration, a node with the smallest $\delta$ (least positive or most negative) is selected, and then a subtree, instead of only
+one node, is appended to the new SPT. All of the above nodes are marked  \textsl{anchored}.
+\begin{figure*}[t]
+        \begin{subfigure}[b]{0.33\textwidth}
+                \centering
+                \includegraphics{ispfspt}
+                \centering
+                \caption{$T_{c}$}
+              \label{spttree11}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.33\textwidth}
+                \centering
+                \includegraphics{ispfchange}
+                \caption{shortest path tree when the $L(c,a)=2$}
+                \label{spttreechange12}
+        \end{subfigure}
+         \begin{subfigure}[b]{0.33\textwidth}
+                \centering
+                \includegraphics{ispfchange2}
+                \caption{$T_{c}^{G_{(c,a)}}$}
+                \label{spttreechange13}
+        \end{subfigure}
+        \caption{An example for explaining iSPF}
+        \label{ex}
+\end{figure*}
+\iffalse
+\begin{figure}[t]
+
+\centering
+%\includegraphics[width=3in]{realcomputationoverhead}
+\includegraphics[width=3in]{ispfspt}
+\caption{Shortest path tree rooted at $A$ before link change}
+\label{ispfsptA}
+\end{figure}
+\begin{figure}[t]
+\centering
+%\includegraphics[width=3in]{realcomputationoverhead}
+\includegraphics[width=3in]{ispfchange}
+\caption{Shortest path tree rooted at $A$ when the weight of $(A,C)$ is changed to 2}
+\label{ispfchangeA}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+%\includegraphics[width=3in]{realcomputationoverhead}
+\includegraphics[width=3in]{ispfchange2}
+\caption{Shortest path tree rooted at $A$ when the weight of $(A,C)$ is changed to -8}
+\label{ispfchangeB}
+\end{figure}
+\fi
+
+Perhaps the most intuitive way to demonstrate iSPF is through an
+example. Consider the network topology depicted in Fig. \ref{spttree11}, which is composed of 6 nodes and 8 links. The letter besides the node is its label.
+The solid lines are the links in the shortest path tree which is rooted at node $c$, while the dotted lines are the links  not in the above shortest path tree. The number inside the circle is the shortest distance from node $c$ to that node.
+
+At some point, the weight of the edge $(c,a)$ is changed from 8 to 2.
+Nodes except $c$ all affected nodes and are marked as \textsl{floating}.
+Only the root node $c$ is marked as \textsl{anchored}. For all the \textsl{floating} nodes,
+we check whether they have links to the \textsl{anchored} nodes, and calculate the new distance and the change  in distance. If the change in distance is smaller than 0, the node will be enqueued into the $Q$.
+In the first iteration, the $Q$ has only one element with the form of
+\{$(a,(c,2,-6))$\}.
+In the next iteration, $(a,(c,2,6))$ will be selected and $a$ will be marked as \textsl{anchored}. Since $a$ has an outing edge to $e$ and $b$, the new distance and $\delta$ of $b$ and $e$ is calculated, which gives queue \{$(b,(a,6,-1)),(e,(a,7,-3))$\}. Then $e$ is selected, instead of only marking $e$ as \textsl{anchored}, the original subtree rooted at $e$  is considered together. Therefore the node $f$ is selected and marked as \textsl{anchored} at the same time. Since $e$ has an outing edge to $d$, the new distance and $\delta$ of $d$ is calculated, which gives queue \{$(b,(a,6,-1)),(d,(e,9,-2))$\}. Since node $d$ has the
+largest potential shortest distance decrease, node $d$ is marked as \textsl{anchored}.
+In the next iteration, node $b$ is selected.
+The new shortest path tree is depicted in the
+Fig. \ref{spttreechange12}.
+
+
+Here we will describe a special example, when a single link changes its weight to the opposite number. For example, the weight of the edge $(c,a)$ is changed from 8 to -8. Only the root node $c$ is marked as anchored. For all the floating nodes,
+we check whether they have links to the anchored nodes, and calculate the new distance and the change in distance, which gives
+queue \{$(a,(c,2,-16))$\}.
+In the next iteration, $(a,(c,2,-16))$ will be selected and  $a$ will be marked as anchored. Since $a$ has an outing edge to $e$ and $b$, the new distance and $\delta$ of $e$ and $b$ is calculated, which gives queue \{$(a,(b,-4,-11)),(e,(a,-3,-13))$\}. Then $e$ is selected, instead of only marking $e$ as anchored, the original subtree rooted at $e$  is considered together. Therefore the node $f$ is selected and marked as anchored at the same time. Since $e$ has an outing edge to $d$, the new distance and $\delta$ of $d$ is calculated, which gives queue \{$(a,(b,-4,-11)),(d,(e,-1,-12))$\}. Since node $d$ has the
+largest potential shortest distance decrease, node $d$ is marked as anchored.
+In the next iteration, node $b$ is selected.
+The new shortest path tree is given in the
+Fig. \ref{spttreechange13}.
+\subsection{Some properties of the iSPF}
 \fi
