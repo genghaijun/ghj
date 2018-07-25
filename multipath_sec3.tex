@@ -789,23 +789,21 @@ Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in
 \begin{proof}
 For any node $d\in T_c^{G'}$, the calculation of the value of $C_x(d)$ can be divided into three cases.
 
-(1) If $d \in D_c(x)$, the lines 16-17 are executed.
+(1) If $d \in D_c(x)$, the lines 24-25 are executed.
 
-(2)If $d \notin D_c(x) \land d \notin D_c^{G'}$, the lines 18-19 are executed.
+(2)If $d \notin D_c(x) \land d \notin D_c^{G'}$, the lines 26-27 are executed.
 
-(3)When the node $d \notin D_c(x)$ and is not enqueued into the $Q$,
-the node $d$  must not be a descendant of $x$ in $T_c^{G'}$.
-The value of $C_x(d)$ can be computed by line 26.
+(3)If $d \notin D_c(x) \land d \notin D_c^{G'}$, the lines 28-29 are executed.
 
-According to Theorem \ref{computeneighborcost}, all of the $C_x(d), d \in V$ will be calculated when the lines ($1 \sim 27$) of the IAC are executed.
+According to Theorem \ref{computeneighborcost}, all of the $C_x(d), d \in V$ will be calculated when the lines ($23 \sim 29$) of the IAC are executed.
 \end{proof}
 
 \begin{theorem}\label{fullprooof}
 Algorithm IAC can compute all the next hop set for node $c$ that satisfies the LFA Rule.
 \end{theorem}
 \begin{proof}
-From Theorem \ref{algorithmcorrect}, all of the $C_x(d), d \in V$ will be calculated when the lines ($1 \sim 27$) of the IAC are executed.
-As long as we know the above values, we can use the LFA rule to compute all the LFA next hop set for node $c$ (lines $29 \sim 31$).
+From Theorem \ref{algorithmcorrect}, all of the $C_x(d), d \in V$ will be calculated when the lines ($23 \sim 29$) of the IAC are executed.
+As long as we know the above values, we can use the LFA rule to compute all the LFA next hop set for node $c$ (lines $30 \sim 31$).
 \end{proof}
 
 
