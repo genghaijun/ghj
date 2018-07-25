@@ -362,19 +362,21 @@ Fig. \ref{spttreedc} is a shortest path tree rooted at node $c$, while Fig. \ref
 %\SetAlgoNoLine
 %\SetAlgoNoEnd
 \ForEach{neighbor $x$ of $c$}{
+copy a shortest path tree $T_c$\;
+\iffalse
 \ForEach{$v \in V$}{
  %$v.visited \leftarrow floating$\;
- $C_{c}^{G_{(c,x)}}(v) \leftarrow C_c(v)$\;
- $P_{c}^{G_{(c,x)}}(v) \leftarrow P_c(v)$\;
+ $C(v) \leftarrow C_c(v)$\;
+% $P_{c}^{G_{(c,x)}}(v) \leftarrow P_c(v)$\;
 }
-
+\fi
 %$c.visited=anchored$\;
  $weight\leftarrow L(c,x) $\;
  $L(c,x)\leftarrow -L(c,x)$\;
- $newdist\leftarrow C_c(x)+\triangle$\;
- $\triangle\leftarrow L(c,x)-weight$\;
+ %$newdist\leftarrow C_c(x)+\delta$\;
+ %$\delta\leftarrow L(c,x)-weight$\;
 
- ENQUEUE$(\{x,(c,newdist,\triangle)\})$\;
+ ENQUEUE$(\{x,(c,C_c(x)-2*L(c,x),\delta)\})$\;
 %\begin{shaded}
 %\hl{(In IAC-NA $L(c,x)=-L(c,x)$)}\;
 %\end{shaded}
@@ -383,7 +385,7 @@ Fig. \ref{spttreedc} is a shortest path tree rooted at node $c$, while Fig. \ref
  \iffalse
 \For{$m\in D(T_c,x)$}
 {
-$C'_c(m)\leftarrow C'_c(m)-\triangle$\;
+$C'_c(m)\leftarrow C'_c(m)-\delta$\;
 %$m.visited=anchored$\;
 }
 \For{$v \in D(T_c,x)$}{
@@ -400,15 +402,15 @@ ENQUEUE$(u,(v,newdist,\delta))$\;}
 }
 \fi
 \While {$Q$ is not empty}{
-$\{m,(n,p,\triangle)\}\leftarrow$ EXTRACTMIN(Q)\;
-$P_c^{G_{(c,x)}}(m)\leftarrow n$\;
+$\{m,(n,p,\delta)\}\leftarrow$ EXTRACTMIN(Q)\;
+%$P_c^{G_{(c,x)}}(m)\leftarrow n$\;
 %$m.visited\leftarrow anchored$\;
-$C_c^{G_{(c,x)}}(m)\leftarrow p$\;
-
-\ForEach{$d\in D_c(m)$}
+$C(m)\leftarrow p$\;
+the descendants of node $m$ is append below node $m$\;
+\iffalse\ForEach{$d\in D_c(m)$}
 {
-$C_{c}^{G_{(c,x)}}(d)\leftarrow C_c(d)+\triangle$\;
-\iffalse
+$C_{c}^{G_{(c,x)}}(d)\leftarrow C_c(d)+\delta$\;
+
 \If {$d \in D_c(x)$}
 {$C_{x}(d)\leftarrow C_{c}(d)-C_{c}(x)$\;
 }
@@ -419,20 +421,20 @@ $C_{c}^{G_{(c,x)}}(d)\leftarrow C_c(d)+\triangle$\;
 \If {$d \notin D_c(x) \land d \notin D_c^{G_{(c,x)}}(x)$}
 {$C_{x}(d)\leftarrow C_{c}(d)+C_c(x)$\;
 }
-\fi
-}
 
+}
+\fi
 %Compute $C_x(v)$ using Theorem \ref{computeneighborcost}\;
 %Add $x$ to $N_c(v)$;\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad
 %\hl{(In IAC-NA Compute $C_x(v)$ using Theorem 9)} \;
 
 \ForEach {neighbor $q$ of $m$}{
-\If {$C_c(q)>C_{c}^{G_{(c,x)}}(m)+L(m,q)$ }
+\If {$C_c(q)>C(m)+L(m,q)$ }
 {
 
-$newdist \leftarrow C_{c}^{G_{(c,x)}}(m)+L(m,q)$\;
-$\triangle\leftarrow newdist-C_c(q)$\;
-ENQUEUE$(q,(m,newdist,\triangle))$\;
+$newdist \leftarrow C(m)+L(m,q)$\;
+$\delta\leftarrow newdist-C_c(q)$\;
+ENQUEUE$(q,(m,newdist,\delta))$\;
 }
 
 }
@@ -447,10 +449,10 @@ ENQUEUE$(q,(m,newdist,\triangle))$\;
 {$C_{x}(d)\leftarrow C_{c}(d)-C_{c}(x)$\;
 }
 
-\If {$d \notin D_c(x) \land d \in D_c^{G_{(c,x)}}(x)$}
+\If {$d \notin D_c(x)$ and $d$ is now a descendant of $x$}
 {$C_{x}(d)\leftarrow C_{c}^{G_{(c,x)}}(d)+C_{c}(x)$\;
 }
-\If {$d \notin D_c(x) \land d \notin D_c^{G_{(c,x)}}(x)$}
+\If {$d \notin D_c(x)$ and $d$ is not now a descendant of $x$}
 {$C_{x}(d)\leftarrow C_{c}(d)+C_c(x)$\;
 }
 \If {LFA is satisfied}
@@ -496,12 +498,12 @@ ENQUEUE$(q,(m,newdist,\triangle))$\;
 We are now in a position to describe the IAC algorithm.
 According to the above discussions, algorithm IAC is proposed to compute all of the backup next-hop set which are satisfied the LFA rule. The inputs of the IAC are the network topology $G=(V,E)$ and $T_{c}$, and the output is the backup next-hop set from node $c$ to all  other nodes in the network.
 IAC maintains a priority queue $Q$, which contains a subset of nodes together with three attributes. In particular, each element in $Q$ is
-of the form ${(u,(v,q,\triangle))}$, where $v$ is the potential parent
-for node $u$, $q$ denotes a potential cost for node $u$ , and $\triangle$ is the potential cost change for node $u$.
+of the form ${(u,(v,q,\delta))}$, where $v$ is the potential parent
+for node $u$, $q$ denotes a potential cost for node $u$ , and $\delta$ is the potential cost change for node $u$.
 The IAC requires several iterations. In each iteration,
 at the beginning,  both of the parameters $C_{c}^{G_{(c,x)}}(v), v\in V$  and  $P_{c}^{G_{(c,x)}}(v)$ are initialized
-(lines 2 $\sim$ 4). We change the weight of the link  $(c,x)$  to $-L(c,x)$, and compute the potential cost change for $(c,x)$ (lines 5 $\sim$ 8), which is stored in variable $\triangle$.
-The node $x$ is enqueued into the $Q$ by the ENQUEUE operation with its potential  parent $c$, its potential cost $newdist$, and the potential cost change $\triangle$ (line 9).
+(lines 2 $\sim$ 4). We change the weight of the link  $(c,x)$  to $-L(c,x)$, and compute the potential cost change for $(c,x)$ (lines 5 $\sim$ 8), which is stored in variable $\delta$.
+The node $x$ is enqueued into the $Q$ by the ENQUEUE operation with its potential  parent $c$, its potential cost $newdist$, and the potential cost change $\delta$ (line 9).
 A node $m$ with the lowest potential cost change will be popped out from the priority queue $Q$ by the EXTRACTMIN operation, where node ID is  used as tie breaking.
 It is then added to the tree, and used as the current node in the iteration, while its attributes like lowest cost and parent  are also set to a permanent value in the $G_{(c,x)}$ (lines $12 \sim 13$).
 %For all the nodes in the subtree of node $m$ i is considered together
@@ -653,12 +655,12 @@ Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in
 \end{theorem}
 \begin{proof}
 (1)Since $d \in D_c(x)$ and $d\in D_c^{G'}(x)$, the node $d$ or its ancestor(s) must be enqueued into the $Q$ using ENQUEUE operation.
-Assume that the potential cost change for node $d$ is  $\triangle$, the potential cost of node $d$ is $C_c(d)+\triangle$.
+Assume that the potential cost change for node $d$ is  $\delta$, the potential cost of node $d$ is $C_c(d)+\delta$.
 In $T_c^{G'}$, we have $C_c^{G'}(d)=C_c^{G'}(x)+C_x^{G'}(d)$.
 Since $C_c^{G'}(x)=-L(c,x)$, we have $C_c^{G'}(d)=C_x^{G'}(d)-L(c,x)$.
 Because the shortest path from node $x$ to $d$ is not going through node $c$ in both of the two networks $G'$ and $G$, we have $C_x^{G'}(d)=C_x(d)$.
 Because $C_c^{G'}(d)=C_c(d)-\delta$,
-we have $C_x(d)-L(c,x)=C_c(d)-\triangle$.
+we have $C_x(d)-L(c,x)=C_c(d)-\delta$.
 Therefore, we have $C_x(d)<L(c,x)+C_c(d)$.
 Since $C_c(x)=L(c,x)$, we have $C_x(d)<C_c(x)+C_c(d)$.
 
@@ -987,10 +989,10 @@ $c.visited=true$\;
  $weight\leftarrow L(c,x) $\;
  $L(c,x)\leftarrow -L(c,x)$\;
 
- $\triangle\leftarrow weight-L(c,x)$\;
+ $\delta\leftarrow weight-L(c,x)$\;
 \For{$m\in D(T_c,x)$}
 {
-$C'_c(m)\leftarrow C'_c(m)-\triangle$\;
+$C'_c(m)\leftarrow C'_c(m)-\delta$\;
 $m.visited=true$\;
 }
 \For{$v \in D(T_c,x)$}{
@@ -1048,7 +1050,7 @@ At last lines 29-32 are added to compute LFA next hop set for node $c$.
 We will elaborate the algorithm in detail in this section.
 According to the above discussions, algorithm INC is proposed to compute the backup next-hop set which satisfies the DC rule. The inputs of the INC are the network topology $G=(V,E)$ and $T_{c}$, and the output is the backup next-hop set from node $c$ to all  other nodes in the network.
 The INC requires several iterations. In each iteration,
-at the beginning, the $visited$ attribute of all nodes except $c$ are set to $false$ (lines 2 $\sim$ 5). We change the weight of the link  $(c,x)$  to $-L(c,x)$, and compute the weight change for $(c,x)$ (lines 6 $\sim$ 8), which is  stored in variable $\triangle$. The shortest cost from $c$ to $v$ and the $visited$ attribute of node $v$ are updated accordingly (lines 9 $\sim$ 11).
+at the beginning, the $visited$ attribute of all nodes except $c$ are set to $false$ (lines 2 $\sim$ 5). We change the weight of the link  $(c,x)$  to $-L(c,x)$, and compute the weight change for $(c,x)$ (lines 6 $\sim$ 8), which is  stored in variable $\delta$. The shortest cost from $c$ to $v$ and the $visited$ attribute of node $v$ are updated accordingly (lines 9 $\sim$ 11).
 For $v \in D(T_c,x)$, for each of its unvisited neighbor $u$,
 we compute the  new tentative cost  of $u$. The node $u$ will be inserted into
 the $Q$ if its new tentative cost is smaller than the old value (lines 12 $\sim$ 17).
