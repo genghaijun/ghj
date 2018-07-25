@@ -414,10 +414,11 @@ $C_{c}^{G_{(c,x)}}(d)\leftarrow C_c(d)+\triangle$\;
 \If {$d \notin D_c(x) \land d \in D_c^{G_{(c,x)}}(x)$}
 {$C_{x}(d)\leftarrow C_{c}^{G_{(c,x)}}(d)+C_{c}(x)$\;
 }
+\iffalse
 \If {$d \notin D_c(x) \land d \notin D_c^{G_{(c,x)}}(x)$}
 {$C_{x}(d)\leftarrow C_{c}(d)+C_c(x)$\;
 }
-
+\fi
 }
 
 %Compute $C_x(v)$ using Theorem \ref{computeneighborcost}\;
@@ -431,6 +432,10 @@ $C_{c}^{G_{(c,x)}}(d)\leftarrow C_c(d)+\triangle$\;
 $newdist \leftarrow C_{c}^{G_{(c,x)}}(m)+L(m,q)$\;
 $\triangle\leftarrow newdist-C_c(q)$\;
 ENQUEUE$(q,(m,newdist,\triangle))$\;
+}
+\Else
+{
+$C_{x}(q)\leftarrow C_{c}(q)+C_c(x)$\;
 }
 }
 }
@@ -491,8 +496,9 @@ at the beginning,  both of the parameters $C_{c}^{G_{(c,x)}}(v), v\in V$  and  $
 The node $x$ id enqueued into the $Q$ by the ENQUEUE operation with its potential new parent $c$ , its potential new cost $newdist$, and the cost change $\triangle$ (line 9).
 A node $m$ with the lowest potential cost change will be popped out from the priority queue $Q$ by the EXTRACTMIN operation, where node ID is  used as tie breaking.
 It is then added to the tree, and used as the current node in the iteration, while its attributes like lowest cost and parent  are also set to a permanent value in the $G_{(c,x)}$ (lines $12 \sim 13$).
-For all the nodes $d \in D_c(m)$, their cost is updated accordingly (line 15), and the corresponding cost $C_x(d)$ is then computed (lines $16 \sim 21$).
-For each neighbor $q$ of $m$, we compute the  potential cost of $q$. The node $q$ will be inserted into the $Q$ if its new potential cost is smaller than the old value (lines 22 $\sim$ 26).
+For all the nodes $d \in D_c(m)$, their cost is updated accordingly (line 15), and the corresponding shortest cost $C_x(d)$ is then computed (lines $16 \sim 19$).
+For each neighbor $q$ of $m$, we compute the  potential cost of $q$. The node $q$ will be inserted into the $Q$ if its new potential cost is smaller than the old value (lines 21 $\sim$ 24).
+While compute the shortest cost $C_x(q)$ when the potential cost of $q$ is smaller than the old value (lines 26).
 Then, we will restore the weight of the link $(c,x)$ (line 27).
 At last lines 28-31 are using to compute all the LFA next hop set for node $c$.
 
@@ -588,9 +594,9 @@ Since only the weight of the link $(c,x)$ is changed to $-L(c,x)$,
 assume that there is a negative cycle $P=(c,x,...c)$, the cost
 of the path is smaller than 0.
 Therefore, we have $C_c(x)+Cost(x,c)<0$, where $Cost(x,c)$ denote the cost from $x$ to $c$ in the path $P$.
-Since $C_c(x)=-L(c,x)$, we can get 
+Since $C_c(x)=-L(c,x)$, we can get
 $Cost(x,c)<L(c,x)$, that is to say
-there exists a path from $x$ to $c$ whose cost is smaller than $L(c,x)$, 
+there exists a path from $x$ to $c$ whose cost is smaller than $L(c,x)$,
 this is impossible. We can conclude that there is no negative cycle in the $G'$.
 Therefore, there must exist a shortest path tree in the $G'$, the Theorem is correct according to \cite{Narv2002New}.
 \iffalse
@@ -763,19 +769,45 @@ From the Theorem \ref{newspt0}, Theorem \ref{newsptposition0} and DC rule, we ca
 \end{proof}
 
 \fi
+\begin{theorem}\label{algorithmcorrect}
+Given a shortest path tree $T_c$ and a network topology  $G'=G_{(c,x)}, (c,x)\in T_c$, the value of $C_x(d), d\neq c \land d\neq x$ can be correctly computed by IAC.
+\end{theorem}
+\begin{proof}
+For any node $d\in T_c^{G'}$, the calculation of the value of $C_x(d)$ can be divided into three cases.
+
+(1) If $d \in D_c(x)$, the lines 16-17 are executed.
+
+(2)If $d \notin D_c(x) \land d \notin D_c^{G'}$, the lines 18-19 are executed.
+
+(3)When the node $d \notin D_c(x)$ and is not enqueued into the $Q$, 
+the node $d$  must not be a descendant of $x$ in $T_c^{G'}$.
+The value of $C_x(d)$ can be computed by line 26.
+
+According to Theorem \ref{computeneighborcost}, all of the $C_x(d), d \in V$ will be calculated when the lines ($1 \sim 27$) of the IAC are executed.
+\end{proof}
+
+\begin{theorem}\label{fullprooof}
+Algorithm IAC can compute all the next hop set for node $c$ that satisfies the LFA Rule.
+\end{theorem}
+\begin{proof}
+From Theorem \ref{algorithmcorrect}, all of the $C_x(d), d \in V$ will be calculated when the lines ($1 \sim 27$) of the IAC are executed.
+As long as we know the above values, we can use the LFA rule to compute all the LFA next hop set for node $c$ (lines $29 \sim 31$). 
+\end{proof}
+
+
+
+
+
+\iffalse
 Now we will show the performance of the algorithm, including the time complexity and the number of backup next-hop computed by LFA. From theorem \ref{iaccomplexity}, we can see that the computational complexity of IAC is less than that of constructing a shortest path tree. From theorem \ref{fullprooof}, we can see that the IAC can compute all the backup next-hop set which satisfies the LFA Rule. We will describe the Theorem \ref{iaccomplexity} and Theorem \ref{fullprooof} in detail, and also their correctness is proved.
+\fi
 \begin{theorem}\label{iaccomplexity}
 The computational complexity of IAC is less than $O(|E|lg|V|)$ when the queue is implemented as a Heap.
 \end{theorem}
 \begin{proof}
  To compute all the backup next-hop set from node $c$ to other nodes in the network. The IAC need to run the iSPF algorithm $k$ times, where $k$ is the number of neighbors of node $c$. Let $N_{i}$ and $M_{i}$ respectively indicate the number of nodes that must adjust their costs or parents and the number of edges which anchored to these nodes when the weight of link $(c,i)$ is changed to $-L(c,i)$. Therefore the computational complexity of the Algorithm INC is $\sum_{i=1}^k{M_{i}*lgN_{i}}\leq \sum_{i=1}^k{M_{i}}*lg|V|=O(|E|lg|V|)$. Since $N_{i}<|V|$, therefore the computational complexity of IAC is less than that of SPF.
 \end{proof}
-\begin{theorem}\label{fullprooof}
-Algorithm IAC can compute all the next hop set for node $c$ that satisfies the LFA Rule.
-\end{theorem}
-\begin{proof}
-For any neighboring node $x$ of $c$, the $C_x(d), d \in V$ will be calculated when the lines (1-27) of the IAC are executed. As long as we know the above values, we can use the LFA rule to compute all the LFA next hop set for node $c$. Therefore, the Theorem is established.
-\end{proof}
+
 
 \iffalse
 \begin{theorem}\label{iacfullprooof}
