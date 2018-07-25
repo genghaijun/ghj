@@ -98,24 +98,36 @@ obviously $I(N)=O(N)$ in an undirected connected graph $G$.
 \fi
 
 \subsection{Basic Idea}
-On a router $c$, we focuses on how to efficiently compute alternate next hops for each destination, 
-according to the criteria of \textbf{LFC}, or \textbf{NPC}, or \textbf{DC}, for different scenarios. 
-By carefully investigating each criterion in Section \ref{criteria}, we can see that the difficulty 
+On a router $c$, we focuses on how to efficiently compute alternate next hops for each destination. 
+We would like to adopt the criterion of \textbf{LFC}, or \textbf{NPC}, or \textbf{DC}, 
+ in Section \ref{criteria} for different scenarios. 
+By carefully investigating each criterion, we can see that the difficulty 
 lies in computing, for each destination $d$, the lowest distance from each neighbor $x$ to $d$ (i.e., $C_{x}(d)$), 
 as well as the lowest distance from $x$ to the default next hop $b$ for $d$ (i.e., $C_{x}(b)$).
-All other costs, including $C_{c}(d), C_{b}(d)$ and $C_{x}(c)$, are already available since $c$ maintains
-a shortest path tree rooted at itself.
+All the other costs, including $C_{c}(d), C_{b}(d)$ and $C_{x}(c)$, are already available 
+since $c$ always maintains a shortest path tree rooted at itself, 
+while $C_{b}(d)$ is just $C_{c}(d)-C_{c}(b)$, and $C_{x}(c)$ is just $C_{c}(x)$.
 
-The computation is actually embedded in a dynamic shortest path tree (SPT) algorithm, which takes 
+Typical LFA implementations of nowaday router vendors naively maintain a SPT for each neighbor $x$, 
+thus requires $O(k)$ time and space. For nodes with a large number of neighbors, this will become 
+a bottleneck. TBFH \cite{TBFH} and DMPA \cite{dmpa} accelerate the computation at the cost of 
+failure repair capability and route availability, since they each utilize a criteria that is more restrict than \textbf{DC}.
+For example, DMPA adopts $C_{c}(u)-C_{c}(x)+L(u,d)<C_{c}(d)$, where $u$ is a descendent of $x$, 
+and the left-hand equation is always no less than $C_{x}(d)$.
+
+Our algorithm IAC is actually embedded in a dynamic shortest path tree (SPT) algorithm, which takes 
 a graph and the corresponding SPT as input, and performs incremental shortest path computation 
-with the sign of some specific link cost simply reversed, i.e., from $x$ to $-x$. 
+with the sign of some specific link cost simply reversed, i.e., from $\ell$ to $-\ell$. During this specific 
+dynamic update process, the cost from each neighbor $x$ to each destination $d$ can be efficiently computed, 
+and the alternates can be computed exactly according to each LFA criterion, achieving high speed, low space and 
+good quality simultaneously.
 
+\iffalse
 Since each node independently computes its next-hops for all destinations,
 in the rest of the paper, our algorithm will be
 described with respect to a particular node $c$ that performs such
 kind of computation.
 
-\iffalse
 We denote the cost of the path from $c$ to $v$ in $T_{c}$ by $C_{c}(v)$,
 the children of $v$ in $T_c$ by $H_c(v)$,
 the parent of $v$ in $T_c$ by $P_{c}(v)$,
@@ -216,13 +228,13 @@ Such computation can consume a considerable
 amount of CPU time, preventing other critical routing functions
 from being executed. Thus, it is desirable to achieve this
 using as little CPU time as possible.
-\fi
+
 For the actual deployment on the Internet, a LFA-based scheme should introduce a small additional burden on the current deployed routing protocol. This paper is dedicated to finding an efficient LFA-based scheme which is suitable for deploying on an ISP network. In particular, we focus on the following problem:
 \textbf{\emph{Given a computing node $c$ and $T_c$, can we find an efficient LFA-based algorithmic technique and the algorithm conforms to the following two conditions:
 (1)The time complexity of the algorithm is less than constructing a shortest path tree.
 (2) It can provide the same protection ratio with LFA.
 }}
-\iffalse
+
 \subsection{Algorithm Specification}
 \iffalse
 Before diving into the detail of IAC algorithm, we first describe DMPA.
@@ -483,7 +495,8 @@ For all the nodes $d \in D_c(m)$, their cost is updated accordingly (line 15), a
 For each neighbor $q$ of $m$, we compute the  potential cost of $q$. The node $q$ will be inserted into the $Q$ if its new potential cost is smaller than the old value (lines 22 $\sim$ 26).
 Then, we will restore the weight of the link $(c,x)$ (line 27).
 At last lines 28-31 are using to compute all the LFA next hop set for node $c$.
-\subsection{Example}
+
+%\subsection{Example}
 In this section, we will employ a simple example to explain how ICA works. Fig. \ref{spttree21} shows a network topology consisting of 5 nodes and 6 edges. Fig. \ref{spttreechange22} shows the shortest path tree $T_c$ rooted at the node $c$.
 Here we will describe how to compute $T_c^{G(c,a)}$ based on $T_c$.
 First, the root node $c$ is marked as $anchored$, all of the nodes except $c$ are marked as $floating$.
