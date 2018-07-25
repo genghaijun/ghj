@@ -504,7 +504,8 @@ at the beginning,  both of the parameters $C_{c}^{G_{(c,x)}}(v), v\in V$  and  $
 The node $x$ id enqueued into the $Q$ by the ENQUEUE operation with its potential new parent $c$ , its potential new cost $newdist$, and the cost change $\triangle$ (line 9).
 A node $m$ with the lowest potential cost change will be popped out from the priority queue $Q$ by the EXTRACTMIN operation, where node ID is  used as tie breaking.
 It is then added to the tree, and used as the current node in the iteration, while its attributes like lowest cost and parent  are also set to a permanent value in the $G_{(c,x)}$ (lines $12 \sim 13$).
-For all the descendants of node $m$ in the old shortest path tree $T_c$, their cost is updated accordingly (line 15).
+%For all the nodes in the subtree of node $m$ i is considered together
+For all the descendants of node $m$ in the old shortest path tree $T_c$,, their cost is updated together (line 15).
 For each neighbor $q$ of $m$, we compute the  potential cost of $q$. The node $q$ will be inserted into the $Q$ if its new potential cost is smaller than the old value (lines 17 $\sim$ 20).
 Then, the weight of the link $(c,x)$ is restored.
 For each neighbor $x$ of $c$, the value of $C_x(d), d\in V$ is computed and the corresponding backup next hop is added according to LFA (lines 22 $\sim$ 31).
