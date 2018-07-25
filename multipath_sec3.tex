@@ -113,7 +113,7 @@ thus requires $O(k)$ time and space. For nodes with a large number of neighbors,
 a bottleneck. TBFH \cite{TBFH} and DMPA \cite{dmpa} accelerate the computation at the cost of 
 failure repair capability and route availability, since they each utilize a criteria that is more restrict than \textbf{DC}.
 For example, DMPA adopts $C_{c}(u)-C_{c}(x)+L(u,d)<C_{c}(d)$, where $u$ is a descendent of $x$, 
-and the left-hand equation is always no less than $C_{x}(d)$.
+and the left-hand equation is provably no less than $C_{x}(d)$.
 
 Our algorithm IAC is actually embedded in a dynamic shortest path tree (SPT) algorithm, which takes 
 a graph and the corresponding SPT as input, and performs incremental shortest path computation 
@@ -353,14 +353,16 @@ For any node $x\in N(c)$, if we can quickly calculate $C_x(v), v\in V$ in the $T
 We will use a simple example to explain the Theorem \ref{dcbackupnexthop}. Fig. \ref{dcnetwork} is a simple network work consists of  5 routers and 6 edges.
 Fig. \ref{spttreedc} is a shortest path tree rooted at node $c$, while Fig. \ref{spttreechange1dc} and \ref{spttreechange2dc} respectively represent the new SPT when the weight of the links $(c,a)$  and $(c,b)$  is changed to $0$. Because $e \notin D(T_{c},a)$ and $e \in D(T'_{c},a)$, we can see that node $a$  can be a viable backup next-hop from   $c$ to $e$. Due to $d \notin D(T_{c},b)$, and $d \in D(T'_{c},b)$ ,  node $b$  can be a viable backup next-hop from $c$  to $d$, and also  we can get ode $b$  can be a viable backup next-hop from $c$  to $g$ in the same way.
 \fi
-\subsection{Algorithm}
-\begin{algorithm}[htb]
+
+
+\subsection{IAC Algorithm}
+\begin{algorithm}[htb]\label{IAC}
 \KwIn{Network graph $G=(V,E)$ and $T_c$}
-\KwOut{$N_c(d), (\forall d \in V \land d \neq c) $}
+\KwOut{$N_c(d)$  ($\forall d \in V \backslash \{c\} $)}
 %\SetAlgoNoLine
 %\SetAlgoNoEnd
-\For{each neighbor $x$ of $c$}{
-\For{$v \in V$}{
+\ForEach{neighbor $x$ of $c$}{
+\ForEach{$v \in V$}{
  %$v.visited \leftarrow floating$\;
  $C_{c}^{G_{(c,x)}}(v) \leftarrow C_c(v)$\;
  $P_{c}^{G_{(c,x)}}(v) \leftarrow P_c(v)$\;
@@ -403,7 +405,7 @@ $P_c^{G_{(c,x)}}(m)\leftarrow n$\;
 %$m.visited\leftarrow anchored$\;
 $C_c^{G_{(c,x)}}(m)\leftarrow p$\;
 
-\For{$d\in D_c(m)$}
+\ForEach{$d\in D_c(m)$}
 {
 $C_{c}^{G_{(c,x)}}(d)\leftarrow C_c(d)+\triangle$\;
 
@@ -425,7 +427,7 @@ $C_{c}^{G_{(c,x)}}(d)\leftarrow C_c(d)+\triangle$\;
 %Add $x$ to $N_c(v)$;\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad
 %\hl{(In IAC-NA Compute $C_x(v)$ using Theorem 9)} \;
 
-\For {each neighbor $q$ of $m$}{
+\ForEach {neighbor $q$ of $m$}{
 \If {$C_c(q)>C_{c}^{G_{(c,x)}}(m)+L(m,q)$ }
 {
 
@@ -441,9 +443,9 @@ $C_{x}(q)\leftarrow C_{c}(q)+C_c(x)$\;
 }
  $L(c,x)\leftarrow weight$\;
 }
-\For {$d\in V \land d \neq c$}
+\ForEach {$d\in V \backslash \{c\}$}
 {
-\For{each neighbor $x$ of $c$}
+\ForEach{neighbor $x$ of $c$}
 {
  \If {LFA is satisfied}
  {
