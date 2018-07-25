@@ -98,28 +98,28 @@ obviously $I(N)=O(N)$ in an undirected connected graph $G$.
 \fi
 
 \subsection{Basic Idea}
-On a router $c$, we focuses on how to efficiently compute alternate next hops for each destination. 
-We would like to adopt the criterion of \textbf{LFC}, or \textbf{NPC}, or \textbf{DC}, 
- in Section \ref{criteria} for different scenarios. 
-By carefully investigating each criterion, we can see that the difficulty 
-lies in computing, for each destination $d$, the lowest distance from each neighbor $x$ to $d$ (i.e., $C_{x}(d)$), 
+On a router $c$, we focuses on how to efficiently compute alternate next hops for each destination.
+We would like to adopt the criterion of \textbf{LFC}, or \textbf{NPC}, or \textbf{DC},
+ in Section \ref{criteria} for different scenarios.
+By carefully investigating each criterion, we can see that the difficulty
+lies in computing, for each destination $d$, the lowest distance from each neighbor $x$ to $d$ (i.e., $C_{x}(d)$),
 as well as the lowest distance from $x$ to the default next hop $b$ for $d$ (i.e., $C_{x}(b)$).
-All the other costs, including $C_{c}(d), C_{b}(d)$ and $C_{x}(c)$, are already available 
-since $c$ always maintains a shortest path tree rooted at itself, 
+All the other costs, including $C_{c}(d), C_{b}(d)$ and $C_{x}(c)$, are already available
+since $c$ always maintains a shortest path tree rooted at itself,
 while $C_{b}(d)$ is just $C_{c}(d)-C_{c}(b)$, and $C_{x}(c)$ is just $C_{c}(x)$.
 
-Typical LFA implementations of nowaday router vendors naively maintain a SPT for each neighbor $x$, 
-thus requires $O(k)$ time and space. For nodes with a large number of neighbors, this will become 
-a bottleneck. TBFH \cite{TBFH} and DMPA \cite{dmpa} accelerate the computation at the cost of 
+Typical LFA implementations of nowaday router vendors naively maintain a SPT for each neighbor $x$,
+thus requires $O(k)$ time and space. For nodes with a large number of neighbors, this will become
+a bottleneck. TBFH \cite{TBFH} and DMPA \cite{dmpa} accelerate the computation at the cost of
 failure repair capability and route availability, since they each utilize a criteria that is more restrict than \textbf{DC}.
-For example, DMPA adopts $C_{c}(u)-C_{c}(x)+L(u,d)<C_{c}(d)$, where $u$ is a descendent of $x$, 
+For example, DMPA adopts $C_{c}(u)-C_{c}(x)+L(u,d)<C_{c}(d)$, where $u$ is a descendent of $x$,
 and the left-hand equation is provably no less than $C_{x}(d)$.
 
-Our algorithm IAC is actually embedded in a dynamic shortest path tree (SPT) algorithm, which takes 
-a graph and the corresponding SPT as input, and performs incremental shortest path computation 
-with the sign of some specific link cost simply reversed, i.e., from $\ell$ to $-\ell$. During this specific 
-dynamic update process, the cost from each neighbor $x$ to each destination $d$ can be efficiently computed, 
-and the alternates can be computed exactly according to each LFA criterion, achieving high speed, low space and 
+Our algorithm IAC is actually embedded in a dynamic shortest path tree (SPT) algorithm, which takes
+a graph and the corresponding SPT as input, and performs incremental shortest path computation
+with the sign of some specific link cost simply reversed, i.e., from $\ell$ to $-\ell$. During this specific
+dynamic update process, the cost from each neighbor $x$ to each destination $d$ can be efficiently computed,
+and the alternates can be computed exactly according to each LFA criterion, achieving high speed, low space and
 good quality simultaneously.
 
 \iffalse
@@ -408,7 +408,7 @@ $C_c^{G_{(c,x)}}(m)\leftarrow p$\;
 \ForEach{$d\in D_c(m)$}
 {
 $C_{c}^{G_{(c,x)}}(d)\leftarrow C_c(d)+\triangle$\;
-
+\iffalse
 \If {$d \in D_c(x)$}
 {$C_{x}(d)\leftarrow C_{c}(d)-C_{c}(x)$\;
 }
@@ -416,7 +416,6 @@ $C_{c}^{G_{(c,x)}}(d)\leftarrow C_c(d)+\triangle$\;
 \If {$d \notin D_c(x) \land d \in D_c^{G_{(c,x)}}(x)$}
 {$C_{x}(d)\leftarrow C_{c}^{G_{(c,x)}}(d)+C_{c}(x)$\;
 }
-\iffalse
 \If {$d \notin D_c(x) \land d \notin D_c^{G_{(c,x)}}(x)$}
 {$C_{x}(d)\leftarrow C_{c}(d)+C_c(x)$\;
 }
@@ -435,19 +434,26 @@ $newdist \leftarrow C_{c}^{G_{(c,x)}}(m)+L(m,q)$\;
 $\triangle\leftarrow newdist-C_c(q)$\;
 ENQUEUE$(q,(m,newdist,\triangle))$\;
 }
-\Else
-{
-$C_{x}(q)\leftarrow C_{c}(q)+C_c(x)$\;
-}
+
 }
 }
  $L(c,x)\leftarrow weight$\;
 }
-\ForEach {$d\in V \backslash \{c\}$}
-{
 \ForEach{neighbor $x$ of $c$}
 {
- \If {LFA is satisfied}
+\ForEach{$d \in V\backslash \{c\}$}
+{
+\If {$d \in D_c(x)$}
+{$C_{x}(d)\leftarrow C_{c}(d)-C_{c}(x)$\;
+}
+
+\If {$d \notin D_c(x) \land d \in D_c^{G_{(c,x)}}(x)$}
+{$C_{x}(d)\leftarrow C_{c}^{G_{(c,x)}}(d)+C_{c}(x)$\;
+}
+\If {$d \notin D_c(x) \land d \notin D_c^{G_{(c,x)}}(x)$}
+{$C_{x}(d)\leftarrow C_{c}(d)+C_c(x)$\;
+}
+\If {LFA is satisfied}
  {
  ADD $x$ to $N_c(d)$\;
  }
@@ -498,25 +504,29 @@ at the beginning,  both of the parameters $C_{c}^{G_{(c,x)}}(v), v\in V$  and  $
 The node $x$ id enqueued into the $Q$ by the ENQUEUE operation with its potential new parent $c$ , its potential new cost $newdist$, and the cost change $\triangle$ (line 9).
 A node $m$ with the lowest potential cost change will be popped out from the priority queue $Q$ by the EXTRACTMIN operation, where node ID is  used as tie breaking.
 It is then added to the tree, and used as the current node in the iteration, while its attributes like lowest cost and parent  are also set to a permanent value in the $G_{(c,x)}$ (lines $12 \sim 13$).
-For all the nodes $d \in D_c(m)$, their cost is updated accordingly (line 15), and the corresponding shortest cost $C_x(d)$ is then computed (lines $16 \sim 19$).
-For each neighbor $q$ of $m$, we compute the  potential cost of $q$. The node $q$ will be inserted into the $Q$ if its new potential cost is smaller than the old value (lines 21 $\sim$ 24).
-While compute the shortest cost $C_x(q)$ when the potential cost of $q$ is smaller than the old value (lines 26).
-Then, we will restore the weight of the link $(c,x)$ (line 27).
-At last lines 28-31 are using to compute all the LFA next hop set for node $c$.
+For all the descendants of node $m$ in the old shortest path tree $T_c$, their cost is updated accordingly (line 15).
+For each neighbor $q$ of $m$, we compute the  potential cost of $q$. The node $q$ will be inserted into the $Q$ if its new potential cost is smaller than the old value (lines 17 $\sim$ 20).
+Then, the weight of the link $(c,x)$ is restored.
+For each neighbor $x$ of $c$, the value of $C_x(d), d\in V$ is computed and the corresponding backup next hop is added according to LFA (lines 22 $\sim$ 31).
+\iffalse
+For any node $d$ in the network, the corresponding  $C_x(d)$ is computed
+for 
 
+The $C_x(d)$
+While compute the shortest cost $C_x(q)$ when the potential cost of $q$ is smaller than the old value (lines 26).
+At last lines 28-31 are using to compute all the LFA next hop set for node $c$.
+\fi
 %\subsection{Example}
 In this section, we will employ a simple example to explain how ICA works. Fig. \ref{spttree21} shows a network topology consisting of 5 nodes and 6 edges. Fig. \ref{spttreechange22} shows the shortest path tree $T_c$ rooted at the node $c$.
 Here we will describe how to compute $T_c^{G(c,a)}$ based on $T_c$.
-First, the root node $c$ is marked as $anchored$, all of the nodes except $c$ are marked as $floating$.
-For all the $floating$ nodes,
-we check whether they have direst link to the anchored nodes, and calculate the new cost and the change in cost, which gives
-queue \{$(a,(c,-3,-6))$\}.
-In the first iteration, $(a,(c,-3,-6))$ will be selected and  $a$ will be marked as $anchored$. The original subtree rooted at $d$  is considered together. Therefore the node $d$ is selected and marked as $anchored$ at the same time. Since $d$ has an outing edge to $e$, the new cost and $\delta$ of $e$ is calculated, which gives queue \{$(e,(e,3,-5))$\}. Node $d$ is marked as anchored in the next iteration.
+First, the node $a$ is enqueued into the $Q$ with its form \{$(a,(c,-3,-6))$\}.
+In the first iteration, $(a,(c,-3,-6))$ will be selected. The original subtree rooted at $a$  is considered together. Therefore the node $d$ is selected at the same time. 
+Since $d$ has an outing edge to $e$, the new cost and cost difference of $e$ is calculated, which gives queue \{$(e,(e,3,-5))$\}. Node $d$ is selected in the next iteration.
 The new shortest path tree is given in the
 Fig. \ref{spttreechange23}.
-We have $d\in D_c(a)$ from Fig. \ref{spttreechange22} , so $C_a(d)=C_c(d)-C_c(a)=3$.
-Because $e \notin D_c(a)$ and $e \in D_c^{G_{(c,a)}}(a)$, we have $C_a(e)=C_c^{G_{(c,a)}}(e)+C_c(a)=6$ from Theorem \ref{computeneighborcost}.
-Since $b \notin D_c(a)$ and $b \notin D_c^{G_{(c,a)}}(a)$, we have $C_a(b)=C_a(c)+C_c(b)=8$.
+Because $d\in D_c(a)$, we have $C_a(d)=C_c(d)-C_c(a)=3$.
+Because $e \notin D_c(a)$ and $e \in D_c^{G_{(c,a)}}(a)$, we have $C_a(e)=C_c^{G_{(c,a)}}(e)+C_c(a)=6$.
+Since $b \notin D_c(a)$ and $b \notin D_c^{G_{(c,a)}}(a)$, we can get $C_a(b)=C_a(c)+C_c(b)=8$.
 
 \subsection{Theoretical  Analysis}
 \iffalse
@@ -781,7 +791,7 @@ For any node $d\in T_c^{G'}$, the calculation of the value of $C_x(d)$ can be di
 
 (2)If $d \notin D_c(x) \land d \notin D_c^{G'}$, the lines 18-19 are executed.
 
-(3)When the node $d \notin D_c(x)$ and is not enqueued into the $Q$, 
+(3)When the node $d \notin D_c(x)$ and is not enqueued into the $Q$,
 the node $d$  must not be a descendant of $x$ in $T_c^{G'}$.
 The value of $C_x(d)$ can be computed by line 26.
 
@@ -793,7 +803,7 @@ Algorithm IAC can compute all the next hop set for node $c$ that satisfies the L
 \end{theorem}
 \begin{proof}
 From Theorem \ref{algorithmcorrect}, all of the $C_x(d), d \in V$ will be calculated when the lines ($1 \sim 27$) of the IAC are executed.
-As long as we know the above values, we can use the LFA rule to compute all the LFA next hop set for node $c$ (lines $29 \sim 31$). 
+As long as we know the above values, we can use the LFA rule to compute all the LFA next hop set for node $c$ (lines $29 \sim 31$).
 \end{proof}
 
 
