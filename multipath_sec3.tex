@@ -402,11 +402,11 @@ ENQUEUE$(u,(v,newdist,\delta))$\;}
 }
 \fi
 \While {$Q$ is not empty}{
-$\{m,(n,p,\delta)\}\leftarrow$ EXTRACTMIN(Q)\;
+$\{m,(p,n,\delta)\}\leftarrow$ EXTRACTMIN(Q)\;
 %$P_c^{G_{(c,x)}}(m)\leftarrow n$\;
 %$m.visited\leftarrow anchored$\;
-$C(m)\leftarrow p$\;
-the descendants of node $m$ is append below node $m$\;
+$C(m)\leftarrow n$ \;
+adjust $T$ to make $p$ the parent of $m$\;
 \iffalse\ForEach{$d\in D_c(m)$}
 {
 $C_{c}^{G_{(c,x)}}(d)\leftarrow C_c(d)+\delta$\;
@@ -440,19 +440,19 @@ ENQUEUE$(q,(m,newdist,\delta))$\;
 }
 }
  $L(c,x)\leftarrow weight$\;
-}
-\ForEach{neighbor $x$ of $c$}
-{
+%}
+%\ForEach{neighbor $x$ of $c$}
+%{
 \ForEach{$d \in V\backslash \{c\}$}
 {
 \If {$d \in D_c(x)$}
 {$C_{x}(d)\leftarrow C_{c}(d)-C_{c}(x)$\;
 }
 
-\If {$d \notin D_c(x)$ and $d$ is now a descendant of $x$}
+\If {$d \notin D_c(x)$ and $d$ is a descendant of $x$ in $T$}
 {$C_{x}(d)\leftarrow C(d)+C_{c}(x)$\;
 }
-\If {$d \notin D_c(x)$ and $d$ is not now a descendant of $x$}
+\If {$d \notin D_c(x)$ and $d$ is not a descendant of $x$ in $T$}
 {$C_{x}(d)\leftarrow C_{c}(d)+C_c(x)$\;
 }
 \If {the LFA criterion is satisfied}
