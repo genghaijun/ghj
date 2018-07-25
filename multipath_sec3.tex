@@ -357,7 +357,7 @@ Fig. \ref{spttreedc} is a shortest path tree rooted at node $c$, while Fig. \ref
 
 \subsection{IAC Algorithm}
 \begin{algorithm}[htb]\label{IAC}
-\KwIn{Network graph $G=(V,E)$ and $T_c$}
+\KwIn{Network graph $G=(V,E)$, the corresponding SPT $T_c$, and the LFA criterion}
 \KwOut{$N_c(d)$  ($\forall d \in V \backslash \{c\} $)}
 %\SetAlgoNoLine
 %\SetAlgoNoEnd
@@ -447,13 +447,13 @@ $C_{x}(q)\leftarrow C_{c}(q)+C_c(x)$\;
 {
 \ForEach{neighbor $x$ of $c$}
 {
- \If {LFA is satisfied}
+ \If {the LFA criterion is satisfied}
  {
- ADD $x$ to $N_c(d)$\;
+ add $x$ to $N_c(d)$\;
  }
 }
 }
-\Return $N_c(d), (\forall d \in V \land d \neq c)$
+\Return $N_c(d)$
 \caption{IAC}
 \label{mnpe}
 \end{algorithm}
