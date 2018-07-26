@@ -79,7 +79,7 @@ In traditional link state routing protocols such as IS-IS or OSPF,
 a node $c$ constructs such a graph $G$ from states carried by link state advertisements.
 With a shortest path algorithm such as the Dijkstra's or the Bellman-Ford algorithm\cite{CLRS},
 it builds a shortest path tree (SPT) $T_c^G$, where $c$ is the root of the tree, and all other nodes are included.
-Let $P_c^G(x)$ be the parent of node $x$ in $T_c^{G}$.
+%Let $P_c^G(x)$ be the parent of node $x$ in $T_c^{G}$.
 Let $D_c^G(x)$ denote the descendants of node $x$ (including $x$ itself) in $T_c^{G}$,
 then each direct child $x$ of $c$ is $c$'s next hop for packets destined to $x$'s descendents,
 i.e., ``$N_{c}^{G}(v)=x$ iff $(c,x) \in E^{G}$ and $v \in D_{c}^{G}(x)$''.
