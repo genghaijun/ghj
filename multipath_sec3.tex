@@ -496,7 +496,10 @@ ENQUEUE$(q,(m,newdist,\delta))$\;
 \end{figure*}
 \fi
 
-Algorithm \ref{IACalg} presents the pseudo code of IAC. 
+Algorithm 1 presents the pseudo code of IAC, where $C_{c}(*)$ and $D_{c}(*)$ denote 
+the lowest cost from $c$ to a given node and the descent
+represent variables with respect to the SPT $T_{c}$ (the superscript $G$ is omitted), 
+
 We are now in a position to describe the IAC algorithm.
 According to the above discussions, algorithm IAC is proposed to compute all of the backup next-hop set which are satisfied the LFA rule. The inputs of the IAC are the network topology $G=(V,E)$ and $T_{c}$, and the output is the backup next-hop set from node $c$ to all  other nodes in the network.
 IAC maintains a priority queue $Q$, which contains a subset of nodes together with three attributes. In particular, each element in $Q$ is
