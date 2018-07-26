@@ -502,19 +502,18 @@ ENQUEUE$(q,(m,newdist,\delta))$\;
 \fi
 
 Algorithm 1 presents the pseudo code of IAC, where $C_{c}(*)$ and $D_{c}(*)$ denote,
-for a give node, the lowest cost from $c$ to it in graph $G$, and its descents
+for a give node, the lowest cost from $c$ to it in graph $G$, and its descendants
 in the SPT $T_{c}^{G}$ (the superscript $G$ is omitted).
 For each neighbor $x$ of $c$, IAC adopts the  ball-and-string model framework\cite{Narv2002New}
 to perform an incremental shortest path tree construction for a specific link cost update,
-i.e., cost of link $(c,x)$ is changed from $L(c,x)$ to $-L(c,x)$ (line 4 $\sim$ 5).
+i.e., cost of link $(c,x)$ is changed from $L(c,x)$ to $-L(c,x)$ (line 4).
 In the framework, a priority queue $Q$ is maintained to determine the proper node whose
 position in the new tree should be fixed.
 Each element in $Q$ is of the form ${(u,(p,n,\delta))}$, where $p$ is the potential parent
 for node $u$, $n$ denotes the potential lowest cost from $c$ to $u$,
 and $\delta$ is the corresponding cost change. The incremental search begins by
 inserting element $(x, (c, C_{c}(x)-2*L(c,x), -2*L(c,x)))$ in to the queue (line 5).
-Then we extract the node $m$ with the lowest cost in $Q$ and fix its position
-as well as its descendents' positions, in the new tree (line 7 $\sim$ 8),
+Then we extract the node $m$ with the lowest cost in $Q$ and fix its position as well as its descendants' positions, in the new tree (line 7 $\sim$ 8),
 and update the cost from $c$ to these nodes (line 9 $\sim$ 11).
 Note that here we use notation $C(*)$ without any subscript to keep track of the potential
 lowest cost from $c$ to a node in the update process.
