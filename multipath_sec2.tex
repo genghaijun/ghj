@@ -69,11 +69,11 @@ it will not become a bottleneck.
 \subsection{Network Model and Basic Notations}
 A link state network is modeled as an undirected graph $G=(V^{G},E^{G})$,
 where $V^{G}$ and $E^G$ respectively denote the set of nodes (routers) and the set of edges (links) in the network.
-Every link $(u,v)\in E^{G}$ in the network  has a link weight $L^{G}(u,v)$ and
-a link failure probability $r^{G}(u,v)$, both of which are non-negative.
+Every link $(u,v)\in E^{G}$ in the network has a non-negative link weight $L^{G}(u,v)$ 
+%and a link failure probability $r^{G}(u,v)$, both of which are non-negative.
 We use $C_c^G(v)$ to denote the lowest cost from node $c$ to node $v$,
 and use $N_{c}^G(v)$ to denote the set of next hops that $c$ can forward to when receiving a packet destined to the node $v$.
-For the cost between two neighboring nodes $u$ of $v$, we further assume the triangle inequality  that $C_u^G(v)=C_v^G(u)=L^{G}(u,v)$, which is typically followed by ISPs in practice.
+For the cost between two neighboring nodes $u$ of $v$, we further assume the triangle inequality  that $C_u^G(v)=C_v^G(u)=L^{G}(u,v)$, which is a common practice followed by ISPs.
 
 In traditional link state routing protocols such as IS-IS or OSPF,
 a node $c$ constructs such a graph $G$ from states carried by link state advertisements.
@@ -111,8 +111,8 @@ $G\!=\!(V^{G},E^{G})$ & $G=(V,E)$ & An undirected graph with nodes and edges\\
 \hline
 $L^{G}(u,v)$ & $L(u,v)$ & The direct link cost between node $u$ and node $v$ \\
 \hline
-$r^{G}(u,v)$ & $r(u,v)$ & The link failure probability between node $u$ and node $v$ \\
-\hline
+%$r^{G}(u,v)$ & $r(u,v)$ & The link failure probability between node $u$ and node $v$ \\
+%\hline
 % $G'=G^w_{(u,v)}$ &  &  &The network topology when the edge $(l,m)\in E$ change its weight to $w$\\
 %\hline
 $T_c^{G}$ & $T_{c} $ & The shortest path tree rooted at node $c$\\

@@ -114,7 +114,10 @@ from scratch. For nodes with a large number of neighbors, this will become
 a bottleneck. TBFH \cite{TBFH} and DMPA \cite{dmpa} accelerate the computation at the cost of
 failure repair capability and route availability, since they each utilize a criteria that is more restrict than \textbf{DC}.
 For example, DMPA adopts $C_{c}(u)-C_{c}(x)+L(u,d)<C_{c}(d)$, where $u$ is a descendant of $x$,
-and the left-hand equation is provably no less than $C_{x}(d)$.
+and the left-hand equation is provably no less than $C_{x}(d)$. Thus DMPA, as well as TBFH, 
+computes less alternate next hops than our IAC algorithm which strictly follows the criterion of \textbf{DC}. 
+In addition, DMPA and TBFH cannot be easily adapted to follow \textbf{NPC} while IAC's 
+unified framework can also handle \textbf{NPC}.
 
 
 
@@ -568,10 +571,12 @@ At last lines 28-31 are using to compute all the LFA next hop set for node $c$.
 \end{figure*}
 
 
-Later, we will prove that this incremental tree construction actually constructs the shortest path
+Later, we will prove that this incremental tree construction process actually constructs the shortest path
 tree for $G_{(c,x)}$, where $G_{(c,x)}$ is the dual graph of $G$ with the sign of $(c,x)$'s cost reversed,
-and $C_{x}(d)$ is correctly computed.
-But before the formal proof, we use the following example to explain how ICA works.
+and $C_{x}(d)$ is correctly computed. The proof has to be performed carefully, since the triangle 
+inequality property may not hold any more in the dual graph with negative link weight.
+
+Before the formal proof, we use the following example to explain how ICA works.
 Fig. \ref{spttree21} depicts a network topology consisting of 5 nodes and 6 edges, while the
 corresponding SPT $T_{c}$ is depicted in Fig. \ref{spttreechange22}, with $c$ being the root.
 For each neighbor or $c$, i.e., $a$ (or $b$), we use Algorithm 1 to compute a shortest path tree
