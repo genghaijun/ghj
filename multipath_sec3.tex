@@ -697,10 +697,13 @@ $(x,(c,-L(c,x),-2*L(c,x)))$. Because there is no node can decrease its cost by m
 \end{proof}
 \begin{theorem}\label{newsptx}
 For $c$'s neighbor $x$ and any node $d$ (other than $c$ and $x$) that is not $x$'s descendant in $T_c$, if
-$d$ becomes $x$'s descendant in $T_{c}^{G_{(c,x)}}$, we have $Length(P)=C_x(d)$, where $P=(x,y,...,d)$ is the  path from $x$ to $d$ in the $T_{c}^{G_{(c,x)}}$.
+$d$ becomes $x$'s descendant in $T_{c}^{G_{(c,x)}}$, we have 
+$C_c^{G(c,x)}(d)=C_c^{G(c,x)}(x)+C_x(d)$.
+
 \end{theorem}
 \begin{proof}
 We prove by contradiction.
+Let $P=(x,y,...,d)$ be a path from $x$ to $d$ in the $T_{c}^{G_{(c,x)}}$, and $Length(P)$ be the cost of path $P$.
 Since $d\in D_c^{G_{(c,x)}}(x)$, we have $(c,x)\notin P$.
 
 (1)Assume that $Length(P)<C_x(d)$,  that is to say the path $P$ has a lower cost than $C_x(d)$. This is impossible because $C_x(d)$ has the lowest cost from $x$ to $d$.
@@ -716,6 +719,9 @@ This is impossible.
 If $Length(P)>C_x(d)$, we have $C_c^{G(c,x)}(d)>C_c^{G(c,x)}(x)+C_x(d)$.
 This is impossible according to the Theorem \ref{newspt}.
 
+Therefore, we can get $Length(P)=C_x(d)$.
+Because $d\in D_{c}^{G_{(c,x)}}(x)$, we have $C_c^{G(c,x)}(d)=C_c^{G(c,x)}(x)+Length(P)$.
+Therefore, we have $C_c^{G(c,x)}(d)=C_c^{G(c,x)}(x)+C_x(d)$.
 \end{proof}
 \begin{theorem}\label{newsptposition}
 For $c$'s neighbor $x$ and any node $d$ (other than $c$ and $x$) that is not $x$'s descendant in $T_c$,
