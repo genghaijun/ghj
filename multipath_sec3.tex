@@ -102,8 +102,8 @@ On a router $c$, we focuses on how to efficiently compute alternate next hops fo
 We would like to adopt the criterion of \textbf{LFC}, or \textbf{NPC}, or \textbf{DC},
  in Section \ref{criteria} for different scenarios.
 By carefully investigating each criterion, we can see that the difficulty
-lies in computing, for each destination $d$, the lowest cost from each neighbor $x$ to $d$ (i.e., $C_{x}(d)$), 
-with $C_{x}(b)$ just being a special case. All the other costs, 
+lies in computing, for each destination $d$, the lowest cost from each neighbor $x$ to $d$ (i.e., $C_{x}(d)$),
+with $C_{x}(b)$ just being a special case. All the other costs,
 including $C_{c}(d), C_{b}(d)$ and $C_{x}(c)$, are already available
 since $c$ always maintains a shortest path tree rooted at itself,
 while $C_{b}(d)$ is just $C_{c}(d)-C_{c}(b)$, and $C_{x}(c)$ is just $C_{c}(x)$.
@@ -501,30 +501,30 @@ ENQUEUE$(q,(m,newdist,\delta))$\;
 \end{figure*}
 \fi
 
-Algorithm 1 presents the pseudo code of IAC, where $C_{c}(*)$ and $D_{c}(*)$ denote, 
-for a give node, the lowest cost from $c$ to it in graph $G$, and its descents 
-in the SPT $T_{c}^{G}$ (the superscript $G$ is omitted). 
-For each neighbor $x$ of $c$, IAC adopts the  ball-and-string model framework\cite{Narv2002New} 
-to perform an incremental shortest path tree construction for a specific link cost update, 
-i.e., cost of link $(c,x)$ is changed from $L(c,x)$ to $-L(c,x)$ (line 4 $\sim$ 5). 
-In the framework, a priority queue $Q$ is maintained to determine the proper node whose 
-position in the new tree should be fixed. 
+Algorithm 1 presents the pseudo code of IAC, where $C_{c}(*)$ and $D_{c}(*)$ denote,
+for a give node, the lowest cost from $c$ to it in graph $G$, and its descents
+in the SPT $T_{c}^{G}$ (the superscript $G$ is omitted).
+For each neighbor $x$ of $c$, IAC adopts the  ball-and-string model framework\cite{Narv2002New}
+to perform an incremental shortest path tree construction for a specific link cost update,
+i.e., cost of link $(c,x)$ is changed from $L(c,x)$ to $-L(c,x)$ (line 4 $\sim$ 5).
+In the framework, a priority queue $Q$ is maintained to determine the proper node whose
+position in the new tree should be fixed.
 Each element in $Q$ is of the form ${(u,(p,n,\delta))}$, where $p$ is the potential parent
-for node $u$, $n$ denotes the potential lowest cost from $c$ to $u$, 
-and $\delta$ is the corresponding cost change. The incremental search begins by 
+for node $u$, $n$ denotes the potential lowest cost from $c$ to $u$,
+and $\delta$ is the corresponding cost change. The incremental search begins by
 inserting element $(x, (c, C_{c}(x)-2*L(c,x), -2*L(c,x)))$ in to the queue (line 5).
-Then we extract the node $m$ with the lowest cost in $Q$ and fix its position 
-as well as its descendents' positions, in the new tree (line 7 $\sim$ 8), 
+Then we extract the node $m$ with the lowest cost in $Q$ and fix its position
+as well as its descendents' positions, in the new tree (line 7 $\sim$ 8),
 and update the cost from $c$ to these nodes (line 9 $\sim$ 11).
-Note that here we use notation $C(*)$ without any subscript to keep track of the potential 
+Note that here we use notation $C(*)$ without any subscript to keep track of the potential
 lowest cost from $c$ to a node in the update process.
-Then we search the potential lower costs of $m$'s neighbors, and insert them into $Q$ 
-if the cost from the root $c$ can be reduced (line 13 $\sim$ 16) to allow further EXTRACTMIN operation. 
-Note that $m$'s descendents will not be reinserted into $Q$ 
+Then we search the potential lower costs of $m$'s neighbors, and insert them into $Q$
+if the cost from the root $c$ can be reduced (line 13 $\sim$ 16) to allow further EXTRACTMIN operation.
+Note that $m$'s descendents will not be reinserted into $Q$
 since their costs and positions are already finalized.
 After this incremental tree construction, we compute the cost from $x$ to each node,
 and add the node to $N_{c}(d)$ if the LFA criterion is satisfied (line 18 $\sim$ 26).
-Finally, after we complete this process for each neighbor of $c$, we return the set of 
+Finally, after we complete this process for each neighbor of $c$, we return the set of
 all alternate next hops for each destination $d$.
 
 \iffalse
@@ -560,7 +560,7 @@ At last lines 28-31 are using to compute all the LFA next hop set for node $c$.
         \end{subfigure}
          \begin{subfigure}[b]{0.24\textwidth}
                 \centering
-                \includegraphics[width=0.8\textwidth]{newsptc}
+                \includegraphics[width=0.8\textwidth]{newsptc1}
                 \caption{$T_{c}^{G_{(c,b)}}$}
                 \label{spttreechange24}
         \end{subfigure}
@@ -569,33 +569,33 @@ At last lines 28-31 are using to compute all the LFA next hop set for node $c$.
 \end{figure*}
 
 
-Later, we will prove that this incremental tree construction actually constructs the shortest path 
-tree for $G_{(c,x)}$, where $G_{(c,x)}$ is the dual graph of $G$ with the sign of $(c,x)$'s cost reversed, 
-and $C_{x}(d)$ is correctly computed. 
-But before the formal proof, we use the following example to explain how ICA works. 
-Fig. \ref{spttree21} depicts a network topology consisting of 5 nodes and 6 edges, while the 
+Later, we will prove that this incremental tree construction actually constructs the shortest path
+tree for $G_{(c,x)}$, where $G_{(c,x)}$ is the dual graph of $G$ with the sign of $(c,x)$'s cost reversed,
+and $C_{x}(d)$ is correctly computed.
+But before the formal proof, we use the following example to explain how ICA works.
+Fig. \ref{spttree21} depicts a network topology consisting of 5 nodes and 6 edges, while the
 corresponding SPT $T_{c}$ is depicted in Fig. \ref{spttreechange22}, with $c$ being the root.
-For each neighbor or $c$, i.e., $a$ (or $b$), we use Algorithm 1 to compute a shortest path tree 
-$T_{c}^{G_{(c,a)}}$ (or $T_{c}^{G_{(c,b)}}$), where the sign of $(c,a)$'s (or $(c,b)$'s) cost is reversed. 
-The corresponding SPTs are depicted in Fig. \ref{spttreechange23} and Fig. \ref{spttreechange24}, respectively.  
+For each neighbor or $c$, i.e., $a$ (or $b$), we use Algorithm 1 to compute a shortest path tree
+$T_{c}^{G_{(c,a)}}$ (or $T_{c}^{G_{(c,b)}}$), where the sign of $(c,a)$'s (or $(c,b)$'s) cost is reversed.
+The corresponding SPTs are depicted in Fig. \ref{spttreechange23} and Fig. \ref{spttreechange24}, respectively.
 
 \iffalse
 First, the node $a$ is enqueued into the $Q$ with its form \{$(a,(c,-3,-6))$\}.
-In the first iteration, $(a,(c,-3,-6))$ will be selected. 
-The original subtree rooted at $a$  is considered together. 
+In the first iteration, $(a,(c,-3,-6))$ will be selected.
+The original subtree rooted at $a$  is considered together.
 Therefore the node $d$ is selected at the same time.
 Since $d$ has an outing edge to $e$, the potential cost and potential cost change of $e$ is calculated, which gives queue \{$(e,(e,3,-5))$\}. Node $d$ is selected in the next iteration.
 The new shortest path tree rooted at $c$ is given in the
 Fig. \ref{spttreechange23}.
 \fi
-For the neighbor $a$, according to line 19 $\sim$ 24 in Algorithm 1, 
+For the neighbor $a$, according to line 19 $\sim$ 24 in Algorithm 1,
 we compute the distance from each node to $a$ by:
 \begin{align}
 &C_a(d)=C_c(d)-C_c(a)=3,  \text{ since } d \in D_c(a) \nonumber\\
 &C_a(e)=C(e)+C_c(a)=6,  \text{ since } e \notin D_c(a) \land e \in D_c^{G_{(c,a)}}(a) \nonumber\\
 &C_a(b)=C_c(b)+C_c(a)=8,  \text{since } b \notin D_c(a) \land b \notin D_c^{G_{(c,a)}}(a) \nonumber
 \end{align}
-The correctness of this result, as well as the case for the neighbor $b$, 
+The correctness of this result, as well as the case for the neighbor $b$,
 can be easily verified against the original topology.
 
 
@@ -673,13 +673,13 @@ For each neighbor $x$ of $c$, the dual graph $G_{(c,x)}$ contains no negative cy
 \end{theorem}
 \begin{proof}
 %the weight of the link $(c,x)$ is changed to $-L(c,x)$,
-We prove by contradiction. Assume there exists a negative cycle in $G_{(c,x)}$, then it must go through $(c,x)$ since 
+We prove by contradiction. Assume there exists a negative cycle in $G_{(c,x)}$, then it must go through $(c,x)$ since
 it is the only link with negative cost, i.e., $-L(c,x)$ where $L(c,x)$ is the link cost in the prime graph $G$.
-Let the cycle be $(c,x,y,...,c)$, and the lengths of the two paths 
-$(c,x)$ and $(x,...,c)$ in this cycle be $-L(c,x)$ and $Length(x,y,...,c)$ respectively, 
-then $-L(c,x)+Length(x,y,...,c)<0$. That means $Length(x,y,...,c)<L(c,x)$, which contradicts with our triangle inequality 
-assumption that $L(c,x)$ is the lowest cost between $c$ and $x$. 
-Therefore, there must exist a SPT in $G'$, and the correctness of tree construction can be proven by following 
+Let the cycle be $(c,x,y,...,c)$, and the lengths of the two paths
+$(c,x)$ and $(x,...,c)$ in this cycle be $-L(c,x)$ and $Length(x,y,...,c)$ respectively,
+then $-L(c,x)+Length(x,y,...,c)<0$. That means $Length(x,y,...,c)<L(c,x)$, which contradicts with our triangle inequality
+assumption that $L(c,x)$ is the lowest cost between $c$ and $x$.
+Therefore, there must exist a SPT in $G'$, and the correctness of tree construction can be proven by following
 the proof of the ball-and-string algorithm \cite{Narv2002New}.
 
 \iffalse
