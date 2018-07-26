@@ -108,7 +108,7 @@ All the other costs, including $C_{c}(d), C_{b}(d)$ and $C_{x}(c)$, are already 
 since $c$ always maintains a shortest path tree rooted at itself,
 while $C_{b}(d)$ is just $C_{c}(d)-C_{c}(b)$, and $C_{x}(c)$ is just $C_{c}(x)$.
 
-Typical LFA implementations of nowaday router vendors naively maintain a SPT for each neighbor $x$,
+Typical LFA implementations of nowadays router vendors naively maintain a SPT for each neighbor $x$,
 thus requires $O(k)$ time and space. For nodes with a large number of neighbors, this will become
 a bottleneck. TBFH \cite{TBFH} and DMPA \cite{dmpa} accelerate the computation at the cost of
 failure repair capability and route availability, since they each utilize a criteria that is more restrict than \textbf{DC}.
