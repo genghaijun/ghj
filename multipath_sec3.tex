@@ -724,7 +724,8 @@ where $\oplus$ means the concatenation of two paths.
 Since the link cost of $(c,x)$ in $G_{(c,x)}$ is $-L(c,x)$,
 the cost of $P(c,d)$ in $G_{(c,x)}$ will be $-L(c,x)+C_x(d)$.
 On the other hand, from the condition $C_x(d)<C_x(c)+C_c(d)$ we get $C_{x}(d)<L(c,x)+C_{c}(d)$,
-which means $C_{c}(d)>-L(c,x)+C_{x}(d)$. So at some time, the condition of line 13 in Algorithm \ref{IAC-alg}
+which means $C_{c}(d)>-L(c,x)+C_{x}(d)$. Since $d$ is not a descendant of $x$ in $T_{c}$, 
+at some time, the condition of line 13 in Algorithm \ref{IAC-alg}
 will be triggered, and $d$ will be inserted into $Q$ by the ENQUEUE operation in line 16,
 and later positioned in the subtree rooted at $x$ and becomes $x$'s descendant. From Theorem \ref{newspt},
 we know the subtree is part of $T_{c}^{G_{(c,x)}}$.
