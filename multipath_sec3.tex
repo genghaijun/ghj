@@ -916,6 +916,15 @@ As long as we know the above values, we can use the LFA rule to compute all the 
 \iffalse
 Now we will show the performance of the algorithm, including the time complexity and the number of backup next-hop computed by LFA. From theorem \ref{iaccomplexity}, we can see that the computational complexity of IAC is less than that of constructing a shortest path tree. From theorem \ref{fullprooof}, we can see that the IAC can compute all the backup next-hop set which satisfies the LFA Rule. We will describe the Theorem \ref{iaccomplexity} and Theorem \ref{fullprooof} in detail, and also their correctness is proved.
 \fi
+
+Incrementally constructing the SPT for the dual graph $G'$ 
+and efficiently computing $C_x(d)$  for each $x$ and $d$ are 
+critical to IAC's correctness and efficiency. 
+Theorem \ref{newsptd}, Theorem \ref{newsptx} and Theorem \ref{fan} show concrete support
+for line 19 $\sim$ 24 in Algorithm \ref{IAC-alg}, 
+where $C_x(d)$ is computed in different ways for each situation.
+Next, we provide a simple analysis on IAC's complexity.
+
 \begin{theorem}\label{iaccomplexity}
 The computational complexity of IAC is less than $O(|E|lg|V|)$ when the queue is implemented as a Heap.
 \end{theorem}
