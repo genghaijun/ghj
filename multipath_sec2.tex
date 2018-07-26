@@ -73,7 +73,7 @@ Every link $(u,v)\in E^{G}$ in the network  has a link weight $L^{G}(u,v)$ and
 a link failure probability $r^{G}(u,v)$, both of which are non-negative.
 We use $C_c^G(v)$ to denote the lowest cost from node $c$ to node $v$,
 and use $N_{c}^G(v)$ to denote the set of next hops that $c$ can forward to when receiving a packet destined to the node $v$.
-For a neighboring node $u$ of $v$, it is clear that $C_u^G(v)=C_v^G(u)=L^{G}(u,v)$.
+For the cost between two neighboring nodes $u$ of $v$, we further assume the triangle inequality  that $C_u^G(v)=C_v^G(u)=L^{G}(u,v)$, which is typically followed by ISPs in practice.
 
 In traditional link state routing protocols such as IS-IS or OSPF,
 a node $c$ constructs such a graph $G$ from states carried by link state advertisements.
