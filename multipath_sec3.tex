@@ -102,18 +102,21 @@ On a router $c$, we focuses on how to efficiently compute alternate next hops fo
 We would like to adopt the criterion of \textbf{LFC}, or \textbf{NPC}, or \textbf{DC},
  in Section \ref{criteria} for different scenarios.
 By carefully investigating each criterion, we can see that the difficulty
-lies in computing, for each destination $d$, the lowest cost from each neighbor $x$ to $d$ (i.e., $C_{x}(d)$),
-as well as the lowest  cost from $x$ to the default next hop $b$ for $d$ (i.e., $C_{x}(b)$).
-All the other costs, including $C_{c}(d), C_{b}(d)$ and $C_{x}(c)$, are already available
+lies in computing, for each destination $d$, the lowest cost from each neighbor $x$ to $d$ (i.e., $C_{x}(d)$), 
+with $C_{x}(b)$ just being a special case. All the other costs, 
+including $C_{c}(d), C_{b}(d)$ and $C_{x}(c)$, are already available
 since $c$ always maintains a shortest path tree rooted at itself,
 while $C_{b}(d)$ is just $C_{c}(d)-C_{c}(b)$, and $C_{x}(c)$ is just $C_{c}(x)$.
 
 Typical LFA implementations of nowadays router vendors naively maintain a SPT for each neighbor $x$,
-thus requires $O(k)$ time and space. For nodes with a large number of neighbors, this will become
+thus requires $O(k)$*\textbf{SPT} time and space, where \textbf{SPT} is the complexity of constructing a SPT
+from scratch. For nodes with a large number of neighbors, this will become
 a bottleneck. TBFH \cite{TBFH} and DMPA \cite{dmpa} accelerate the computation at the cost of
 failure repair capability and route availability, since they each utilize a criteria that is more restrict than \textbf{DC}.
 For example, DMPA adopts $C_{c}(u)-C_{c}(x)+L(u,d)<C_{c}(d)$, where $u$ is a descendent of $x$,
 and the left-hand equation is provably no less than $C_{x}(d)$.
+
+
 
 Our algorithm IAC is actually embedded in a dynamic shortest path tree (SPT) algorithm, which takes
 a graph and the corresponding SPT as input, and performs incremental shortest path computation
@@ -134,7 +137,7 @@ the parent of $v$ in $T_c$ by $P_{c}(v)$,
 and the descendants of $v$ in $T_c$ by $D_c(v)$, with $c$ itself included.
 \fi
 \iffalse
-\begin{figure*}[t]
+\begin{figure*}[b]
         \centering
         \begin{subfigure}[b]{0.32\textwidth}
                 \centering
@@ -354,9 +357,8 @@ We will use a simple example to explain the Theorem \ref{dcbackupnexthop}. Fig. 
 Fig. \ref{spttreedc} is a shortest path tree rooted at node $c$, while Fig. \ref{spttreechange1dc} and \ref{spttreechange2dc} respectively represent the new SPT when the weight of the links $(c,a)$  and $(c,b)$  is changed to $0$. Because $e \notin D(T_{c},a)$ and $e \in D(T'_{c},a)$, we can see that node $a$  can be a viable backup next-hop from   $c$ to $e$. Due to $d \notin D(T_{c},b)$, and $d \in D(T'_{c},b)$ ,  node $b$  can be a viable backup next-hop from $c$  to $d$, and also  we can get ode $b$  can be a viable backup next-hop from $c$  to $g$ in the same way.
 \fi
 
-
 \subsection{IAC Algorithm}
-\begin{algorithm}[htb]\label{IACalg}
+\begin{algorithm}[t]\label{IACalg}
 \KwIn{Network graph $G=(V,E)$, the corresponding SPT $T_c$, and the LFA criterion}
 \KwOut{$N_c(d)$  ($d \in V \backslash \{c\} $)}
 %\SetAlgoNoLine
@@ -405,8 +407,11 @@ ENQUEUE$(u,(v,newdist,\delta))$\;}
 $\{m,(p,n,\delta)\}\leftarrow$ EXTRACTMIN(Q)\;
 %$P_c^{G_{(c,x)}}(m)\leftarrow n$\;
 %$m.visited\leftarrow anchored$\;
-$C(m)\leftarrow n$\;
 adjust $T$ to make $p$ the parent of $m$\;
+$C(m)\leftarrow n$\;
+\ForEach{descendent $t$ of $m$}{
+$C(t) \leftarrow C(t)+\delta$\;
+}
 \iffalse\ForEach{$d\in D_c(m)$}
 {
 $C_{c}^{G_{(c,x)}}(d)\leftarrow C_c(d)+\delta$\;
@@ -461,7 +466,7 @@ ENQUEUE$(q,(m,newdist,\delta))$\;
  }
 }
 }
-\Return $N_c(d)$
+\Return $N_c(d) (d \in V \backslash \{c\})$
 \caption{IAC}
 \label{mnpe}
 \end{algorithm}
@@ -496,26 +501,32 @@ ENQUEUE$(q,(m,newdist,\delta))$\;
 \end{figure*}
 \fi
 
-Algorithm 1 presents the pseudo code of IAC, where $C_{c}(*)$ and $D_{c}(*)$ denote 
-the lowest cost from $c$ to a given node and the descent
-represent variables with respect to the SPT $T_{c}$ (the superscript $G$ is omitted), 
+Algorithm 1 presents the pseudo code of IAC, where $C_{c}(*)$ and $D_{c}(*)$ denote, 
+for a give node, the lowest cost from $c$ to it in graph $G$, and its descents 
+in the SPT $T_{c}^{G}$ (the superscript $G$ is omitted). 
+For each neighbor $x$ of $c$, IAC adopts the  ball-and-string model framework\cite{Narv2002New} 
+to perform an incremental shortest path tree construction for a specific link cost update, 
+i.e., cost of link $(c,x)$ is changed from $L(c,x)$ to $-L(c,x)$ (line 4 $\sim$ 5). 
+In the framework, a priority queue $Q$ is maintained to determine the proper node whose 
+position in the new tree should be fixed. 
+Each element in $Q$ is of the form ${(u,(p,n,\delta))}$, where $p$ is the potential parent
+for node $u$, $n$ denotes the potential lowest cost from $c$ to $u$, 
+and $\delta$ is the corresponding cost change. The incremental search begins by 
+inserting element $(x, (c, C_{c}(x)-2*L(c,x), -2*L(c,x)))$ in to the queue (line 5).
+Then we extract the node $m$ with the lowest cost in $Q$ and fix its position 
+as well as its descendents' positions, in the new tree (line 7 $\sim$ 8), 
+and update the cost from $c$ to these nodes (line 9 $\sim$ 11).
+Note that here we use notation $C(*)$ without any subscript to keep track of the potential 
+lowest cost from $c$ to a node in the update process.
+Then we search the potential lower costs of $m$'s neighbors, and insert them into $Q$ 
+if the cost from the root $c$ can be reduced (line 13 $\sim$ 16) to allow further EXTRACTMIN operation. 
+Note that $m$'s descendents will not be reinserted into $Q$ 
+since their costs and positions are already finalized.
+After this incremental tree construction, we compute the cost from $x$ to each node,
+and add the node to $N_{c}(d)$ if the LFA criterion is satisfied (line 18 $\sim$ 26).
+Finally, after we complete this process for each neighbor of $c$, we return the set of 
+all alternate next hops for each destination $d$.
 
-We are now in a position to describe the IAC algorithm.
-According to the above discussions, algorithm IAC is proposed to compute all of the backup next-hop set which are satisfied the LFA rule. The inputs of the IAC are the network topology $G=(V,E)$ and $T_{c}$, and the output is the backup next-hop set from node $c$ to all  other nodes in the network.
-IAC maintains a priority queue $Q$, which contains a subset of nodes together with three attributes. In particular, each element in $Q$ is
-of the form ${(u,(v,q,\delta))}$, where $v$ is the potential parent
-for node $u$, $q$ denotes a potential cost for node $u$ , and $\delta$ is the potential cost change for node $u$.
-The IAC requires several iterations. In each iteration,
-at the beginning,  both of the parameters $C_{c}^{G_{(c,x)}}(v), v\in V$  and  $P_{c}^{G_{(c,x)}}(v)$ are initialized
-(lines 2 $\sim$ 4). We change the weight of the link  $(c,x)$  to $-L(c,x)$, and compute the potential cost change for $(c,x)$ (lines 5 $\sim$ 8), which is stored in variable $\delta$.
-The node $x$ is enqueued into the $Q$ by the ENQUEUE operation with its potential  parent $c$, its potential cost $newdist$, and the potential cost change $\delta$ (line 9).
-A node $m$ with the lowest potential cost change will be popped out from the priority queue $Q$ by the EXTRACTMIN operation, where node ID is  used as tie breaking.
-It is then added to the tree, and used as the current node in the iteration, while its attributes like lowest cost and parent  are also set to a permanent value in the $G_{(c,x)}$ (lines $12 \sim 13$).
-%For all the nodes in the subtree of node $m$ i is considered together
-For all the descendants of node $m$ in the old shortest path tree $T_c$, their lowest cost is updated together (line 15).
-For each neighbor $q$ of $m$, we compute the  potential cost of $q$. The node $q$ will be inserted into the $Q$ if its  potential cost is smaller than the old value (lines 17 $\sim$ 20).
-The weight of the link $(c,x)$ is restored when the $Q$ is empty.
-For each neighbor $x$ of $c$, the value of $C_x(d), d\in V$ is computed and the  backup next hop is added according to corresponding LFA (lines 22 $\sim$ 31).
 \iffalse
 For any node $d$ in the network, the corresponding  $C_x(d)$ is computed
 for
@@ -526,39 +537,68 @@ At last lines 28-31 are using to compute all the LFA next hop set for node $c$.
 \fi
 %\subsection{Example}
 
-In this section, we will employ a simple example to explain how ICA works. Fig. \ref{spttree21} shows a network topology consisting of 5 nodes and 6 edges. Fig. \ref{spttreechange22} shows the shortest path tree $T_c$ rooted at the node $c$.
-Here we will describe how to compute $T_c^{G(c,a)}$ based on $T_c$.
-First, the node $a$ is enqueued into the $Q$ with its form \{$(a,(c,-3,-6))$\}.
-In the first iteration, $(a,(c,-3,-6))$ will be selected. The original subtree rooted at $a$  is considered together. Therefore the node $d$ is selected at the same time.
-Since $d$ has an outing edge to $e$, the potential cost and potential cost change of $e$ is calculated, which gives queue \{$(e,(e,3,-5))$\}. Node $d$ is selected in the next iteration.
-The new shortest path tree rooted at $c$ is given in the
-Fig. \ref{spttreechange23}.
-Because $d\in D_c(a)$, we have $C_a(d)=C_c(d)-C_c(a)=3$.
-Because $e \notin D_c(a)$ and $e \in D_c^{G_{(c,a)}}(a)$, we have $C_a(e)=C_c^{G_{(c,a)}}(e)+C_c(a)=6$.
-Since $b \notin D_c(a)$ and $b \notin D_c^{G_{(c,a)}}(a)$, we can get $C_a(b)=C_a(c)+C_c(b)=8$.
-\begin{figure*}[t]
+
+\begin{figure*}[t!]
         \centering
-        \begin{subfigure}[b]{0.32\textwidth}
+        \begin{subfigure}[b]{0.24\textwidth}
                 \centering
-                \includegraphics{nettopology}
-                \caption{Network topology}
+                \includegraphics[width=0.8\textwidth]{nettopology}
+                \caption{Network $G$}
               \label{spttree21}
         \end{subfigure}
-        \begin{subfigure}[b]{0.32\textwidth}
+        \begin{subfigure}[b]{0.24\textwidth}
                 \centering
-                \includegraphics{sptc}
+                \includegraphics[width=0.8\textwidth]{sptc}
                 \caption{$T_{c}$}
                 \label{spttreechange22}
         \end{subfigure}
-         \begin{subfigure}[b]{0.32\textwidth}
+         \begin{subfigure}[b]{0.24\textwidth}
                 \centering
-                \includegraphics{newsptc}
+                \includegraphics[width=0.8\textwidth]{newsptc}
                 \caption{$T_{c}^{G_{(c,a)}}$}
                 \label{spttreechange23}
+        \end{subfigure}
+         \begin{subfigure}[b]{0.24\textwidth}
+                \centering
+                \includegraphics[width=0.8\textwidth]{newsptc}
+                \caption{$T_{c}^{G_{(c,b)}}$}
+                \label{spttreechange24}
         \end{subfigure}
         \caption{An example for explaining how ICA works}
         \label{theoremexample}
 \end{figure*}
+
+
+Later, we will prove that this incremental tree construction actually constructs the shortest path 
+tree for $G_{(c,x)}$, where $G_{(c,x)}$ is the dual graph of $G$ with the sign of $(c,x)$'s cost reversed, 
+and $C_{x}(d)$ is correctly computed. 
+But before the formal proof, we use the following example to explain how ICA works. 
+Fig. \ref{spttree21} depicts a network topology consisting of 5 nodes and 6 edges, while the 
+corresponding SPT $T_{c}$ is depicted in Fig. \ref{spttreechange22}, with $c$ being the root.
+For each neighbor or $c$, i.e., $a$ (or $b$), we use Algorithm 1 to compute a shortest path tree 
+$T_{c}^{G_{(c,a)}}$ (or $T_{c}^{G_{(c,b)}}$), where the sign of $(c,a)$'s (or $(c,b)$'s) cost is reversed. 
+The corresponding SPTs are depicted in Fig. \ref{spttreechange23} and Fig. \ref{spttreechange24}, respectively.  
+
+\iffalse
+First, the node $a$ is enqueued into the $Q$ with its form \{$(a,(c,-3,-6))$\}.
+In the first iteration, $(a,(c,-3,-6))$ will be selected. 
+The original subtree rooted at $a$  is considered together. 
+Therefore the node $d$ is selected at the same time.
+Since $d$ has an outing edge to $e$, the potential cost and potential cost change of $e$ is calculated, which gives queue \{$(e,(e,3,-5))$\}. Node $d$ is selected in the next iteration.
+The new shortest path tree rooted at $c$ is given in the
+Fig. \ref{spttreechange23}.
+\fi
+For the neighbor $a$, according to line 19 $\sim$ 24 in Algorithm 1, 
+we compute the distance from each node to $a$ by:
+\begin{align}
+&C_a(d)=C_c(d)-C_c(a)=3,  \text{ since } d \in D_c(a) \nonumber\\
+&C_a(e)=C(e)+C_c(a)=6,  \text{ since } e \notin D_c(a) \land e \in D_c^{G_{(c,a)}}(a) \nonumber\\
+&C_a(b)=C_c(b)+C_c(a)=8,  \text{since } b \notin D_c(a) \land b \notin D_c^{G_{(c,a)}}(a) \nonumber
+\end{align}
+The correctness of this result, as well as the case for the neighbor $b$, 
+can be easily verified against the original topology.
+
+
 \subsection{Theoretical  Analysis}
 \iffalse
 \begin{definition}
