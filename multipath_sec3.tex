@@ -114,9 +114,9 @@ from scratch. For nodes with a large number of neighbors, this will become
 a bottleneck. TBFH \cite{TBFH} and DMPA \cite{dmpa} accelerate the computation at the cost of
 failure repair capability and route availability, since they each utilize a criteria that is more restrict than \textbf{DC}.
 For example, DMPA adopts $C_{c}(u)-C_{c}(x)+L(u,d)<C_{c}(d)$, where $u$ is a descendant of $x$,
-and the left-hand equation is provably no less than $C_{x}(d)$. Thus DMPA, as well as TBFH, 
-computes less alternate next hops than our IAC algorithm which strictly follows the criterion of \textbf{DC}. 
-In addition, DMPA and TBFH cannot be easily adapted to follow \textbf{NPC} while IAC's 
+and the left-hand equation is provably no less than $C_{x}(d)$. Thus DMPA, as well as TBFH,
+computes less alternate next hops than our IAC algorithm which strictly follows the criterion of \textbf{DC}.
+In addition, DMPA and TBFH cannot be easily adapted to follow \textbf{NPC} while IAC's
 unified framework can also handle \textbf{NPC}.
 
 
@@ -573,7 +573,7 @@ At last lines 28-31 are using to compute all the LFA next hop set for node $c$.
 
 Later, we will prove that this incremental tree construction process actually constructs the shortest path
 tree for $G_{(c,x)}$, where $G_{(c,x)}$ is the dual graph of $G$ with the sign of $(c,x)$'s cost reversed,
-and $C_{x}(d)$ is correctly computed. The proof has to be performed carefully, since the triangle 
+and $C_{x}(d)$ is correctly computed. The proof has to be performed carefully, since the triangle
 inequality property may not hold any more in the dual graph with negative link weight.
 
 Before the formal proof, we use the following example to explain how ICA works.
@@ -679,11 +679,11 @@ For each neighbor $x$ of $c$, the dual graph $G_{(c,x)}$ contains no negative cy
 %the weight of the link $(c,x)$ is changed to $-L(c,x)$,
 We prove by contradiction. Assume there exists a negative cycle in $G_{(c,x)}$, then it must go through $(c,x)$ since
 it is the only link with negative cost, i.e., $-L(c,x)$ where $L(c,x)$ is the link cost in the prime graph $G$.
-Let the cycle be $(c,x,y,...,c)$, and the lengths of the two paths 
-$(c,x)$ and $(x,y,...,c)$ in this cycle be $-L(c,x)$ and $Length(x,y,...,c)$ respectively, 
-then $-L(c,x)+Length(x,y,...,c)<0$. That means $Length(x,y,...,c)<L(c,x)$, which contradicts with our triangle inequality 
-assumption that $L(c,x)$ is the lowest cost between $c$ and $x$. 
-Therefore, there must exist a SPT in $G'$, and the correctness of tree construction can be proven by following 
+Let the cycle be $(c,x,y,...,c)$, and the lengths of the two paths
+$(c,x)$ and $(x,y,...,c)$ in this cycle be $-L(c,x)$ and $Length(x,y,...,c)$ respectively,
+then $-L(c,x)+Length(x,y,...,c)<0$. That means $Length(x,y,...,c)<L(c,x)$, which contradicts with our triangle inequality
+assumption that $L(c,x)$ is the lowest cost between $c$ and $x$.
+Therefore, there must exist a SPT in $G'$, and the correctness of tree construction can be proven by following
 the proof of the ball-and-string algorithm \cite{Narv2002New}.
 
 \iffalse
@@ -694,24 +694,38 @@ The potential parent for node $x$ is $c$, the potential cost for node $x$ is $-L
 $(x,(c,-L(c,x),-2*L(c,x)))$. Because there is no node can decrease its cost by more than $-2*L(c,x)$. Therefore, all of the descendants of node $x$ will be  placed in the correct positions during the first iteration.\\
 (2)The inductive step is the same as in the \cite{Narv2002New}, so we omitted the content.\fi
 \end{proof}
+\begin{theorem}\label{newsptx}
+For $c$'s neighbor $x$ and any node $d$ (other than $c$ and $x$) that is not $x$'s descendant in $T_c$, if
+$d$ becomes $x$'s descendant in $T_{c}^{G_{(c,x)}}$, we have $Length(P)=C_x(d)$, where $P=(x,y,...,d)$ is the  path from $x$ to $d$ in the $T_{c}^{G_{(c,x)}}$.
+\end{theorem}
+\begin{proof}
+We prove by contradiction. 
+Since $d\in D_c^{G_{(c,x)}}(x)$, we have $(c,x)\notin P$.
 
+(1)Assume that $Length(P)<C_x(d)$,  that is to say the path $P$ has a lower cost than $C_x(d)$. This is impossible because $C_x(d)$ has the lowest cost from $x$ to $d$.
+
+(2)Since $d\in D_c^{G'}(x)$, we can get $C_c^{G(c,x)}(d)=C_c^{G(c,x)}(x)+Length(P)$.
+If $Length(P)>C_x(d)$, we have $C_c^{G(c,x)}(d)>C_c^{G(c,x)}(x)+C_x(d)$.
+This is impossible according to the Theorem \ref{newspt}.
+
+\end{proof}
 \begin{theorem}\label{newsptposition}
-For $c$'s neighbor $x$ and any node $d$ (other than $c$ and $x$) that is not $x$'s descendant in $T_c$, 
+For $c$'s neighbor $x$ and any node $d$ (other than $c$ and $x$) that is not $x$'s descendant in $T_c$,
 $d$ becomes $x$'s descendant in $T_{c}^{G_{(c,x)}}$ if and only if $C_x(d)<C_x(c)+C_c(d)$.
 \end{theorem}
 \begin{proof}
 We first prove if $C_x(d)<C_x(c)+C_c(d)$, then  $d\in D_c^{G'}(x)$.
-Since $C_x(d)<C_x(c)+C_c(d)$, the shortest path in $G$ from node $x$ to node $d$ 
-does not pass through node $c$. 
-Let the path be denoted by $P(x,d)$, then we can construct a non-cycling path 
-$P(c,d)=(c,x) \oplus P(x,d)$ from $c$ to $d$ in $G_{(c,x)}$, 
+Since $C_x(d)<C_x(c)+C_c(d)$, the shortest path in $G$ from node $x$ to node $d$
+does not pass through node $c$.
+Let the path be denoted by $P(x,d)$, then we can construct a non-cycling path
+$P(c,d)=(c,x) \oplus P(x,d)$ from $c$ to $d$ in $G_{(c,x)}$,
 where $\oplus$ means the concatenation of two paths.
-Since the link cost of $(c,x)$ in $G_{(c,x)}$ is $-L(c,x)$, 
+Since the link cost of $(c,x)$ in $G_{(c,x)}$ is $-L(c,x)$,
 the cost of $P(c,d)$ in $G_{(c,x)}$ will be $-L(c,x)+C_x(d)$.
-On the other hand, from the condition $C_x(d)<C_x(c)+C_c(d)$ we get $C_{x}(d)<L(c,x)+C_{c}(d)$, 
+On the other hand, from the condition $C_x(d)<C_x(c)+C_c(d)$ we get $C_{x}(d)<L(c,x)+C_{c}(d)$,
 which means $C_{c}(d)>-L(c,x)+C_{x}(d)$. So at some time, the condition of line 13 in Algorithm 1
-will be triggered, and $d$ will be inserted into $Q$ by the ENQUEUE operation in line 16, 
-and later positioned in the subtree rooted at $x$ and becomes $x$'s descendant. From Theorem \ref{newspt}, 
+will be triggered, and $d$ will be inserted into $Q$ by the ENQUEUE operation in line 16,
+and later positioned in the subtree rooted at $x$ and becomes $x$'s descendant. From Theorem \ref{newspt},
 we know the subtree is part of $T_{c}^{G_{(c,x)}}$.
 
 We then prove if $d\in D_c^{G'}(x)$, then  $C_x(d)<C_x(c)+C_c(d)$. Since $d \in D_c(x)$ and $d\in D_c^{G'}(x)$, the node $d$ or its ancestor(s) must be enqueued into the $Q$ using ENQUEUE operation.
