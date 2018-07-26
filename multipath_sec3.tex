@@ -356,9 +356,9 @@ Fig. \ref{spttreedc} is a shortest path tree rooted at node $c$, while Fig. \ref
 
 
 \subsection{IAC Algorithm}
-\begin{algorithm}[htb]\label{IAC}
+\begin{algorithm}[htb]\label{IACalg}
 \KwIn{Network graph $G=(V,E)$, the corresponding SPT $T_c$, and the LFA criterion}
-\KwOut{$N_c(d)$  ($\forall d \in V \backslash \{c\} $)}
+\KwOut{$N_c(d)$  ($d \in V \backslash \{c\} $)}
 %\SetAlgoNoLine
 %\SetAlgoNoEnd
 \ForEach{neighbor $x$ of $c$}{
@@ -495,6 +495,8 @@ ENQUEUE$(q,(m,newdist,\delta))$\;
         \label{theoremdc}
 \end{figure*}
 \fi
+
+Algorithm \ref{IACalg} presents the pseudo code of IAC. 
 We are now in a position to describe the IAC algorithm.
 According to the above discussions, algorithm IAC is proposed to compute all of the backup next-hop set which are satisfied the LFA rule. The inputs of the IAC are the network topology $G=(V,E)$ and $T_{c}$, and the output is the backup next-hop set from node $c$ to all  other nodes in the network.
 IAC maintains a priority queue $Q$, which contains a subset of nodes together with three attributes. In particular, each element in $Q$ is
