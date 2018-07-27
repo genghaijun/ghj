@@ -934,10 +934,10 @@ To compute all the backup next-hop sets on node $c$ for each destination in the 
 IAC needs to run the incremental SPT construction (i.e., iSPF) algorithm $k$ times,
 where $k$ is the number of its neighbors.
 For one neighbor $x$, let $\delta_{n}$ denote the number of potentially affected nodes,
-and $\delta_{e}$  the number of edges attached to one of these nodes.
+and $\delta_{e}$  the number of edges attached to any of these nodes.
 According to the ball-and-string model\cite{Narv2002New},
 the worst case complexity of the iSPF procedure for this neighbor will be
-$O(\delta_{e}*lg(\delta_{n}))$ with a binary heap, or $O(\delta_{e}+\delta_{n}*lg(\delta_{n}))$ with a Fibonacci heap,
+$O(\delta_{e}*lg(\delta_{n}))$ with a binary heap, or $O(\delta_{e}+\delta_{n}*lg(\delta_{n}))$ with a Fibonacci heap.
 The remaining part, including constructing the temporary tree and
 computing $C_{x}(d)$ for all destinations, requires only $O(|E|+|V|)$ time.
 

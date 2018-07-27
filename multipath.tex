@@ -357,11 +357,8 @@ Email: wzl@csnet1.cs.tsinghua.edu.cn}
 \maketitle
 \begin{abstract}
 Both the hardware and the software of network equipments face occasional failures.
-%Typical scenarios include that a fiber is broken, or a forwarding port is down, or even a router completely stops working.
 Without proper failure mitigation methods, packets forwarded to the failed equipment are no longer able to
-be correctly forwarded,
-%so packet losses will be inevitable
-and network performance will be degraded.
+be correctly forwarded, and network performance will be degraded.
 Although routing protocols automatically detect topology changes, heal the network by globally computing new paths, and reroute,
 they typically exhibit a slow response of hundreds of milliseconds or even longer.
 To support critical applications or guarantee a high quality of service, Internet Service Providers
@@ -375,9 +372,9 @@ and cannot achieve both good coverage of alternates and low computational comple
 Based on graph properties we newly find, we propose IAC, which can
 compute the full set of alternates with incremental shortest path computation on specific link cost update.
 Compared with the naive implementation in typical commercial routers, IAC achieves the same coverage of alternates but
-with at least an $O(k)$ reduction in  time or memory consumption, where $k$ is the degree of a node.
-For real-world topologies, the reduction is typically at least an order of magnitude.
-Compared with TBFH and DMPA, which are latest algorithms achieving acceleration under limited scenarios,
+with an order of magnitude reduction in computation time, or $O(k)$ reduction in memory consumption,
+where $k$ is the degree of a node.
+Compared with TBFH and DMPA, which are latest algorithms optimized for limited scenarios,
 IAC not only finds about 50\% more available alternates and speeds up by more than 3 times, but also
 provides node protection capabilities that TBFH and DMPA cannot provide.
 These advantages make IAC a good candidate for both traditional telecommunication networks

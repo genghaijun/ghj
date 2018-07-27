@@ -51,9 +51,11 @@ cost update,
 where the sign of some cost is simply reversed, i.e., from $\ell$ to $-\ell$.
 We formally prove the property of IAC,
 and use both synthesized and real-world topologies to evaluate its performance.
-Compared with the naive implementation in typical commercial routers, IAC achieves the same coverage of alternates but
-with at least an $O(k)$ reduction in time or memory consumption, where $k$ is the degree of a node. For real-world topologies, the reduction is typically at least an order of magnitude.
-Compared with TBFH and DMPA, which are latest algorithms achieving acceleration under limited scenarios,
+Compared with the naive implementation in typical commercial routers, 
+IAC achieves the same coverage of alternates but
+with an order of magnitude reduction in computation time, or $O(k)$ reduction in memory consumption,
+where $k$ is the degree of a node.
+Compared with TBFH and DMPA, which are latest algorithms optimized for limited scenarios,
 IAC not only finds about 50\% more available alternates and speeds up by more than 3 times,
 but also provides node protection capabilities that TBFH and DMPA cannot provide.
 These advantages make IAC a good candidate for both traditional telecommunication networks
