@@ -1,27 +1,4 @@
 \section{Performance Evaluation}\label{evaluation}
-\begin{figure*}[t!]
-        \centering
-        \begin{subfigure}[b]{0.32\textwidth}
-                \centering
-                \includegraphics[width=\textwidth]{degcomputationoverhead}
-                \caption{Network $G$}
-              \label{spttree21}
-        \end{subfigure}
-        \begin{subfigure}[b]{0.32\textwidth}
-                \centering
-                \includegraphics[width=\textwidth]{degcomputationoverhead}
-                \caption{$T_{c}$}
-                \label{spttreechange22}
-        \end{subfigure}
-         \begin{subfigure}[b]{0.32\textwidth}
-                \centering
-                \includegraphics[width=\textwidth]{protectionratiodegree}
-                \caption{$T_{c}^{G_{(c,a)}}$}
-                \label{spttreechange23}
-        \end{subfigure}
-        \caption{An example for explaining how ICA works}
-        \label{theoremexample}
-\end{figure*}
 Since our main motivation is to achieve good computational efficiency and LFA coverage,
 we compare IAC with TBFH, DMPA, and the naive method that uses $k$ SPT.
 Table \ref{britetable1} lists their LFA capabilities with respect to each criterion,
@@ -131,31 +108,53 @@ m&NodePlacement &GrowthTypem & ${alpha}$  \\
 \end{center}
 \end{table}
 \fi
-\subsection{Computation complexity}
-
+\subsection{Computation overhead}
+\begin{figure*}[t!]
+        \centering
+        \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{topcomputationoverhead}
+                \caption{Brite topologies}
+              \label{topcom}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{degcomputationoverhead}
+                \caption{Brite topologies}
+                \label{nodedegreecom}
+        \end{subfigure}
+         \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{realcomputationoverhead}
+                \caption{Measured and real networks}
+                \label{realtopologytime}
+        \end{subfigure}
+        \caption{Computation overhead results on different topologies}
+        \label{comoverhead}
+\end{figure*}
 
 
 \begin{figure*}[t!]
         \centering
         \begin{subfigure}[b]{0.32\textwidth}
                 \centering
-                \includegraphics[width=\textwidth]{generatenum}
-                \caption{Network $G$}
-              \label{spttree21}
+                \includegraphics[width=\textwidth]{protectionratiotop}
+                \caption{Brite topologies}
+              \label{prtop}
         \end{subfigure}
                  \begin{subfigure}[b]{0.32\textwidth}
                 \centering
-                \includegraphics[width=\textwidth]{TORONTOcumulative}
-                \caption{$T_{c}^{G_{(c,a)}}$}
-                \label{spttreechange23}
+                \includegraphics[width=\textwidth]{protectionratiodegree}
+                \caption{Brite topologies}
+                \label{prd}
         \end{subfigure}
          \begin{subfigure}[b]{0.32\textwidth}
                 \centering
-                \includegraphics[width=\textwidth]{1239cumulative}
-                \caption{$T_{c}^{G_{(c,b)}}$}
-                \label{spttreechange24}
+                \includegraphics[width=\textwidth]{protectionratioreal}
+                \caption{Measured and real networks}
+                \label{prreal}
         \end{subfigure}
-        \caption{An example for explaining how ICA works}
+        \caption{Protection ratio results on different topologies}
         \label{theoremexample}
 \end{figure*}
 
@@ -163,23 +162,47 @@ m&NodePlacement &GrowthTypem & ${alpha}$  \\
         \centering
         \begin{subfigure}[b]{0.32\textwidth}
                 \centering
-                \includegraphics[width=\textwidth]{realcomputationoverhead}
-                \caption{Network $G$}
-              \label{spttree21}
+                \includegraphics[width=\textwidth]{topnum}
+                \caption{Measured and real networks}
+              \label{topnumber}
         \end{subfigure}
         \begin{subfigure}[b]{0.32\textwidth}
                 \centering
-                \includegraphics[width=\textwidth]{protectionratioreal}
-                \caption{$T_{c}$}
-                \label{spttreechange22}
+                \includegraphics[width=\textwidth]{generatenum}
+                \caption{Brite topologies}
+                \label{degnumber}
         \end{subfigure}
          \begin{subfigure}[b]{0.32\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{realnum}
-                \caption{$T_{c}^{G_{(c,a)}}$}
-                \label{spttreechange23}
+                \caption{Measured and real networks}
+                \label{realnumber}
         \end{subfigure}
-        \caption{An example for explaining how ICA works}
+        \caption{The average number of backup next hops on different topologies}
+        \label{theoremexample}
+\end{figure*}
+\begin{figure*}[t!]
+        \centering
+        \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{Cernet2cumulative}
+                \caption{Cernet2}
+              \label{cernet2cumulative}
+        \end{subfigure}
+                 \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{TORONTOcumulative}
+                \caption{Brite topologies}
+                \label{TORONTOcumulative}
+        \end{subfigure}
+         \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{1239cumulative}
+                \caption{Brite topologies}
+                \label{1239cumulative}
+        \end{subfigure}
+        \caption{Cumulative distribution of the
+number of backup next hops on different topologies}
         \label{theoremexample}
 \end{figure*}
 \iffalse
@@ -210,7 +233,8 @@ In order to verify the computational performance, we make simulations on differe
 \label{rockettopologytime}
 \end{figure}
 \fi
-Fig. \ref{nodedegree6} presents the relationship between the computation overhead and average node degree on generated topologies when the topology size is 200.
+Fig. \ref{topcom} shows relationship between the computation overhead and topology size on generated topologies when the average node degree is 6.
+Fig. \ref{nodedegreecom} presents the relationship between the computation overhead and average node degree on generated topologies when the topology size is 500.
 As the average node degree increases, the computation overhead of Naive increases accordingly. And also IAC has the highest performance among all the algorithms. Therefore, the above experiment results are consistent with the theoretical analysis described above.
 
 Fig. \ref{realtopologytime} indicates the computational overhead obtained by different algorithms on real and Rocketfuel topologies. From the Fig. \ref{realtopologytime}, we can see that IAC has the lowest computation overhead among all the algorithms. The computation overhead of IAC is less than computing a SPT, while DMPA need to construct a SPT and TBFH need to compute two SPTs. The computation overhead of Naive is proportionally to the average node degree of the network.
@@ -349,13 +373,15 @@ describes the number of opportunities packets can be deflected off the
 shortest path.
 For both of the above two metrics, larger is better.
 
+Fig. \ref{prtop} shows relationship between the computation overhead and topology size on generated topologies when the average node degree is 6.
 Fig. \ref{prd} presents the relationship between the protection ratio and average node degree on generated topologies
-when the topology size is 200.
+when the topology size is 500.
 Fig. \ref{prreal} depicts the protection ratio obtained by different algorithms on real and measured topologies.
-Fig. \ref{generatenumber} shows the average number of backup next hops obtained by different algorithms on generated topologies.
+Fig. \ref{topnumber} shows the average number of backup next hops obtained by different algorithms on generated topologies when the average node degree is 6.
+Fig. \ref{degnumber} shows the average number of backup next hops obtained by different algorithms on generated topologies when the topology size is 500.
 Fig. \ref{realnumber} depicts  the average number of backup next hops obtained by different algorithms on real and measured topologies.
-Fig. \ref{TORONTOcumulative} and  Fig. \ref{1239cumulative} show
-the cumulative distribution of the  number of backup next hops for CERNET2 and TORONTO topologies.
+Fig. \ref{cernet2cumulative}, \ref{TORONTOcumulative} and  Fig. \ref{1239cumulative} show
+the cumulative distribution of the  number of backup next hops for CERNET2 , TORONTO and AS1239 topologies.
 \iffalse
 \begin{figure}[t]
 \centering
@@ -419,16 +445,17 @@ the cumulative distribution of the  number of backup next hops for CERNET2 and T
 \fi
 \begin{figure}[t]
 \centering
-\includegraphics[width=3in]{nodedegree}
-\caption{Network availability on generated topologies when topology size=200}
-\label{avdeg}
+\includegraphics[width=3in]{topavi}
+\caption{Network availability on generated topologies when average node degree=6}
+\label{avtop}
 \end{figure}
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{nodedegree}
-\caption{Network availability on generated topologies when topology size=200}
+\caption{Network availability on generated topologies when topology size=500}
 \label{avdeg}
 \end{figure}
+
 We made several conclusions. First, IAC is more
 flexible than TBFH and DMPA. It has more deflection choices in all
 the experiment networks. Second, the
@@ -485,7 +512,7 @@ A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)}
 \footnotesize
 %\small
 %\renewcommand{\arraystretch}{1}
-\caption{Network Availability for Real and Measured Topologies}
+\caption{Network availability for real and measured topologies}
 \label{Availability}
 \begin{tabular}{c|c|c|c|c|c}
 \hline
@@ -522,6 +549,7 @@ A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)}
 \hline
 \end{tabular}
 \end{table}
+Fig. \ref{avtop} shows the  relationship between the network availability and the topology size.
 Fig. \ref{avdeg} illustrates the relationship between the network availability and the average node degree.
 As Fig. \ref{avdeg} shows, as the average node degree increase, the network availability increases too. Note that when the average node degree increases, all schemes provide better protection results, while IAC/IAC-NA and DC are always much better than DMPA and TBFH.
 
