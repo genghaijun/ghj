@@ -919,24 +919,33 @@ Now we will show the performance of the algorithm, including the time complexity
 
 Incrementally constructing the SPT for the dual graph $G'$
 and efficiently computing $C_x(d)$  for each $x$ and $d$ are
-critical to IAC's correctness and efficiency.
+critical to IAC's correctness, completeness and efficiency.
 Theorem \ref{newsptd}, Theorem \ref{newsptx} and Theorem \ref{fan} show concrete support
 for line 19 $\sim$ 24 in Algorithm \ref{IAC-alg},
 where $C_x(d)$ is computed in different ways for each situation.
-Next, we provide a simple analysis on IAC's complexity.
+%Next, we provide a simple analysis on IAC's complexity.
 
-\begin{theorem}\label{iaccomplexity}
-The computational complexity of IAC is less than $\lg|V|\sum_{i=1}^k{M_{i}}$ when the queue is implemented as a binary heap.
-\end{theorem}
-\begin{proof}
-To compute all the backup next-hop set from node $c$ to other nodes in the network. The IAC need to run the iSPF algorithm $k$ times, where $k$ is the number of neighbors of node $c$. Let $N_{i}$  be the number of
-potential affected nodes, and $M_{i}$ be the number of edges
-attached to one of these nodes. The computational complexity in IAC for this neighbor $i$ is $O(M_{i}lgN_{i})$ according to \cite{Narv2002New}.
+%\begin{theorem}\label{iaccomplexity}
+%The computational complexity of IAC is less than $\lg|V|\sum_{i=1}^k{M_{i}}$ when the queue is implemented as a binary heap.
+%\end{theorem}
+%\begin{proof}
+To compute all the backup next-hop sets on node $c$ for each destination in the network, 
+IAC needs to run the incremental SPT construction (i.e., iSPF) algorithm $k$ times, 
+where $k$ is the number of its neighbors.
+For one neighbor $x$, let $\delta_{n}$ denote the number of potentially affected nodes, 
+and $\delta_{e}$  the number of edges attached to one of these nodes. 
+According to the ball-and-string model\cite{Narv2002New}, 
+the worst case complexity of the iSPF procedure for this neighbor will be 
+$O(\delta_{e}*lg(\delta_{n}))$ with a binary heap, or $O(\delta_{e}+\delta_{n}*lg(\delta_{n}))$ with a Fibonacci heap, 
+The remaining part, including constructing the temporary tree and 
+computing $C_{x}(d)$ for all destinations, requires only $O(|E|+|V|)$ time.
+
 Therefore, the computational complexity of the Algorithm IAC is $\sum_{i=1}^k{M_{i}*lgN_{i}}.  \leq \lg|V|\sum_{i=1}^k{M_{i}}$.
 Since $N_{i}<|V|$, the computational complexity of IAC is less than $\lg|V|\sum_{i=1}^k{M_{i}}$.
 
- %The computational complexity in IAC for this neighbor $i$ can be expressed as $O(M_{i}lgN_{i})$ according to \ref{Narv2002New}.
-\end{proof}
+%The computational complexity in IAC for this neighbor $i$ can be expressed as $O(M_{i}lgN_{i})$ according to \ref{Narv2002New}.
+%\end{proof}
+
 \iffalse
 \begin{theorem}\label{iacfullprooof}
 Algorithm IAC can compute all the backup next-hop set that satisfies the LFA Rule.

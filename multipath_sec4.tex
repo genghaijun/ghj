@@ -1,13 +1,19 @@
 \section{Performance Evaluation}\label{evaluation}
 
-In this paper, we focus on protection schemes that (1) are computationally efficient,
-(2) provide high network protection coverage.
+Since our main motivation is to achieve good computational efficiency and LFA coverage, 
+we compare IAC with TBFH, DMPA, and the naive method that uses $k$ SPT. 
+Table \ref{britetable1} lists their LFA capabilities with respect to each criterion, 
+where $full$ means the corresponding algorithm can compute all alternate next hops 
+that satisfy the LFA criterion in the column header, $partial$ means only a subset 
+of alternate next hops for the criterion can be computed, while $-$ means the algorithm 
+cannot be used for that criterion.
 
-and (3) preserve as much as possible the benefits
-that multiple next-hop solutions have, such as no cooperation/signaling and load balancing.
+As shown in table \ref{britetable1}, only IAC can be applied to three LFA rules and can compute all the next hops  that meet the LFA rule. The other three algorithms do not support NPC rule.
+Both of the DMPA and TBFH  can be  used to deal with LFC and DC rule. However  DMPA and TBFH cannot compute all the next hops which satisfied LFC and DC rules.
+
 
 \begin{table}[h]
-\caption{Comparison of Different Routing Protection Algorithms}
+\caption{Comparison of Different Algorithms}
 \label{britetable1}
 \centering
 %\large
@@ -16,29 +22,19 @@ that multiple next-hop solutions have, such as no cooperation/signaling and load
 \hline  % 在表格最上方绘制横线
 Algorithm&LFC&NPC&DC\\
 \hline
-DMPA&$\times$&$-$&$\times$\\
+Naive&$full$&$full$&$full$\\
 \hline
-TBFH&$\times$&$-$&$\times$\\
+DMPA&$partial$&$-$&$partial$\\
+\hline
+TBFH&$partial$&$-$&$partial$\\
 \hline % 在表格最下方绘制横线
-IAC&$\surd$ &$\surd$&$\surd$\\
+IAC&$full$ &$full$&$full$\\
 \hline % 在表格最下方绘制横线
 \end{tabular}
 
 \end{table}
 
 
-Since our focus is on the algorithm complexity of computing next hops according 
-different criteria for different usage, we compare 
-
-A comparison of several existing solutions and ours can be
-seen in Table \ref{britetable1}.
-In Table \ref{britetable1}, the $\surd$ describes the algorithm that can
-compute all the next hop set satisfied the corresponding rule,
-the $\times$ means the algorithm can
-compute the partial  next hop set satisfied the corresponding rule,
-while the $-$ represents the algorithm cannot compute the next hop set of corresponding rule.
-As shown in table \ref{britetable1}, only IAC can be applied to three LFA rules and can compute all the next hops  that meet the LFA rule. The other three algorithms do not support NPC rule.
-Both of the DMPA and TBFH  can be  used to deal with LFC and DC rule. However  DMPA and TBFH cannot compute all the next hops which satisfied LFC and DC rules.
 
 
 Evaluation studies \cite{Gjoka2007Evaluation,Menth20101300} show that LFA protects against
