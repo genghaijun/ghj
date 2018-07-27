@@ -578,8 +578,7 @@ At last lines 28-31 are using to compute all the LFA next hop set for node $c$.
 \end{figure*}
 
 
-Later, we will prove that this incremental tree construction process actually constructs the shortest path
-tree for $G_{(c,x)}$, where $G_{(c,x)}$ is the dual graph of $G$ with the sign of $(c,x)$'s cost reversed,
+Later, we will prove that this incremental tree construction process actually constructs the SPT for $G_{(c,x)}$, where $G_{(c,x)}$ is the dual graph of $G$ with the sign of $(c,x)$'s cost reversed,
 and $C_{x}(d)$ is correctly computed. The proof has to be performed carefully, since the triangle
 inequality property may not hold any more in the dual graph with negative link weight.
 
@@ -944,12 +943,18 @@ and $\delta_{e}$  the number of edges attached to any of these nodes.
 According to the ball-and-string model\cite{Narv2002New},
 the worst case complexity of the iSPF procedure for this neighbor will be
 $O(\delta_{e}*lg(\delta_{n}))$ with a binary heap, or $O(\delta_{e}+\delta_{n}*lg(\delta_{n}))$ with a Fibonacci heap.
-The remaining part, including constructing the temporary tree and
+The remaining part, including duplicating the tree and
 computing $C_{x}(d)$ for all destinations, requires only $O(|E|+|V|)$ time.
+So the worst case complexity of IAC will be no more than $O(k*|V|*lg|V|)$ (or $O(k*|E|*lg|V|)$, 
+depending on the heap implementation). However, in practice, we find this bound to be 
+quite loose, and IAC is always faster than computing a single SPT. 
+This may be due to the special link cost decrement operation in IAC, 
+and we leave why this happens to future studies.
 
+\iffalse
 Therefore, the computational complexity of the Algorithm IAC is $\sum_{i=1}^k{M_{i}*lgN_{i}}.  \leq \lg|V|\sum_{i=1}^k{M_{i}}$.
 Since $N_{i}<|V|$, the computational complexity of IAC is less than $\lg|V|\sum_{i=1}^k{M_{i}}$.
-
+\fi
 %The computational complexity in IAC for this neighbor $i$ can be expressed as $O(M_{i}lgN_{i})$ according to \ref{Narv2002New}.
 %\end{proof}
 
