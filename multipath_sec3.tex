@@ -520,8 +520,9 @@ Then we extract the node $m$ with the lowest cost in $Q$ and fix its position as
 and update the cost from $c$ to these nodes (line 9 $\sim$ 11).
 Note that here we use notation $C(*)$ without any subscript to keep track of the potential
 lowest cost from $c$ to a node in the update process.
-Then we search the potential lower costs of $D_c(m)$'s neighbors, and insert them into $Q$
-if the cost from the root $c$ can be reduced (line 14 $\sim$ 17) to allow further EXTRACTMIN operation.
+Then for $m$ and its descendants, we search the potential lower costs of their neighbors, 
+and insert them into $Q$
+if the cost from the root $c$ can be reduced (line 12 $\sim$ 17) to allow further EXTRACTMIN operation.
 Note that $m$'s descendants will not be reinserted into $Q$
 since their costs and positions are already finalized.
 After this incremental tree construction, we compute the cost from $x$ to each node,
