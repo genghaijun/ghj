@@ -1,5 +1,33 @@
 \section{Performance Evaluation}\label{evaluation}
-
+\begin{figure*}[t!]
+        \centering
+        \begin{subfigure}[b]{0.24\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{degcomputationoverhead}
+                \caption{Network $G$}
+              \label{spttree21}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.24\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{degcomputationoverhead}
+                \caption{$T_{c}$}
+                \label{spttreechange22}
+        \end{subfigure}
+         \begin{subfigure}[b]{0.24\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{protectionratiodegree}
+                \caption{$T_{c}^{G_{(c,a)}}$}
+                \label{spttreechange23}
+        \end{subfigure}
+         \begin{subfigure}[b]{0.24\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{protectionratiodegree}
+                \caption{$T_{c}^{G_{(c,b)}}$}
+                \label{spttreechange24}
+        \end{subfigure}
+        \caption{An example for explaining how ICA works}
+        \label{theoremexample}
+\end{figure*}
 Since our main motivation is to achieve good computational efficiency and LFA coverage,
 we compare IAC with TBFH, DMPA, and the naive method that uses $k$ SPT.
 Table \ref{britetable1} lists their LFA capabilities with respect to each criterion,
@@ -48,8 +76,8 @@ Therefore, our algorithms can directly use the above research findings, so that 
 
 To evaluate our algorithms,
 we use the real  network
-CERNET2 (14 nodes, 16 links), Abilene (11 nodes, 14 links), NJLATA (11 nodes, 23 links), TORONTO (25 nodes, 55 links) and
-USLD (28 nodes, 45 links)
+Cernet2 (14 nodes, 16 links), Abilene (11 nodes, 14 links), Njlata (11 nodes, 23 links), Toronto (25 nodes, 55 links) and
+Usld (28 nodes, 45 links)
 and five ISP topologies which are measured by Rocketfuel\cite{2004148100061},
 including   AS1221 (108 nodes, 153 links),
 AS1239 (315 nodes, 972 links),
@@ -58,7 +86,7 @@ AS3967 (79 nodes, 147 links), and AS6461  (128 nodes, 372 links) .
 We also generate synthetic topologies with BRITE \cite{medina2001brite}.
 The model is set to Waxman, mode is set to be Router only. The bandwidth
 on each link follows a heavy-tail distribution ranging from
-100 to 1024 \cite {Gjoka2007Evaluation} and the link cost is an inverse function of the bandwidth. 
+100 to 1024 \cite {Gjoka2007Evaluation} and the link cost is an inverse function of the bandwidth.
 The parameters $\alpha$ and $\beta$ are set to 0.5.
 %using parameters as listed in Table \ref{britetable}.
 %In this section, we first show how link failures are modeled in our evaluation.
@@ -110,39 +138,64 @@ m&NodePlacement &GrowthTypem & ${alpha}$  \\
 \end{table}
 \fi
 \subsection{Computation complexity}
-\iffalse
+
+
+
 \begin{figure*}[t!]
         \centering
         \begin{subfigure}[b]{0.24\textwidth}
                 \centering
-                \includegraphics[width=0.8\textwidth]{nettopology}
+                \includegraphics[width=\textwidth]{generatenum}
                 \caption{Network $G$}
               \label{spttree21}
         \end{subfigure}
         \begin{subfigure}[b]{0.24\textwidth}
                 \centering
-                \includegraphics[width=0.8\textwidth]{sptc}
+                \includegraphics[width=\textwidth]{generatenum}
                 \caption{$T_{c}$}
                 \label{spttreechange22}
         \end{subfigure}
          \begin{subfigure}[b]{0.24\textwidth}
                 \centering
-                \includegraphics[width=0.8\textwidth]{newsptc}
+                \includegraphics[width=\textwidth]{TORONTOcumulative}
                 \caption{$T_{c}^{G_{(c,a)}}$}
                 \label{spttreechange23}
         \end{subfigure}
          \begin{subfigure}[b]{0.24\textwidth}
                 \centering
-                \includegraphics[width=0.8\textwidth]{newsptc1}
+                \includegraphics[width=\textwidth]{1239cumulative}
                 \caption{$T_{c}^{G_{(c,b)}}$}
                 \label{spttreechange24}
         \end{subfigure}
         \caption{An example for explaining how ICA works}
         \label{theoremexample}
 \end{figure*}
-\fi
 
+\begin{figure*}[t!]
+        \centering
+        \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{realcomputationoverhead}
+                \caption{Network $G$}
+              \label{spttree21}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{protectionratioreal}
+                \caption{$T_{c}$}
+                \label{spttreechange22}
+        \end{subfigure}
+         \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{realnum}
+                \caption{$T_{c}^{G_{(c,a)}}$}
+                \label{spttreechange23}
+        \end{subfigure}
+        \caption{An example for explaining how ICA works}
+        \label{theoremexample}
+\end{figure*}
 
+\iffalse
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{degcomputationoverhead}
@@ -156,6 +209,7 @@ m&NodePlacement &GrowthTypem & ${alpha}$  \\
 \caption{Computation overhead on real and measured topologies}
 \label{realtopologytime}
 \end{figure}
+\fi
 \iffalse
 Theoretical analysis has indicated that the time complexity of IAC is less than that of building of a shortest path tree, which has a great advantage over Naive, TBFH and DMPA.\fi
 In order to verify the computational performance, we make simulations on different topologies. In this section, we evaluate the computational overhead of different algorithms. In order to avoid the uncertain factors impact the algorithm¡¯s performance. The computational overhead of an algorithm is defined as the ratio of computation time of the algorithm to that of SPF (shortest path first).
@@ -315,7 +369,7 @@ Fig. \ref{generatenumber} shows the average number of backup next hops obtained 
 Fig. \ref{realnumber} depicts  the average number of backup next hops obtained by different algorithms on real and measured topologies.
 Fig. \ref{TORONTOcumulative} and  Fig. \ref{1239cumulative} show
 the cumulative distribution of the  number of backup next hops for CERNET2 and TORONTO topologies.
-
+\iffalse
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{protectionratiodegree}
@@ -328,7 +382,7 @@ the cumulative distribution of the  number of backup next hops for CERNET2 and T
 \caption{Protection ratio on real and measured topologies}
 \label{prreal}
 \end{figure}
-
+\fi
 \iffalse
 \begin{figure}[t]
 \centering
@@ -337,6 +391,7 @@ the cumulative distribution of the  number of backup next hops for CERNET2 and T
 \label{prrocket}
 \end{figure}
 \fi
+\iffalse
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{generatenum}
@@ -349,6 +404,7 @@ the cumulative distribution of the  number of backup next hops for CERNET2 and T
 \caption{Average number of backup next hops on real and measured topologies}
 \label{realnumber}
 \end{figure}
+\fi
 \iffalse
 \begin{figure}[t]
 \centering
@@ -359,7 +415,7 @@ the cumulative distribution of the  number of backup next hops for CERNET2 and T
 \fi
 
 
-
+\iffalse
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{TORONTOcumulative}
@@ -378,6 +434,7 @@ the cumulative distribution of the  number of backup next hops for CERNET2 and T
 \caption{Network availability on generated topologies when topology size=200}
 \label{avdeg}
 \end{figure}
+\fi
 We made several conclusions. First, IAC is more
 flexible than TBFH and DMPA. It has more deflection choices in all
 the experiment networks. Second, the
