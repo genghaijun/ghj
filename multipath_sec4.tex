@@ -1,11 +1,11 @@
 \section{Performance Evaluation}\label{evaluation}
 
-Since our main motivation is to achieve good computational efficiency and LFA coverage, 
-we compare IAC with TBFH, DMPA, and the naive method that uses $k$ SPT. 
-Table \ref{britetable1} lists their LFA capabilities with respect to each criterion, 
-where $full$ means the corresponding algorithm can compute all alternate next hops 
-that satisfy the LFA criterion in the column header, $partial$ means only a subset 
-of alternate next hops for the criterion can be computed, while $-$ means the algorithm 
+Since our main motivation is to achieve good computational efficiency and LFA coverage,
+we compare IAC with TBFH, DMPA, and the naive method that uses $k$ SPT.
+Table \ref{britetable1} lists their LFA capabilities with respect to each criterion,
+where $full$ means the corresponding algorithm can compute all alternate next hops
+that satisfy the LFA criterion in the column header, $partial$ means only a subset
+of alternate next hops for the criterion can be computed, while $-$ means the algorithm
 cannot be used for that criterion.
 
 
@@ -39,8 +39,8 @@ Both of the DMPA and TBFH  can be  used to deal with LFC and DC rule. However  D
 
 Evaluation studies \cite{Gjoka2007Evaluation,Menth20101300} show that LFA protects against
 many more failures than ECMP. Nevertheless, they also reveal that, on
-average, LFA offers protection against only about 90\%
-of all possible link failures and less than 75\% of node failures
+average, LFA offers protection against only about 50\%
+of all possible link failures and less than 40\% of node failures
 Despite the limited protection it achieves, LFA is already supported by some equipment vendors \cite{cisco,Juniper}. With that in mind,
 Retvari et al. \cite{lfarevisited} suggested that networks should be augmented with additional links to ensure that LFA can provide recovery
 for all possible failures.
@@ -55,12 +55,16 @@ including   AS1221 (108 nodes, 153 links),
 AS1239 (315 nodes, 972 links),
 AS1755 (87 nodes, 161 links), AS3257 (161 nodes, 328 links),
 AS3967 (79 nodes, 147 links), and AS6461  (128 nodes, 372 links) .
-We also generate synthetic topologies with BRITE \cite{medina2001brite},
-using parameters as listed in Table \ref{britetable}.
+We also generate synthetic topologies with BRITE \cite{medina2001brite}.
+The model is set to Waxman, mode is set to be Router only. The bandwidth
+on each link follows a heavy-tail distribution ranging from
+100 to 1024 \cite {Gjoka2007Evaluation} and the link cost is an inverse function of the bandwidth. 
+The parameters $\alpha$ and $\beta$ are set to 0.5.
+%using parameters as listed in Table \ref{britetable}.
 %In this section, we first show how link failures are modeled in our evaluation.
 For similarity, we use a simple model to characterize link failure events.
 The fail probability of each link $e$
-is randomly generated in the range from 0 to 0.0001.
+is randomly generated in the range from 0 to 0.001.
 All the simulations are conducted on a PC with Intel
 i5 CPU, 1.7GHz and 1.5G Memory.
 \iffalse
@@ -77,6 +81,7 @@ are similar.
 
 %Because IAC and IAC-NA have similar performance in realizing DC rule, IAC/IAC-NA is used to represent these two algorithms in the following section.
 %In the following section, we will use IAC/IAC-NA to denote the IAC and IAC-NA.
+\iffalse
 \begin{table}[h]
 %% increase table row spacing, adjust to taste
 \normalsize
@@ -103,7 +108,47 @@ m&NodePlacement &GrowthTypem & ${alpha}$  \\
 \end{tabular}
 \end{center}
 \end{table}
+\fi
 \subsection{Computation complexity}
+\iffalse
+\begin{figure*}[t!]
+        \centering
+        \begin{subfigure}[b]{0.24\textwidth}
+                \centering
+                \includegraphics[width=0.8\textwidth]{nettopology}
+                \caption{Network $G$}
+              \label{spttree21}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.24\textwidth}
+                \centering
+                \includegraphics[width=0.8\textwidth]{sptc}
+                \caption{$T_{c}$}
+                \label{spttreechange22}
+        \end{subfigure}
+         \begin{subfigure}[b]{0.24\textwidth}
+                \centering
+                \includegraphics[width=0.8\textwidth]{newsptc}
+                \caption{$T_{c}^{G_{(c,a)}}$}
+                \label{spttreechange23}
+        \end{subfigure}
+         \begin{subfigure}[b]{0.24\textwidth}
+                \centering
+                \includegraphics[width=0.8\textwidth]{newsptc1}
+                \caption{$T_{c}^{G_{(c,b)}}$}
+                \label{spttreechange24}
+        \end{subfigure}
+        \caption{An example for explaining how ICA works}
+        \label{theoremexample}
+\end{figure*}
+\fi
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{degcomputationoverhead}
+\caption{Computation overhead on generated topologies when topology size is 200}
+\label{nodedegree6}
+\end{figure}
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{realcomputationoverhead}
@@ -111,7 +156,9 @@ m&NodePlacement &GrowthTypem & ${alpha}$  \\
 \caption{Computation overhead on real and measured topologies}
 \label{realtopologytime}
 \end{figure}
-Theoretical analysis has indicated that the time complexity of IAC is less than that of building of a shortest path tree, which has a great advantage over Naive, TBFH and DMPA. In order to further verify the computational performance, we make simulations on different topologies. In this section, we evaluate the computational overhead of different algorithms. In order to avoid the uncertain factors impact the algorithm¡¯s performance. The computational overhead of an algorithm is defined as the ratio of computation time of the algorithm to that of SPF (shortest path first).
+\iffalse
+Theoretical analysis has indicated that the time complexity of IAC is less than that of building of a shortest path tree, which has a great advantage over Naive, TBFH and DMPA.\fi
+In order to verify the computational performance, we make simulations on different topologies. In this section, we evaluate the computational overhead of different algorithms. In order to avoid the uncertain factors impact the algorithm¡¯s performance. The computational overhead of an algorithm is defined as the ratio of computation time of the algorithm to that of SPF (shortest path first).
 
 \iffalse
 \begin{figure}[t]
@@ -122,6 +169,9 @@ Theoretical analysis has indicated that the time complexity of IAC is less than 
 \label{rockettopologytime}
 \end{figure}
 \fi
+Fig. \ref{nodedegree6} presents the relationship between the computation overhead and average node degree on generated topologies when the topology size is 200.
+As the average node degree increases, the computation overhead of Naive increases accordingly. And also IAC has the highest performance among all the algorithms. Therefore, the above experiment results are consistent with the theoretical analysis described above.
+
 Fig. \ref{realtopologytime} indicates the computational overhead obtained by different algorithms on real and Rocketfuel topologies. From the Fig. \ref{realtopologytime}, we can see that IAC has the lowest computation overhead among all the algorithms. The computation overhead of IAC is less than computing a SPT, while DMPA need to construct a SPT and TBFH need to compute two SPTs. The computation overhead of Naive is proportionally to the average node degree of the network.
 \iffalse
 \begin{figure}[t]
@@ -131,12 +181,7 @@ Fig. \ref{realtopologytime} indicates the computational overhead obtained by dif
 \label{topologysize200}
 \end{figure}
 \fi
-\begin{figure}[t]
-\centering
-\includegraphics[width=3in]{degcomputationoverhead}
-\caption{Computation overhead on generated topologies when topology size is 200}
-\label{nodedegree6}
-\end{figure}
+
 
 \iffalse
 \begin{figure*}[t]
@@ -218,8 +263,7 @@ Fig. \ref{realtopologytime} indicates the computational overhead obtained by dif
 Fig. \ref{topologysize200} illustrates the relationship between the computation overhead and topology size on generated topologies when the average node degree is 6. As Fig. \ref{topologysize200} shows, the computation overhead of all the algorithms does not depend on the topology size. The computation overhead of IAC is lowest among all the algorithms.
 \fi
 
-Fig. \ref{nodedegree6} presents the relationship between the computation overhead and average node degree on generated topologies when the topology size is 200.
-As the average node degree increases, the computation overhead of Naive increases accordingly. And also IAC has the highest performance among all the algorithms. Therefore, the above experiment results are consistent with the theoretical analysis described above.
+
 \iffalse
  \begin{table}[h]
 \centering
@@ -264,24 +308,27 @@ describes the number of opportunities packets can be deflected off the
 shortest path.
 For both of the above two metrics, larger is better.
 
-Fig. \ref{prreal} depicts the protection ratio obtained by different algorithms on real and measured topologies.
 Fig. \ref{prd} presents the relationship between the protection ratio and average node degree on generated topologies
 when the topology size is 200.
+Fig. \ref{prreal} depicts the protection ratio obtained by different algorithms on real and measured topologies.
+Fig. \ref{generatenumber} shows the average number of backup next hops obtained by different algorithms on generated topologies.
 Fig. \ref{realnumber} depicts  the average number of backup next hops obtained by different algorithms on real and measured topologies.
-Fig. \ref{abicumulative} and  Fig. \ref{cercumulative} show
+Fig. \ref{TORONTOcumulative} and  Fig. \ref{1239cumulative} show
 the cumulative distribution of the  number of backup next hops for CERNET2 and TORONTO topologies.
-\begin{figure}[t]
-\centering
-\includegraphics[width=3in]{protectionratioreal}
-\caption{Protection ratio on real and measured topologies}
-\label{prreal}
-\end{figure}
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{protectionratiodegree}
 \caption{Protection ratio on generated topologies when topology size is 200}
 \label{prd}
 \end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{protectionratioreal}
+\caption{Protection ratio on real and measured topologies}
+\label{prreal}
+\end{figure}
+
 \iffalse
 \begin{figure}[t]
 \centering
@@ -290,7 +337,12 @@ the cumulative distribution of the  number of backup next hops for CERNET2 and T
 \label{prrocket}
 \end{figure}
 \fi
-
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{generatenum}
+\caption{Average number of backup next hops on real and measured topologies}
+\label{generatenumber}
+\end{figure}
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{realnum}
@@ -305,17 +357,26 @@ the cumulative distribution of the  number of backup next hops for CERNET2 and T
 \label{rocketnumber}
 \end{figure}
 \fi
-\begin{figure}[t]
-\centering
-\includegraphics[width=3in]{CERNET2cumulative}
-\caption{Cumulative  distribution of the  number of backup next hops on CERNET2 topology}
-\label{abicumulative}
-\end{figure}
+
+
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{TORONTOcumulative}
-\caption{Cumulative  distribution of the number of backup next hops on TORONTO topology}
-\label{cercumulative}
+\caption{Cumulative  distribution of the number of backup next hops on Toronto topology}
+\label{TORONTOcumulative}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{1239cumulative}
+\caption{Cumulative  distribution of the  number of backup next hops on AS1239 topology}
+\label{1239cumulative}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{nodedegree}
+\caption{Network availability on generated topologies when topology size=200}
+\label{avdeg}
 \end{figure}
 We made several conclusions. First, IAC is more
 flexible than TBFH and DMPA. It has more deflection choices in all
@@ -328,10 +389,9 @@ For IAC/IAC-NA and DC, more than
 and this advantage is more pronounced in large topologies.
 From Fig. \ref{prreal}, Fig. \ref{prrocket} and Fig. \ref{prd}, we can see that INC, INC-NA and DC have the similar protection ratio, which have better performance than both of DMPA and TBFH.
 \fi
-
-Since both of the above two metrics cannot accurately describe end-to-end network availability. Therefore, we will use network availability to measure the end-to-end availability of different algorithms in the next section.
-
- \subsection{Network availability}
+\subsection{Network availability}
+Since both of the above two metrics cannot accurately describe end-to-end network availability. Therefore, we will use network availability \cite{Geng2017Algebra} to measure the end-to-end availability of different algorithms in the next section.
+\iffalse
  We formally define the network availability $A(G)$ as follows (similar to that in \cite{ReliabilityAnalysis}),
 and use it as a main metric to evaluate the protection capability of different schemes.
 
@@ -367,6 +427,7 @@ Then, the network availability can be computed as
 \begin{equation}
 A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)}
 \end{equation}
+\fi
 \begin{table}[t]
 \centering
 %\normalsize
@@ -394,33 +455,30 @@ A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)}
 \cline{2-6}
 \hline
 \multirow{5}{*}{Measured}
-& AS1221 & 99.94 &99.94&96.35&97.25 \\
+& AS1221 & 99.94 &97.77&98.89&99.94 \\
 \cline{2-6}
-& AS1239 &  99.96&99.96 &95.67&96.37 \\
+& AS1239 &  99.96&96.67 &98.75&99.96 \\
 \cline{2-6}
-& AS1755 &  99.98&99.98&97.38&98.29 \\
+& AS1755 &  99.98&97.98&98.56&99.98 \\
 \cline{2-6}
-& AS3257 & 99.91&99.91&95.48&96.35 \\
+& AS3257 & 99.91&96.35&98.03&99.91 \\
 \cline{2-6}
-& AS3967 & 99.94 &99.94&95.78&96.89 \\
+& AS3967 & 99.94 &97.89&98.79&99.94 \\
 \cline{2-6}
-& AS6461 & 99.96 &99.96&95.82&97.03 \\
+& AS6461 & 99.96 &97.58&98.69&99.96 \\
 \cline{2-6}
 
 \hline
 \end{tabular}
 \end{table}
+Fig. \ref{avdeg} illustrates the relationship between the network availability and the average node degree.
+As Fig. \ref{avdeg} shows, as the average node degree increase, the network availability increases too. Note that when the average node degree increases, all schemes provide better protection results, while IAC/IAC-NA and DC are always much better than DMPA and TBFH.
 
 Table \ref{Availability} provides the network availability provided by each protection scheme, on the real and measured topologies. From the results, we can see that IAC has a clear advantage over TBFH and DMPA, and has the same performance as Naive.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=3in]{nodedegree}
-\caption{Network availability on generated topologies when topology size=200}
-\label{avdeg}
-\end{figure}
-Fig. \ref{avdeg} illustrates the relationship between the network availability and the average node degree.
-As Fig. \ref{avdeg} shows, as the average node degree increase, the network availability increases too. Note that when the average node degree increases, all schemes provide better protection results, while IAC/IAC-NA and DC are always much better than DMPA and TBFH.
+
+
+
 \iffalse
 \subsection{Incremental Deployment}
 In this paper, we have proposed IAC/IAC-NA,
