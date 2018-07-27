@@ -1,29 +1,23 @@
 \section{Performance Evaluation}\label{evaluation}
 \begin{figure*}[t!]
         \centering
-        \begin{subfigure}[b]{0.24\textwidth}
+        \begin{subfigure}[b]{0.32\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{degcomputationoverhead}
                 \caption{Network $G$}
               \label{spttree21}
         \end{subfigure}
-        \begin{subfigure}[b]{0.24\textwidth}
+        \begin{subfigure}[b]{0.32\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{degcomputationoverhead}
                 \caption{$T_{c}$}
                 \label{spttreechange22}
         \end{subfigure}
-         \begin{subfigure}[b]{0.24\textwidth}
+         \begin{subfigure}[b]{0.32\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{protectionratiodegree}
                 \caption{$T_{c}^{G_{(c,a)}}$}
                 \label{spttreechange23}
-        \end{subfigure}
-         \begin{subfigure}[b]{0.24\textwidth}
-                \centering
-                \includegraphics[width=\textwidth]{protectionratiodegree}
-                \caption{$T_{c}^{G_{(c,b)}}$}
-                \label{spttreechange24}
         \end{subfigure}
         \caption{An example for explaining how ICA works}
         \label{theoremexample}
@@ -143,25 +137,19 @@ m&NodePlacement &GrowthTypem & ${alpha}$  \\
 
 \begin{figure*}[t!]
         \centering
-        \begin{subfigure}[b]{0.24\textwidth}
+        \begin{subfigure}[b]{0.32\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{generatenum}
                 \caption{Network $G$}
               \label{spttree21}
         \end{subfigure}
-        \begin{subfigure}[b]{0.24\textwidth}
-                \centering
-                \includegraphics[width=\textwidth]{generatenum}
-                \caption{$T_{c}$}
-                \label{spttreechange22}
-        \end{subfigure}
-         \begin{subfigure}[b]{0.24\textwidth}
+                 \begin{subfigure}[b]{0.32\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{TORONTOcumulative}
                 \caption{$T_{c}^{G_{(c,a)}}$}
                 \label{spttreechange23}
         \end{subfigure}
-         \begin{subfigure}[b]{0.24\textwidth}
+         \begin{subfigure}[b]{0.32\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{1239cumulative}
                 \caption{$T_{c}^{G_{(c,b)}}$}
@@ -194,7 +182,6 @@ m&NodePlacement &GrowthTypem & ${alpha}$  \\
         \caption{An example for explaining how ICA works}
         \label{theoremexample}
 \end{figure*}
-
 \iffalse
 \begin{figure}[t]
 \centering
@@ -428,13 +415,20 @@ the cumulative distribution of the  number of backup next hops for CERNET2 and T
 \caption{Cumulative  distribution of the  number of backup next hops on AS1239 topology}
 \label{1239cumulative}
 \end{figure}
+
+\fi
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{nodedegree}
 \caption{Network availability on generated topologies when topology size=200}
 \label{avdeg}
 \end{figure}
-\fi
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{nodedegree}
+\caption{Network availability on generated topologies when topology size=200}
+\label{avdeg}
+\end{figure}
 We made several conclusions. First, IAC is more
 flexible than TBFH and DMPA. It has more deflection choices in all
 the experiment networks. Second, the
