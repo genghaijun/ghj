@@ -453,18 +453,44 @@ the cumulative distribution of the  number of backup next hops for CERNET2 , TOR
         \caption{Protection ratio in different topologies}
         \label{protect}
 \end{figure*}
+\begin{figure*}[t]
+        \centering
+        \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{topavi}
+                \caption{Varying topology size in Brite topologies}
+              \label{avitop}
+        \end{subfigure}
+                 \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{degavi}
+                \caption{Varying node degree in Brite topologies}
+                \label{avideg}
+        \end{subfigure}
+         \begin{subfigure}[b]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{realavi}
+                \caption{In real network topologies}
+                \label{avireal}
+        \end{subfigure}
+        \caption{Unavailability  of the network in different topologies}
+        \label{avi}
+\end{figure*}
 Now we study how good each algorithm can protect nodes from failures by employing alternate next hops it can find.
 We define the protection ratio as
 \[
 Pr={\sum\limits_{c,d\in V, c\neq d}{K(c,d)}}/{(|V|*(|V|-1))},
 \]
-where $K(c,d)$ indicates whether any alternate next hop can be found on node $c$ for destination $d$, i.e.,
+where $K(c,d)$ indicates whether any alternate next hop can be found on node $c$ for destination $d$. If node $c$ to node $d$ has at least one alternate next hop (default next hop is excluded) then $K(c,d)=1$, otherwise
+$K(c,d)=0$.
+\iffalse
 \[
 K(c,d)=\begin{cases}
-1&\mbox{$|N_c(d)|\geq 2$}\\
-0&\mbox{$|N_c(d)|=1$}
+1&\mbox{ }\\
+0&\mbox{else}
 \end{cases}
 \]
+\fi
 Since IAC always finds more alternates, it provides better protection than DMPA and TBFH.
 As shown in Fig. \ref{protect}, for example, in the synthetic topology with 500 nodes and an average
 node degree of 40, IAC(NPC) nearly provides a protection ratio of 100\%, while DMPA and TBFH
@@ -538,7 +564,7 @@ From Fig. \ref{prreal}, Fig. \ref{prrocket} and Fig. \ref{prd}, we can see that 
 \subsection{Network availability}
 
 
-
+\iffalse
 \begin{figure}[t]
 \centering
 \includegraphics[width=3in]{topavi}
@@ -551,11 +577,23 @@ From Fig. \ref{prreal}, Fig. \ref{prrocket} and Fig. \ref{prd}, we can see that 
 \caption{Network availability on generated topologies when topology size=500}
 \label{avdeg}
 \end{figure}
-
+\fi
 In the last, we evaluate how LFAs can protect applications
-based on another metric,  network availability.
-============================================
+based on another metric,  network availability \cite{Geng2017Algebra}.
+For similarity, we use a simple
+model to characterize link failure events. The fail probability of
+each link in the network is randomly generated in the range from 0 to 0.01.
+The corresponding results for \textbf{LFC}  are similar to those for \textbf{DC}, and we  omit them in the graphs.
+In Fig. \ref{avi},  the unavailability (y axis) is equal to that of 1-network availability.
+Fig. \ref{avitop} shows the  relationship between the network availability and the topology size when the average node degree is 4.
+Fig. \ref{avideg} illustrates the relationship between the network availability and the average node degree  when the topology size is 1000.
+Fig. \ref{avireal} presents network availability in real networks.
+From Fig. \ref{avi}, we can see the network availability of IAC is close to 100\% in all simulated topologies, while DMPA and TBFH can only
+provide around 95\% $\sim$ 99\% network availability.
+As shown in the Fig. \ref{avideg}, as the average node degree increase, the network availability increases too. IAC also has a clear advantage over TBFH and DMPA, and has the same performance as Naive.
+\iffalse
 Since both of the above two metrics cannot accurately describe end-to-end network availability. Therefore, we will use network availability \cite{Geng2017Algebra} to measure the end-to-end availability of different algorithms in the next section.
+\fi
 \iffalse
  We formally define the network availability $A(G)$ as follows (similar to that in \cite{ReliabilityAnalysis}),
 and use it as a main metric to evaluate the protection capability of different schemes.
@@ -593,6 +631,7 @@ Then, the network availability can be computed as
 A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)}
 \end{equation}
 \fi
+\iffalse
 \begin{table}[t]
 \centering
 %\normalsize
@@ -636,12 +675,14 @@ A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)}
 \hline
 \end{tabular}
 \end{table}
+\fi
+\iffalse
 Fig. \ref{avtop} shows the  relationship between the network availability and the topology size.
 Fig. \ref{avdeg} illustrates the relationship between the network availability and the average node degree.
 As Fig. \ref{avdeg} shows, as the average node degree increase, the network availability increases too. Note that when the average node degree increases, all schemes provide better protection results, while IAC/IAC-NA and DC are always much better than DMPA and TBFH.
 
 Table \ref{Availability} provides the network availability provided by each protection scheme, on the real and measured topologies. From the results, we can see that IAC has a clear advantage over TBFH and DMPA, and has the same performance as Naive.
-
+\fi
 
 
 
