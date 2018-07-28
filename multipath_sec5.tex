@@ -1,19 +1,24 @@
 \section{Conclusion}\label{conclusion}
-This paper is mainly focusing on the problem that how to efficiently
-and effectively deploy LFA on ISPS' networks.
-To this end, an incremental alternates computation algorithm based on Incremental Shortest Path First
-Algorithm was proposed.
-Unlike majority of
-schemes proposed in the literature, IAC does not need to construct many SPTs on a node, which would entail significant computation overhead.
-We also established the correctness of our scheme,
-together with some other important properties. On top of that,
-simulation results using several realistic network instances
-gave evidence that IAC is very competitive in terms of
-network availability as well.
-The simulation results showed that IAC can achieve
-the same network availability as  the state-of-the-art LFA with small computation overhead.
+In this paper, we propose IAC, an algorithm that can efficiently 
+compute loop free alternate next hops in link state networks. 
+These alternates can effectively protect traffic and applications from 
+network component failures, and increase the network availability. 
+We carefully analyze different LFA criteria, and find the critical 
+point is to compute the cost from any neighbor to each destination. 
+We then push forward a further understanding of shortest paths, which are 
+fundamental properties of graphs, as shown in Theorems \ref{newspt} 
+$\sim$ \ref{fan}. Based on these results, and the 
+ball-and-string framework proposed by Paolo Narv¨¢ez et al. 
+for incremental shortest path computation, we build IAC. 
+Although IAC seems to be only a special case of iSPF with a special 
+link cost update, its correctness needs non-trivial proofs. 
+Our evaluation with both real and synthetic topologies shows that, 
+IAC always achieves less complexity than the other algorithms, 
+and provides better failure repair capability and network availability.
+In the future, we will study whether tighter bounds on IAC's complexity 
+can be formally established, 
+since in our experiments we see a constant pattern that IAC runs faster 
+than constructing a single SPT. We will also study how IAC 
+can be utilized in multipath schemes for better utilization of bandwidth, 
+load balancing and et al.
 
-In the future, we will focus on studying the link failure characteristics.
-We believe that accurate link failure model will accurately improve  the performance evaluation.
-We will use virtualization technology to deploy our algorithms on
-CERNET2, which is the China Education and Research network.
