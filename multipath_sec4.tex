@@ -580,11 +580,17 @@ From Fig. \ref{prreal}, Fig. \ref{prrocket} and Fig. \ref{prd}, we can see that 
 \fi
 In the last, we evaluate how LFAs can protect applications
 based on another metric,  network availability \cite{Geng2017Algebra}.
+The network availability can be computed as
+
+\begin{equation}
+A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)}
+\end{equation}
+where $A(s,d)$ is the end-to-end availability of a source-destination ($s$-$d$) pair.
+Therefore, the unavailability of network is equal to that of 1-$A(G)$.
 For similarity, we use a simple
 model to characterize link failure events. The fail probability of
 each link in the network is randomly generated in the range from 0 to 0.01.
 The corresponding results for \textbf{LFC}  are similar to those for \textbf{DC}, and we  omit them in the graphs.
-In Fig. \ref{avi},  the unavailability (y axis) is equal to that of 1-network availability.
 Fig. \ref{avitop} shows the  relationship between the network availability and the topology size when the average node degree is 4.
 Fig. \ref{avideg} illustrates the relationship between the network availability and the average node degree  when the topology size is 1000.
 Fig. \ref{avireal} presents network availability in real networks.
