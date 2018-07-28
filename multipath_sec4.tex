@@ -481,16 +481,17 @@ We define the protection ratio as
 \[
 Pr={\sum\limits_{c,d\in V, c\neq d}{K(c,d)}}/{(|V|*(|V|-1))},
 \]
-where $K(c,d)$ indicates whether any alternate next hop can be found on node $c$ for destination $d$. If node $c$ to node $d$ has at least one alternate next hop (default next hop is excluded) then $K(c,d)=1$, otherwise
-$K(c,d)=0$.
-\iffalse
+where $K(c,d)$ indicates whether any alternate next hop can be found on node $c$ for destination $d$, 
+and is defined as
+%If node $c$ to node $d$ has at least one alternate next hop (default next hop is excluded) then $K(c,d)=1$, 
+%otherwise $K(c,d)=0$.
 \[
 K(c,d)=\begin{cases}
-1&\mbox{ }\\
-0&\mbox{else}
+1&\mbox{if at least an alternate next hop is found}\\
+0&\mbox{if no alternate next hop is found}
 \end{cases}
 \]
-\fi
+
 Since IAC always finds more alternates, it provides better protection than DMPA and TBFH.
 As shown in Fig. \ref{protect}, for example, in the synthetic topology with 500 nodes and an average
 node degree of 40, IAC(NPC) nearly provides a protection ratio of 100\%, while DMPA and TBFH
@@ -578,14 +579,19 @@ From Fig. \ref{prreal}, Fig. \ref{prrocket} and Fig. \ref{prd}, we can see that 
 \label{avdeg}
 \end{figure}
 \fi
-In the last, we evaluate how LFAs can protect applications
-based on another metric,  network availability \cite{Geng2017Algebra}.
-The network availability can be computed as
+Last, we evaluate how LFAs can protect applications
+based on another metric, network availability \cite{Geng2017Algebra}.
+Network availability measures the average path availability over all 
+source-destination pairs, and is defined as
 
 \begin{equation}
-A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)}
+A(G)=\frac{\sum\limits_{s,d \in V, s \neq d}{A(s,d)}}{|V|*(|V|-1|)},\nonumber
 \end{equation}
-where $A(s,d)$ is the end-to-end availability of a source-destination ($s$-$d$) pair.
+where $A(s,d)$ is the end-to-end path availability from a single source $s$
+to a single destination $d$, and can be determined by properly combining the 
+availabilities of all possible paths from $s$ to $d$. 
+ 
+
 Therefore, the unavailability of network is equal to that of 1-$A(G)$.
 For similarity, we use a simple
 model to characterize link failure events. The fail probability of
