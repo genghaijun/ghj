@@ -69,7 +69,7 @@ it will not become a bottleneck.
 \subsection{Network Model and Basic Notations}
 A link state network is modeled as an undirected graph $G=(V^{G},E^{G})$,
 where $V^{G}$ and $E^G$ respectively denote the set of nodes (routers) and the set of edges (links) in the network.
-Every link $(u,v)\in E^{G}$ in the network has a non-negative link weight $L^{G}(u,v)$ 
+Every link $(u,v)\in E^{G}$ in the network has a non-negative link weight $L^{G}(u,v)$.
 %and a link failure probability $r^{G}(u,v)$, both of which are non-negative.
 We use $C_c^G(v)$ to denote the lowest cost from node $c$ to node $v$,
 and use $N_{c}^G(v)$ to denote the set of next hops that $c$ can forward to when receiving a packet destined to the node $v$.
@@ -155,7 +155,7 @@ in the notations when the network topology is $G$.
 \subsection{Loop Free Alternates}\label{criteria}
 
 Loop-free Alternate (LFA)\cite{LFA} proposes several criteria for selecting  proper next hops,
-including the Loop-free Criterion (LFC), the Node Protection Condition (NPC) and the Downstream Criterion (DC).
+including the Loop-free Criterion (LFC), the Node Protection Condition (NPC) and the Downstream Path Criterion(DC).
 These criteria are designed to provide alternative paths bypassing the failed component,
 and guarantee loop-freeness. In what follows, we describe the criteria with regard to a node $c$ receiving
 packets destined to node $d$ ($c \ne d$), where $c$ detects that the default next hop for $d$, i.e., $b$, cannot be used,

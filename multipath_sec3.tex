@@ -521,9 +521,9 @@ for node $u$, $n$ denotes the potential lowest cost from $c$ to $u$,
 and $\delta$ is the corresponding cost change. The incremental search begins by
 inserting element $(x, (c, C_{c}(x)-2*L(c,x), -2*L(c,x)))$ in to the queue (line 5).
 Then we extract the node $m$ with the lowest cost in $Q$ and fix its position as well as its descendants' positions, in the new tree (line 7 $\sim$ 8).
-For each descendant $t$ of $m$, update the cost from $c$ to 
+For each descendant $t$ of $m$, update the cost from $c$ to
 $t$ , and the node $t$ will be removed from the $Q$ if the parent of $t$ in the $Q$ is not equal to its parent in the $T_c$ (line 10 $\sim$ 13).
- 
+
 Note that here we use notation $C(*)$ without any subscript to keep track of the potential
 lowest cost from $c$ to a node in the update process.
 Then for $m$ and its descendants, we search the potential lower costs of their neighbors,
@@ -534,7 +534,7 @@ since their costs and positions are already finalized.
 After this incremental tree construction, we compute the cost from $x$ to each node,
 and add the node to $N_{c}(d)$ if the LFA criterion is satisfied (line 21 $\sim$ 29).
 Finally, after we complete this process for each neighbor of $c$, we return the set of
-all alternate next hops for each destination $d$.
+all alternate next hops for each destination $d$ (line 30) .
 
 \iffalse
 For any node $d$ in the network, the corresponding  $C_x(d)$ is computed
@@ -945,10 +945,10 @@ the worst case complexity of the iSPF procedure for this neighbor will be
 $O(\delta_{e}*lg(\delta_{n}))$ with a binary heap, or $O(\delta_{e}+\delta_{n}*lg(\delta_{n}))$ with a Fibonacci heap.
 The remaining part, including duplicating the tree and
 computing $C_{x}(d)$ for all destinations, requires only $O(|E|+|V|)$ time.
-So the worst case complexity of IAC will be no more than $O(k*|V|*lg|V|)$ (or $O(k*|E|*lg|V|)$, 
-depending on the heap implementation). However, in practice, we find this bound to be 
-quite loose, and IAC is always faster than computing a single SPT. 
-This may be due to the special link cost decrement operation in IAC, 
+So the worst case complexity of IAC will be no more than $O(k*|V|*lg|V|)$ (or $O(k*|E|*lg|V|)$,
+depending on the heap implementation). However, in practice, we find this bound to be
+quite loose, and IAC is always faster than computing a single SPT.
+This may be due to the special link cost decrement operation in IAC,
 and we leave why this happens to future studies.
 
 \iffalse
